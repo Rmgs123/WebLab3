@@ -8,7 +8,7 @@ We are going to make a **Telegram-like** website where people will communicate v
 
 ## **First Design Ideas:**
 ---
-![Logo](https://github.com/user-attachments/assets/f1fdfcb8-0185-4916-a17b-3d480dfef56a)
+![Logo](https://github.com/user-attachments/assets/41f4ad49-57b7-4824-b0f2-d5dc92b2fb84)
 ---
 ![Дизайн1](https://github.com/user-attachments/assets/27e097d3-56f5-4230-9226-431467f0320d)
 ---
