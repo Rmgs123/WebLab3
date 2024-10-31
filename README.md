@@ -6,15 +6,11 @@ This is a team website development project using _Django_
 We are going to make a **Telegram-like** website where people will communicate via private messages or in public chat groups. But it will be with one particular ~feature~
 
 
-## **First Design Ideas:**
+## **Current Design:**
 ---
 ![Logo](https://github.com/user-attachments/assets/41f4ad49-57b7-4824-b0f2-d5dc92b2fb84)
 ---
-![Дизайн1](https://github.com/user-attachments/assets/27e097d3-56f5-4230-9226-431467f0320d)
+![image (6)](https://github.com/user-attachments/assets/c06f337a-5c07-4d09-bbc3-075e21469102)
 ---
-![Дизайн2](https://github.com/user-attachments/assets/1355254a-3ae6-4a90-a1a0-770820f831de)
----
-![Дизайн3](https://github.com/user-attachments/assets/62b48ec2-7ccd-4936-9c6f-9fb8adb7dce5)
----
-![Дизайн4](https://github.com/user-attachments/assets/472aa5e8-6c1c-4eef-82cc-38a8d9ba314e)
+![image (7)](https://github.com/user-attachments/assets/07c00205-7f3b-4e7c-9b69-44facc8bab3a)
 ---
