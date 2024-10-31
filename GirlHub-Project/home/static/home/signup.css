@@ -1,0 +1,172 @@
+/* home/static/home/signup.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', Arial, sans-serif;
+    user-select: none;
+}
+
+.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff5fa5, #ff95d8); /* Розовый градиент */
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    z-index: -1;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container-wrapper {
+    position: relative; /* Родительский контейнер для абсолютного позиционирования */
+}
+
+/* Стили для сообщений об ошибках */
+.error {
+    color: #d9534f; /* Красный цвет для ошибок */
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.password-requirements ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #333;
+}
+
+.password-requirements li {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 10px 40px;
+    padding-top: 25px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.password-requirements {
+    position: absolute;
+    top: 0;
+    left: 110%; /* Смещение блока вправо от основного */
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 250px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+/* Стили для заголовка */
+h1 {
+    color: #000000;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 34px;
+}
+
+/* Остальные стили */
+.password-requirements h2 {
+    font-size: 18px;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.password-requirements ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #333;
+}
+
+.password-requirements li {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.status-message {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #d9534f; /* Цвет для сообщений об ошибках */
+}
+
+.logo img {
+    width: 100px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+button {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.8s;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: #FF8C00;
+}
+
+p.signup {
+    color: #000000;
+    text-decoration: none;
+    margin-top: 40px;
+    font-size: 14px;
+}
+
+p.signup a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.8s;
+}
+
+p.signup a:hover {
+    color: #FF8C00;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+input:focus {
+    outline: none;
+    border-color: #0288d1;
+}

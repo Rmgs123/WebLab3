@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/login.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background"></div> <!-- Контейнер для анимации фона -->
+        <div class="container">
+            <div class="logo">
+                <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
+            </div>
+            <h1>Войти в аккаунт</h1>
+            <form method="post" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Username">
+                <input type="password" name="password" placeholder="Password">
+                <a href="{% url 'account_reset_password' %}" class="forgot-password">Забыли пароль?</a>
+                <button type="submit">Войти</button>
+            </form>
+            <p class="signup">Еще нет аккаунта? <a href="{% url 'account_signup' %}">Зарегистрироваться</a></p>
+        </div>
+</body>
+</html>

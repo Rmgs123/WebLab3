@@ -1,0 +1,129 @@
+/* home/static/home/login.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', Arial, sans-serif; /* Новый шрифт */
+    user-select: none; /* Отключение выделения текста */
+}
+
+.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    z-index: -1;
+}
+
+/* Анимация градиента */
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 10px 40px; /* Уменьшенный отступ по вертикали */
+    padding-top: 25px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px); /* Размытие */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo img {
+    width: 100px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+h1 {
+    color: #000000;
+    font-weight: 600;
+    margin-bottom: 0px; /* Отступ для заголовка */
+    margin-top: 10px;
+    font-size: 34px;
+}
+
+.forgot-password {
+    display: block;
+    font-size: 14px;
+    color: #000000;
+    margin-top: -10px;
+    text-decoration: none;
+    transition: color 0.8s;
+    text-align: right;
+    margin-right: 5px;
+}
+
+.forgot-password:hover {
+    color: #EE82EE; /* Цвет при наведении */
+}
+
+button {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.8s;
+    margin-top: 10px; /* Отступ сверху для кнопки */
+}
+
+button:hover {
+    background-color: #EE82EE;
+}
+
+p.signup {
+    color: #000000;
+    text-decoration: none;
+    margin-top: 40px; /* Отступ от верхней границы контейнера */
+    font-size: 14px;
+}
+
+p.signup a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.8s;
+}
+
+p.signup a:hover {
+    color: #EE82EE;
+}
+
+/* Стили для полей ввода */
+input[type="text"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: rgba(0, 0, 0, 0.5); /* Полупрозрачный текст для placeholder */
+    text-align: center;
+}
+
+input:focus {
+    outline: none;
+    border-color: #0288d1;
+}

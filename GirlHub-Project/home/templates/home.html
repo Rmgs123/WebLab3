@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+</head>
+<body>
+    <h1>Добро пожаловать, {{ username }}!</h1>
+    <p>Это ваша домашняя страница.</p>
+
+    <!-- Ссылка на выход -->
+    <p><a href="{% url 'account_logout' %}">Выйти</a></p>
+</body>
+</html>
