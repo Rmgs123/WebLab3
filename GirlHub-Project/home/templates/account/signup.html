@@ -8,55 +8,72 @@
 </head>
 <body>
     <div class="background"></div>
+
+    <!-- Всплывающее уведомление об ошибке регистрации -->
+    {% if form.non_field_errors %}
+        <div class="notification">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="container-wrapper">
         <div class="container">
             <div class="logo">
                 <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
             </div>
             <h1>Регистрация</h1>
+
             <form method="post" action="{% url 'account_signup' %}">
                 {% csrf_token %}
 
-                <!-- Ошибки имени пользователя над полем -->
+                <!-- Поле Username и его ошибки -->
                 {% if form.username.errors %}
-                    <div class="error">{{ form.username.errors.0 }}</div>
+                    <div class="error">
+                        {% for error in form.username.errors %}
+                            <p>Username: {{ error }}</p>
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <input type="text" name="username" placeholder="Username" required value="{{ form.username.value|default_if_none:'' }}">
 
-                <!-- Ошибки email над полем -->
+                <!-- Поле Email и его ошибки -->
                 {% if form.email.errors %}
-                    <div class="error">{{ form.email.errors.0 }}</div>
+                    <div class="error">
+                        {% for error in form.email.errors %}
+                            <p>Email: {{ error }}</p>
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <input type="email" name="email" placeholder="Email address" required value="{{ form.email.value|default_if_none:'' }}">
 
-                <!-- Ошибки пароля над полем -->
-                {% if form.password.errors %}
-                    {% for error in form.password.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
+                <!-- Поле Password и его ошибки -->
+                {% if form.password1.errors %}
+                    <div class="error">
+                        {% for error in form.password1.errors %}
+                            <p>Password: {{ error }}</p>
+                        {% endfor %}
+                    </div>
                 {% endif %}
-                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="password1" placeholder="Password" required>
 
                 <button type="submit">Зарегистрироваться</button>
             </form>
 
             <p class="signup">Уже есть аккаунт? <a href="{% url 'account_login' %}">Войти</a></p>
         </div>
-
-        <!-- Динамический блок требований к паролю -->
-        <div class="password-requirements">
-            <h2>Сообщения о пароле:</h2>
-
-            <!-- Показывать условия пароля, если нет ошибок пароля -->
-            {% if not form.password.errors %}
-                <ul>
-                    <li>Минимум 8 символов</li>
-                    <li>Содержит заглавную букву</li>
-                    <li>Содержит цифру</li>
-                    <li>Содержит специальный символ</li>
-                </ul>
-            {% endif %}
-        </div>
     </div>
+
+    <script>
+        // Скрипт для автоматического скрытия уведомления через 3 секунды
+        setTimeout(function() {
+            const notification = document.querySelector('.notification');
+            if (notification) {
+                notification.style.transform = 'translateY(-100%)';
+                notification.style.opacity = '0';
+            }
+        }, 3000);
+    </script>
 </body>
 </html>

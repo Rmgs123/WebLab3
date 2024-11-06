@@ -28,26 +28,36 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com']
 
 # Регистрация!!!
 
-# Упрощенная регистрация
-# Упрощенная регистрация
 ACCOUNT_EMAIL_REQUIRED = True              # Требование email при регистрации
 ACCOUNT_EMAIL_VERIFICATION = "none"        # Отключить подтверждение по email
 ACCOUNT_USERNAME_REQUIRED = True           # Требование имени пользователя
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False  # Убрать необходимость повтора пароля
-ACCOUNT_AUTHENTICATION_METHOD = 'username' # Аутентификация только по имени пользователя
+ACCOUNT_AUTHENTICATION_METHOD = 'email' # Аутентификация только по имени пользователя
+
+LOGIN_REDIRECT_URL = '/home'  # Путь для перенаправления после успешного входа
+ACCOUNT_SIGNUP_REDIRECT_URL = '/home'  # Путь для перенаправления после успешной регистрации
+LOGOUT_REDIRECT_URL = '/home'  # Перенаправление на главную страницу после выхода
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # Базовые приложения Django
+    'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
+
+    # Приложения для allauth
     'allauth',
     'allauth.account',
-    'home',  # добавил home!
+
+    # Ваше основное приложение
+    'home',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
@@ -134,10 +144,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
-
-LOGIN_REDIRECT_URL = '/'   # Перенаправление после входа
-ACCOUNT_SIGNUP_REDIRECT_URL = '/'  # Перенаправление после регистрации
-LOGOUT_REDIRECT_URL = '/'  # Перенаправление на главную страницу после выхода
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

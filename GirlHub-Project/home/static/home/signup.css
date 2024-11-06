@@ -16,38 +16,157 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #ff5fa5, #ff95d8); /* Розовый градиент */
+    background: linear-gradient(135deg, #ff5fa5, #ff95d8);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
     z-index: -1;
 }
 
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
 .container-wrapper {
-    position: relative; /* Родительский контейнер для абсолютного позиционирования */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Стили для сообщений об ошибках */
+/* Стиль для сообщений об ошибках */
 .error {
-    color: #d9534f; /* Красный цвет для ошибок */
+    color: #d9534f;
     font-size: 14px;
     margin-top: 5px;
+    text-align: left;
 }
 
-.password-requirements ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    color: #333;
+/* Уведомление об ошибке регистрации */
+.notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px 0;
+    text-align: center;
+    border-bottom: 2px solid #721c24;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    animation: slide-down 0.5s ease forwards, fade-out 0.5s ease 2.5s forwards;
 }
 
-.password-requirements li {
+/* Анимация для появления уведомления сверху */
+@keyframes slide-down {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Анимация для плавного исчезновения уведомления */
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+button {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.8s;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: #FF8C00;
+}
+
+p.signup {
+    color: #000000;
+    text-decoration: none;
+    margin-top: 40px;
     font-size: 14px;
-    margin-bottom: 5px;
+}
+
+p.signup a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.8s;
+}
+
+p.signup a:hover {
+    color: #FF8C00;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+input:focus {
+    outline: none;
+    border-color: #0288d1;
+}
+
+/* Ошибка в уведомлении */
+.error-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    font-size: 16px;
+    text-align: center;
+    animation: slide-down 0.5s ease forwards, fade-out 0.5s ease 2.5s forwards;
+}
+
+/* Анимация появления */
+@keyframes slide-down {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+/* Анимация исчезновения */
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
 
 .container {
@@ -66,55 +185,11 @@ body {
     z-index: 1;
 }
 
-.password-requirements {
-    position: absolute;
-    top: 0;
-    left: 110%; /* Смещение блока вправо от основного */
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 250px;
-    width: 100%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: left;
-}
-
-/* Стили для заголовка */
-h1 {
-    color: #000000;
-    font-weight: 600;
-    margin-bottom: 10px;
-    font-size: 34px;
-}
-
-/* Остальные стили */
-.password-requirements h2 {
-    font-size: 18px;
-    color: #000;
-    margin-bottom: 10px;
-}
-
-.password-requirements ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    color: #333;
-}
-
-.password-requirements li {
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-
-.status-message {
-    margin-top: 20px;
-    font-size: 14px;
-    color: #d9534f; /* Цвет для сообщений об ошибках */
-}
-
 .logo img {
-    width: 100px;
+    width: 100px; /* Задаем фиксированную ширину для логотипа */
+    height: auto; /* Автоматическая высота, чтобы сохранить пропорции */
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 10px;
 }
 
 button {
