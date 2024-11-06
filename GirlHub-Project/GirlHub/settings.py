@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
+
     # Приложения для allauth
     'allauth',
     'allauth.account',

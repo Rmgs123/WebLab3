@@ -1,4 +1,172 @@
 /* home/static/home/home.css */
+
+/* Основные стили */
 body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #f0f0f0;
+}
+
+/* Контейнер для основного макета */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "header header"
+        "contacts chat";
+    height: 100vh;
+}
+
+/* Верхняя панель */
+header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #0078D4;
+    color: #fff;
+}
+
+.username-display {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.logout a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.logout a:hover {
+    text-decoration: underline;
+}
+
+/* Боковая панель контактов */
+.contacts-list {
+    grid-area: contacts;
+    background-color: #f7f7f7;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.contacts-list h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.contacts-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contacts-list ul li {
+    margin-bottom: 10px;
+}
+
+.contacts-list ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.contacts-list ul li a:hover {
+    text-decoration: underline;
+}
+
+.add-contact-form {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.add-contact-form input {
+    flex-grow: 1;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.add-contact-form button {
+    padding: 5px 10px;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-contact-form button:hover {
+    background-color: #005a9e;
+}
+
+/* Основная часть чата */
+.chat {
+    grid-area: chat;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-left: 1px solid #ddd;
+}
+
+.chat-header {
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.from-user {
+    background-color: #0078D4;
+    color: white;
+    align-self: flex-end;
+}
+
+.from-contact {
+    background-color: #f0f0f0;
+    color: #333;
+    align-self: flex-start;
+}
+
+.send-message-form {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.send-message-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.send-message-form button {
+    padding: 10px;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.send-message-form button:hover {
+    background-color: #005a9e;
 }

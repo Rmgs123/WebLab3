@@ -3,12 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>Главная страница</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/home.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Подключение jQuery для упрощения AJAX -->
 </head>
 <body>
-    <h1>Добро пожаловать, {{ username }}!</h1>
-    <p>Это ваша домашняя страница.</p>
+    <div class="container">
+        <header>
+            <div class="username-display">Добро пожаловать, {{ user.username }}!</div>
+            <div class="logout"><a href="{% url 'account_logout' %}">Выйти</a></div>
+        </header>
 
-    <!-- Ссылка на выход -->
-    <p><a href="{% url 'account_logout' %}">Выйти</a></p>
+        <aside class="contacts-list">
+            <h2>Контакты</h2>
+            <ul>
+                {% for contact in user.profile.contacts.all %}
+                    <li><a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a></li>
+                {% empty %}
+                    <li>Нет контактов</li>
+                {% endfor %}
+            </ul>
+            <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
+                {% csrf_token %}
+                <input type="text" name="contact_name" placeholder="Добавить контакт" required>
+                <button type="submit">Добавить</button>
+            </form>
+        </aside>
+
+        <main class="chat">
+            <div class="chat-header">
+                Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                {% if chat_user %}
+                    {% for message in messages %}
+                        <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}">
+                            {{ message.content }}
+                        </div>
+                    {% empty %}
+                        <p>Нет сообщений.</p>
+                    {% endfor %}
+                {% else %}
+                    <p>Выберите контакт для начала чата.</p>
+                {% endif %}
+            </div>
+            <form class="send-message-form" id="send-message-form" method="post" action="{% url 'send_message' %}">
+                {% csrf_token %}
+                <input type="hidden" name="receiver_name" value="{{ chat_user }}">
+                <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off" required>
+                <button type="submit">Отправить</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        // AJAX отправка сообщения
+        $('#send-message-form').on('submit', function(event) {
+            event.preventDefault();  // Остановить стандартное поведение отправки формы
+            const messageContent = $('#message-input').val();  // Получить текст сообщения
+            const receiverName = '{{ chat_user }}';  // Имя получателя
+
+            $.ajax({
+                url: "{% url 'send_message' %}",  // URL для отправки сообщения
+                type: 'POST',
+                data: {
+                    'message': messageContent,
+                    'receiver_name': receiverName,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#chat-messages').append(`<div class="message from-user">${messageContent}</div>`);
+                    $('#message-input').val('');  // Очистить поле ввода после отправки
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка отправки сообщения: ", error);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
