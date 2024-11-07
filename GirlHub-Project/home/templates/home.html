@@ -5,20 +5,25 @@
     <title>Главная страница</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'home/home.css' %}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Подключение jQuery для упрощения AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- Верхняя панель с именем пользователя и кнопкой выхода -->
         <header>
             <div class="username-display">Добро пожаловать, {{ user.username }}!</div>
             <div class="logout"><a href="{% url 'account_logout' %}">Выйти</a></div>
         </header>
 
+        <!-- Боковая панель для контактов -->
         <aside class="contacts-list">
             <h2>Контакты</h2>
             <ul>
                 {% for contact in user.profile.contacts.all %}
-                    <li><a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a></li>
+                    <li id="contact-{{ contact.user.username }}">
+                        <a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a>
+                        <span class="notification-dot" style="display:none;">●</span>
+                    </li>
                 {% empty %}
                     <li>Нет контактов</li>
                 {% endfor %}
@@ -30,6 +35,7 @@
             </form>
         </aside>
 
+        <!-- Основной блок для чата -->
         <main class="chat">
             <div class="chat-header">
                 Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
@@ -38,7 +44,12 @@
                 {% if chat_user %}
                     {% for message in messages %}
                         <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}">
-                            {{ message.content }}
+                            {% if message.content %}
+                                <p>{{ message.content }}</p>
+                            {% endif %}
+                            {% if message.image %}
+                                <img src="{{ message.image.url }}" width="200">
+                            {% endif %}
                         </div>
                     {% empty %}
                         <p>Нет сообщений.</p>
@@ -47,39 +58,79 @@
                     <p>Выберите контакт для начала чата.</p>
                 {% endif %}
             </div>
-            <form class="send-message-form" id="send-message-form" method="post" action="{% url 'send_message' %}">
+            <form class="send-message-form" id="send-message-form" method="post" action="{% url 'send_message' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="receiver_name" value="{{ chat_user }}">
-                <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off" required>
+                <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off">
+                <input type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg"> <!-- Поле для загрузки изображения -->
                 <button type="submit">Отправить</button>
             </form>
         </main>
     </div>
 
     <script>
-        // AJAX отправка сообщения
+        // AJAX отправка сообщений, включая изображение
         $('#send-message-form').on('submit', function(event) {
-            event.preventDefault();  // Остановить стандартное поведение отправки формы
-            const messageContent = $('#message-input').val();  // Получить текст сообщения
-            const receiverName = '{{ chat_user }}';  // Имя получателя
+            event.preventDefault();
+
+            const formData = new FormData(this);  // Используем FormData для отправки текстов и файлов
 
             $.ajax({
-                url: "{% url 'send_message' %}",  // URL для отправки сообщения
+                url: "{% url 'send_message' %}",
                 type: 'POST',
-                data: {
-                    'message': messageContent,
-                    'receiver_name': receiverName,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
+                data: formData,
+                processData: false,  // Отключаем обработку данных для отправки файла
+                contentType: false,  // Устанавливаем false, чтобы заголовок contentType не изменялся
                 success: function(response) {
-                    $('#chat-messages').append(`<div class="message from-user">${messageContent}</div>`);
-                    $('#message-input').val('');  // Очистить поле ввода после отправки
+                    if (response.status === 'success') {
+                        const messageContent = $('#message-input').val();
+                        if (messageContent) {
+                            $('#chat-messages').append(`<div class="message from-user">${messageContent}</div>`);
+                        }
+                        const imageInput = $('#image-input')[0].files[0];
+                        if (imageInput) {
+                            $('#chat-messages').append(`<div class="message from-user"><img src="${URL.createObjectURL(imageInput)}" width="200"></div>`);
+                        }
+                        $('#message-input').val('');  // Очищаем поле ввода
+                        $('#image-input').val('');  // Очищаем поле для загрузки изображения
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.log("Ошибка отправки сообщения: ", error);
                 }
             });
         });
+
+        // Периодическая проверка новых сообщений
+        function checkNewMessages() {
+            $.ajax({
+                url: "{% url 'check_new_messages' %}",
+                type: 'GET',
+                success: function(response) {
+                    $('.notification-dot').hide();  // Скрываем все точки уведомлений
+                    response.contacts_with_unread.forEach(function(contact) {
+                        $(`#contact-${contact} .notification-dot`).show();  // Показать точку уведомления
+                    });
+                }
+            });
+        }
+
+        // Периодическая проверка и обновление сообщений в чате
+        function loadNewMessages() {
+            $.ajax({
+                url: "{% url 'get_new_messages' chat_user=chat_user %}",
+                type: 'GET',
+                success: function(response) {
+                    response.new_messages.forEach(function(message) {
+                        $('#chat-messages').append(`<div class="message from-contact">${message.content}</div>`);
+                    });
+                }
+            });
+        }
+
+        // Запускаем функции периодически
+        setInterval(checkNewMessages, 5000);  // Проверка уведомлений каждые 5 секунд
+        setInterval(loadNewMessages, 5000);   // Обновление чата каждые 5 секунд
     </script>
 </body>
 </html>

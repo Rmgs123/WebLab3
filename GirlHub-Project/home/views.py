@@ -6,6 +6,25 @@ from django.contrib.auth.models import User
 from .models import Profile, Message
 from django.contrib import messages
 
+from django.http import JsonResponse
+
+@login_required
+def check_new_messages(request):
+    contacts_with_unread = []
+    for contact in request.user.profile.contacts.all():
+        unread_messages = Message.objects.filter(sender=contact.user, receiver=request.user, is_read=False)
+        if unread_messages.exists():
+            contacts_with_unread.append(contact.user.username)
+    return JsonResponse({'contacts_with_unread': contacts_with_unread})
+
+@login_required
+def get_new_messages(request, chat_user):
+    sender = User.objects.get(username=chat_user)
+    new_messages = Message.objects.filter(sender=sender, receiver=request.user, is_read=False)
+    message_data = [{'content': msg.content, 'timestamp': msg.timestamp} for msg in new_messages]
+    new_messages.update(is_read=True)  # Отметить все сообщения как прочитанные
+    return JsonResponse({'new_messages': message_data})
+
 @login_required
 def home_view(request):
     chat_user = request.GET.get('chat_with')
@@ -52,12 +71,18 @@ def send_message(request):
     if request.method == 'POST':
         message_content = request.POST.get('message')
         receiver_name = request.POST.get('receiver_name')
+        image = request.FILES.get('image')  # Получаем загруженное изображение, если есть
+
         try:
             receiver_user = User.objects.get(username=receiver_name)
-            message = Message.objects.create(sender=request.user, receiver=receiver_user, content=message_content)
+            message = Message.objects.create(
+                sender=request.user,
+                receiver=receiver_user,
+                content=message_content if message_content else None,
+                image=image if image else None  # Сохраняем изображение, если оно есть
+            )
             message.save()
-            messages.success(request, 'Сообщение успешно отправлено!')
+            return JsonResponse({'status': 'success'})
         except User.DoesNotExist:
-            messages.error(request, 'Получатель не найден.')
-        return redirect('home')
-    return redirect('home')
+            return JsonResponse({'status': 'error', 'message': 'Получатель не найден'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})

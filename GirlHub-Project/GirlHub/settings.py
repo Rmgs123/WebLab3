@@ -38,6 +38,9 @@ LOGIN_REDIRECT_URL = '/home'  # Путь для перенаправления �
 ACCOUNT_SIGNUP_REDIRECT_URL = '/home'  # Путь для перенаправления после успешной регистрации
 LOGOUT_REDIRECT_URL = '/home'  # Перенаправление на главную страницу после выхода
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Application definition
 INSTALLED_APPS = [
     # Базовые приложения Django
