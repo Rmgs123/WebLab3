@@ -20,23 +20,9 @@
 
             <!-- Поле Email и его ошибки -->
             <input type="email" name="login" placeholder="Email" required value="{{ form.login.value|default_if_none:'' }}">
-            {% if form.login.errors %}
-                <div class="error">
-                    {% for error in form.login.errors %}
-                        <p>Email: {{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
 
             <!-- Поле Password и его ошибки -->
             <input type="password" name="password" placeholder="Password" required>
-            {% if form.password.errors %}
-                <div class="error">
-                    {% for error in form.password.errors %}
-                        <p>Password: {{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
 
             <a href="{% url 'account_reset_password' %}" class="forgot-password">Забыли пароль?</a>
             <button type="submit">Войти</button>
@@ -51,21 +37,5 @@
         </div>
         {% endif %}
     </div>
-    <script>
-    // Плавное появление ошибки и исчезновение через время
-    document.addEventListener('DOMContentLoaded', function() {
-        const errorMessage = document.querySelector('.error-message');
-        if (errorMessage) {
-            setTimeout(() => {
-                errorMessage.classList.add('show');
-            }, 0); // Немедленно показываем при загрузке
-
-            // Через 3 секунды скрываем сообщение
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 3000);
-        }
-    });
-    </script>
 </body>
 </html>

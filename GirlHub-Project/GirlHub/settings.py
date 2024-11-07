@@ -153,3 +153,22 @@ STATIC_ROOT = BASE_DIR / 'static'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Лимиты на обращения пользователей к серверу
+
+ACCOUNT_RATE_LIMITS = {
+    # Лимит на запросы на вход в аккаунт
+    "login": "10/m",  # До 10 запросов в минуту
+
+    # Лимит на запросы на сброс пароля
+    "reset_password": "5/m",  # До 5 запросов в минуту
+
+    # Лимит на подтверждение почты
+    "verify_email": "5/m",  # До 5 запросов в минуту
+
+    # Лимит для подтверждения/восстановления входа
+    "email_verification": "20/h",  # До 20 запросов в час
+
+    # Лимит на регистрацию
+    "signup": "5/m",  # До 3 запросов в минуту
+}

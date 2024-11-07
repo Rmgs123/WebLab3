@@ -8,6 +8,40 @@ from django.contrib import messages
 
 from django.http import JsonResponse
 
+from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.urls import reverse
+
+@login_required
+def change_email_view(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        new_email = request.POST.get('new_email')
+
+        # Проверяем пароль пользователя
+        user = authenticate(username=request.user.username, password=password)
+        if user is None:
+            messages.error(request, "Неверный пароль.")
+            return redirect('account_email')  # Остаемся на той же странице
+
+        # Проверка корректности нового email
+        try:
+            validate_email(new_email)
+        except ValidationError:
+            messages.error(request, "Некорректный формат электронной почты.")
+            return redirect('account_email')
+
+        # Устанавливаем новый email
+        user.email = new_email
+        user.save()
+
+        # Сообщение об успешной смене email
+        messages.success(request, "Email успешно изменен.")
+        return redirect('account_email')  # Остаемся на странице изменения email
+
+    return render(request, 'account/email.html', {'user': request.user})
+
 @login_required
 def check_new_messages(request):
     contacts_with_unread = []
@@ -17,13 +51,29 @@ def check_new_messages(request):
             contacts_with_unread.append(contact.user.username)
     return JsonResponse({'contacts_with_unread': contacts_with_unread})
 
+
 @login_required
-def get_new_messages(request, chat_user):
-    sender = User.objects.get(username=chat_user)
-    new_messages = Message.objects.filter(sender=sender, receiver=request.user, is_read=False)
-    message_data = [{'content': msg.content, 'timestamp': msg.timestamp} for msg in new_messages]
-    new_messages.update(is_read=True)  # Отметить все сообщения как прочитанные
-    return JsonResponse({'new_messages': message_data})
+def get_new_messages(request, chat_user=None):
+    # Проверка, что параметр chat_user передан
+    if not chat_user:
+        return JsonResponse({"error": "chat_user parameter is missing"}, status=400)
+
+    try:
+        # Попробуем найти пользователя с именем chat_user
+        sender = User.objects.get(username=chat_user)
+        messages = Message.objects.filter(sender=sender, receiver=request.user, read=False)
+
+        # Формируем список новых сообщений
+        new_messages = [{"content": message.content, "image_url": message.image.url if message.image else None} for
+                        message in messages]
+
+        # Помечаем сообщения как прочитанные
+        messages.update(read=True)
+
+        return JsonResponse({"new_messages": new_messages})
+
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User does not exist"}, status=404)
 
 @login_required
 def home_view(request):

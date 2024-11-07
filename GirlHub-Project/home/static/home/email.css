@@ -1,0 +1,125 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+}
+
+input::placeholder {
+    color: rgba(0, 0, 0, 0.5); /* Полупрозрачный текст */
+    font-size: 16px; /* Увеличиваем размер шрифта */
+    font-weight: 500; /* Делаем текст чуть более выделенным */
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.6);
+    padding: 20px 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+/* Отображение имени пользователя */
+.username-display p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.logo img {
+    width: 90px; /* Ограничиваем размер логотипа */
+    height: auto;
+    margin-bottom: 0px;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 90%; /* Уменьшаем ширину для лучшего центрирования */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center; /* Центрируем текст внутри поля */
+}
+
+.submit-button {
+    margin-top: 10px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.8s;
+    width: 90%; /* Ширина кнопки совпадает с шириной полей */
+    max-width: 150px;
+}
+
+.submit-button:hover {
+    background-color: #EE82EE;
+}
+
+.back-link {
+    margin-top: 30px;
+}
+
+.back-link a {
+    color: #000;
+    text-decoration: none;
+    font-weight: normal; /* Убираем жирность */
+    transition: color 0.8s;
+    color: #555555;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.back-link a:hover {
+    color: #EE82EE;
+}
+
+/* Уведомление об успехе */
+.notification {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff; /* Белый фон для уведомления */
+    color: 	#000000; /* White текст */
+    padding: 10px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+/* Показ уведомления */
+.notification.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Исчезновение уведомления через 3 секунды */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Стили для ошибок */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center; /* Центрируем ошибки */
+}

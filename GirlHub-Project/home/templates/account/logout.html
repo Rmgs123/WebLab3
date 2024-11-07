@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Выход & Настройки</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/logout.css' %}">
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="container-wrapper">
+        <!-- Основной блок с подтверждением выхода -->
+        <div class="container">
+            <div class="username-display">
+                <p>Вы вошли как <strong>{{ user.username }}</strong></p>
+            </div>
+
+            <div class="logo">
+                <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
+            </div>
+            <h1>Вы уверены, что хотите выйти?</h1>
+
+            <!-- Форма для подтверждения выхода -->
+            <form method="post" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Выйти</button>
+            </form>
+
+            <p class="cancel"><a href="{% url 'home' %}">Назад</a></p>
+
+            <!-- Дополнительные ссылки для мобильного отображения -->
+            <div class="additional-links">
+                <a href="{% url 'account_change_password' %}">Сменить пароль</a>
+                <a href="{% url 'account_email' %}">Изменить email</a>
+            </div>
+        </div>
+
+        <!-- Боковой блок с дополнительными ссылками для управления аккаунтом -->
+        <aside class="settings-sidebar">
+            <h2>Настройки аккаунта:</h2>
+            <ul>
+                <li><a href="{% url 'account_change_password' %}">Сменить пароль</a></li>
+                <li><a href="{% url 'account_email' %}">Изменить email</a></li>
+            </ul>
+        </aside>
+    </div>
+</body>
+</html>

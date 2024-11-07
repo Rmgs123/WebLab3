@@ -9,15 +9,6 @@
 <body>
     <div class="background"></div>
 
-    <!-- Всплывающее уведомление об ошибке регистрации -->
-    {% if form.non_field_errors %}
-        <div class="notification">
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     <div class="container-wrapper">
         <div class="container">
             <div class="logo">
@@ -65,15 +56,5 @@
         </div>
     </div>
 
-    <script>
-        // Скрипт для автоматического скрытия уведомления через 3 секунды
-        setTimeout(function() {
-            const notification = document.querySelector('.notification');
-            if (notification) {
-                notification.style.transform = 'translateY(-100%)';
-                notification.style.opacity = '0';
-            }
-        }, 3000);
-    </script>
 </body>
 </html>

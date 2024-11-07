@@ -61,6 +61,7 @@ h1 {
 
 .forgot-password {
     display: block;
+    display: none;  /* Отключил пока что "Забыли пароль" так как пока не делал это и не факт что понадобится */
     font-size: 14px;
     color: #000000;
     margin-top: -10px;

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Слишком много попыток</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '429.css' %}">
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="container">
+        <!-- Добавим Суща над текстом, УДАЛИТЬ ЭТОТ DIV ЧТОБЫ УБРАТЬ СУЩА -->
+        <div class="image-container">
+            <img src="{% static 'suchenko.png' %}" alt="Suchenko">
+        </div>
+        <h1>Слишком много попыток</h1>
+        <p>Вы превысили допустимое количество попыток. Пожалуйста, подождите и попробуйте снова позже.</p>
+    </div>
+</body>
+</html>

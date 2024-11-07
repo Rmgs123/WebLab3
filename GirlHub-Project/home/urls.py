@@ -1,6 +1,8 @@
 # home/urls.py
 from django.urls import path
 from . import views
+from .views import change_email_view
+
 
 urlpatterns = [
     path('', views.home_view, name='home'),  # Главная страница
@@ -8,4 +10,5 @@ urlpatterns = [
     path('send_message/', views.send_message, name='send_message'),  # Маршрут для отправки сообщений
     path('check_new_messages/', views.check_new_messages, name='check_new_messages'),  # Проверка новых сообщений
     path('get_new_messages/<str:chat_user>/', views.get_new_messages, name='get_new_messages'),  # Получение новых сообщений для чата
+    path('accounts/email/', change_email_view, name='account_email'),
 ]
