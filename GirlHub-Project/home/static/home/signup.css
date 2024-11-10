@@ -37,60 +37,6 @@ body {
     text-align: left;
 }
 
-button {
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    padding: 10px 25px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.8s;
-    margin-top: 15px;
-}
-
-button:hover {
-    background-color: #FF8C00;
-}
-
-p.signup {
-    color: #000000;
-    text-decoration: none;
-    margin-top: 40px;
-    font-size: 14px;
-}
-
-p.signup a {
-    color: #000000;
-    text-decoration: none;
-    transition: color 0.8s;
-}
-
-p.signup a:hover {
-    color: #FF8C00;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 16px;
-}
-
-input::placeholder {
-    color: rgba(0, 0, 0, 0.5);
-    text-align: center;
-}
-
-input:focus {
-    outline: none;
-    border-color: #0288d1;
-}
-
 .container {
     background: rgba(255, 255, 255, 0.6);
     border-radius: 10px;

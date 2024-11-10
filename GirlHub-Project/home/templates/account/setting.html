@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Выход & Настройки</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/setting.css' %}">
+</head>
+<body>
+<div class="background"></div>
+
+<div class="container-wrapper">
+    <div class="container">
+        <div class="username-display">
+            <p>Вы вошли как <strong>{{ user.username }}</strong></p>
+        </div>
+
+        <div class="logo">
+            <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
+        </div>
+        <div class="settings">
+            <h2>Настройки аккаунта:</h2>
+
+
+            <p><a href="{% url 'account_change_username' %}">Изменить ник</a></p>
+            <p><a href="{% url 'account_change_image' %}">Изменить фото профиля</a></p>
+            <p><a href="{% url 'account_change_email' %}">Изменить email</a></p>
+            <p><a href="{% url 'account_change_password' %}">Сменить пароль</a></p>
+
+            <p class="logout"><a href="{% url 'account_logout' %}">Выйти</a></p>
+            <p class="cancel"><a href="{% url 'home' %}">Назад</a></p>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

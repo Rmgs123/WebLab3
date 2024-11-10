@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Смена Image</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/change_image.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Отображение имени пользователя -->
+        <div class="username-display">
+            <p>Вы вошли как <strong>{{ user.username }}</strong></p>
+        </div>
+
+        <h2>Изменение изображение профиля</h2>
+
+        <form method="post"  enctype="multipart/form-data">
+            {% csrf_token %}
+            <p><input type="file" name="image" accept=".png, .jpg, .jpeg"></p>
+            <p><button type="submit">Загрузить</button></p>
+        </form>
+
+        <!-- Кнопка назад -->
+        <p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
+    </div>
+
+    <script>
+
+    </script>
+</body>
+</html>

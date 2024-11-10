@@ -65,28 +65,48 @@ body {
     margin-bottom: 10px;
 }
 
-/* Заголовок */
-h1 {
+.settings{
+
+    margin: 10px 0;
+    border: none;
+    text-align: center; /* Центрируем текст внутри поля */
+}
+
+.settings h2 {
+    font-size: 22px;
     color: #333333;
-    font-weight: 600;
-    font-size: 24px;
     margin-bottom: 20px;
 }
 
-/* Кнопка выхода */
-.logout-button {
-    background-color: #ff4b5c;
-    color: #ffffff;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+/* Стили ссылок в боковом блоке */
+.settings p {
+    list-style-type: none;
+    padding: 0;
+
+    margin-bottom: 10px;
 }
 
-.logout-button:hover {
-    background-color: #EE82EE;
+.settings p a {
+    color: #333333;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.settings p a:hover {
+    color: #EE82EE;
+}
+
+
+.logout{
+    color: #333333;
+    font-size: 18px;
+    margin-top: 25px;
+}
+
+.logout:hover {
+    color: #EE82EE;
 }
 
 /* Ссылка для отмены */
@@ -97,7 +117,7 @@ h1 {
 }
 
 .cancel a {
-    color: #333333;
+    color: #555555;
     text-decoration: none;
     transition: color 0.3s;
 }
@@ -105,5 +125,3 @@ h1 {
 .cancel a:hover {
     color: #EE82EE;
 }
-
-

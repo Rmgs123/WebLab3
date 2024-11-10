@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Смена ника</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/change_username.css' %}">
+</head>
+<body>
+<div class="container">
+
+    <div class="username-display">
+        <p>Вы вошли как <strong>{{ user.username }}</strong></p>
+    </div>
+
+    <div class="logo">
+        <img src="{% static 'home/GirlHub_transparent.png' %}" alt="Лого">
+    </div>
+    <h2>Изменение ника</h2>
+
+    <form method="post" action="{% url 'account_change_username' %}">
+        {% csrf_token %}
+
+        <label for="password">Current Password:</label>
+        <input type="password" placeholder="Current Password" id="password" name="password" required>
+
+        {% if form.username.errors %}
+        <div class="error">
+            {% for error in form.username.errors %}
+            <p>Username: {{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <label for="new_username">New Username:</label>
+        <input type="text" placeholder="New username" id="new_username" name="new_username" required
+               value="{{ form.username.value|default_if_none:'' }}">
+
+        <button type="submit" class="submit-button">Изменить ник</button>
+    </form>
+
+    <!-- Кнопка назад -->
+    <p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
+</div>
+
+<!-- Уведомление об успехе -->
+<div class="notification" id="notification">Ник был успешно изменен.</div>
+
+<script>
+    // Функция показа уведомления
+    function showNotification(message) {
+        const notification = document.getElementById("notification");
+        notification.innerText = message;
+        notification.classList.add("show");
+
+        // Убираем уведомление через 3 секунды
+        setTimeout(() => {
+            notification.classList.remove("show");
+        }, 3000);
+    }
+
+    // Если есть сообщения об успехе, показать уведомление
+    {% if messages %}
+        {% for message in messages %}
+            showNotification("{{ message }}");
+        {% endfor %}
+    {% endif %}
+</script>
+</body>
+</html>

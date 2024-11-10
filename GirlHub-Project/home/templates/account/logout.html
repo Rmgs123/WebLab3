@@ -27,23 +27,9 @@
                 <button type="submit" class="logout-button">Выйти</button>
             </form>
 
-            <p class="cancel"><a href="{% url 'home' %}">Назад</a></p>
-
-            <!-- Дополнительные ссылки для мобильного отображения -->
-            <div class="additional-links">
-                <a href="{% url 'account_change_password' %}">Сменить пароль</a>
-                <a href="{% url 'account_email' %}">Изменить email</a>
-            </div>
+            <p class="cancel"><a href="{% url 'account_settings' %}">Назад</a></p>
         </div>
 
-        <!-- Боковой блок с дополнительными ссылками для управления аккаунтом -->
-        <aside class="settings-sidebar">
-            <h2>Настройки аккаунта:</h2>
-            <ul>
-                <li><a href="{% url 'account_change_password' %}">Сменить пароль</a></li>
-                <li><a href="{% url 'account_email' %}">Изменить email</a></li>
-            </ul>
-        </aside>
     </div>
 </body>
 </html>

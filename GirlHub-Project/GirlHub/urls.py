@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),  # URL для django-allauth
+    path('accounts/', include('home.accounts_urls')),
     path('home/', include('home.urls')),  # Главная страница, маршрут к home
     path('', home_views.redirect_to_home, name='redirect_to_home'),  # Редирект с корневого URL
 ]

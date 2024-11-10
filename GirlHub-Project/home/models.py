@@ -2,13 +2,16 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 # Модель для профиля пользователя, если нужна дополнительная информация
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     contacts = models.ManyToManyField('self', symmetrical=False, related_name='contact_users')
+    image = models.ImageField(upload_to='profile_images/', default='profile_images/default.png')
 
     def __str__(self):
         return self.user.username
+
 
 # Модель для сообщений между пользователями
 class Message(models.Model):

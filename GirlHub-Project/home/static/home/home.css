@@ -35,6 +35,12 @@ header {
     font-size: 18px;
 }
 
+.profile_img{
+    weight=32px;
+    height=32px;
+    /*border-radius: 50%*/
+}
+
 .logout a {
     color: #ffffff;
     text-decoration: none;
@@ -58,6 +64,12 @@ header {
     margin-bottom: 10px;
 }
 
+.info-contact {
+    font-size: 18px;
+    font-weight: bold;
+    align-items: center;
+}
+
 .contacts-list ul {
     list-style: none;
     padding: 0;
@@ -69,8 +81,9 @@ header {
 }
 
 .contacts-list ul li a {
+    align-items: center;
     text-decoration: none;
-    color: #333;
+    color: #333333;
 }
 
 .contacts-list ul li a:hover {
