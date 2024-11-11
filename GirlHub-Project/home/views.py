@@ -106,14 +106,14 @@ def get_new_messages(request, chat_user=None):
     try:
         # Попробуем найти пользователя с именем chat_user
         sender = User.objects.get(username=chat_user)
-        messages = Message.objects.filter(sender=sender, receiver=request.user, read=False)
+        messages = Message.objects.filter(sender=sender, receiver=request.user, is_read=False).order_by('timestamp') # ИЗМЕНЕНО С READ на IS_READ
 
         # Формируем список новых сообщений
         new_messages = [{"content": message.content, "image_url": message.image.url if message.image else None} for
                         message in messages]
 
         # Помечаем сообщения как прочитанные
-        messages.update(read=True)
+        messages.update(is_read=True) # ИЗМЕНЕНО С READ на IS_READ
 
         return JsonResponse({"new_messages": new_messages})
 
@@ -132,6 +132,10 @@ def home_view(request):
             # Получаем все сообщения между текущим пользователем и выбранным контактом
             sent_messages = Message.objects.filter(sender=request.user, receiver=chat_partner)
             received_messages = Message.objects.filter(sender=chat_partner, receiver=request.user)
+
+            # Помечаем полученные сообщения как прочитанные - ЭТО ДОБАВИЛ
+            received_messages.filter(is_read=False).update(is_read=True)
+
             messages = sorted(
                 list(sent_messages) + list(received_messages),
                 key=lambda msg: msg.timestamp
