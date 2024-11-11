@@ -1,32 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Смена Image</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/change_image.css' %}">
-</head>
-<body>
-    <div class="container">
-        <!-- Отображение имени пользователя -->
-        <div class="username-display">
-            <p>Вы вошли как <strong>{{ user.username }}</strong></p>
-        </div>
+{% extends "base_settings.html" %}
 
-        <h2>Изменение изображение профиля</h2>
+{% block title %}
+<h2>Изменение изображение профиля</h2>
+{% endblock %}
 
-        <form method="post"  enctype="multipart/form-data">
-            {% csrf_token %}
-            <p><input type="file" name="image" accept=".png, .jpg, .jpeg"></p>
-            <p><button type="submit">Загрузить</button></p>
-        </form>
+{% block content %}
+<form method="post"  enctype="multipart/form-data">
+    {% csrf_token %}
+    <p><input type="file" name="image" accept=".png, .jpg, .jpeg"></p>
+    <p><button class="submit-button" type="submit">Загрузить</button></p>
+</form>
+<p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
+<style type="text/css">
+    .logo img {
+        width: 90px;
+        height: auto;
+        margin-bottom: 0px;
+    }
 
-        <!-- Кнопка назад -->
-        <p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
-    </div>
+    h1, h2 {
+        margin-bottom: 10px;
+    }
 
-    <script>
+    .submit-button {
+        margin-top: 10px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.8s;
+        width: 90%;
+        max-width: 150px;
+    }
 
-    </script>
-</body>
-</html>
+    .submit-button:hover {
+        background-color: #EE82EE;
+    }
+
+    .back-link {
+        margin-top: 30px;
+    }
+
+    .back-link a {
+        color: #000;
+        text-decoration: none;
+        font-weight: normal;
+        transition: color 0.8s;
+        color: #555555;
+        font-size: 14px;
+        margin-top: 20px;
+    }
+
+    .back-link a:hover {
+        color: #EE82EE;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+</style>
+{% endblock %}

@@ -1,35 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Выход & Настройки</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/logout.css' %}">
-</head>
-<body>
-    <div class="background"></div>
+{% extends "base_settings.html" %}
 
-    <div class="container-wrapper">
-        <!-- Основной блок с подтверждением выхода -->
-        <div class="container">
-            <div class="username-display">
-                <p>Вы вошли как <strong>{{ user.username }}</strong></p>
-            </div>
+{% block title %}
+    <h1>Вы уверены, что хотите выйти?</h1>
+{% endblock %}
 
-            <div class="logo">
-                <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
-            </div>
-            <h1>Вы уверены, что хотите выйти?</h1>
+{% block content %}
+<form method="post" action="{% url 'account_logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="logout-button">Выйти</button>
+</form>
+<p class="cancel"><a href="{% url 'account_settings' %}">Назад</a></p>
+<style type="text/css">
+    .logo img {
+        width: 100px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
-            <!-- Форма для подтверждения выхода -->
-            <form method="post" action="{% url 'account_logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-button">Выйти</button>
-            </form>
+    h1 {
+        color: #333333;
+        font-weight: 600;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
 
-            <p class="cancel"><a href="{% url 'account_settings' %}">Назад</a></p>
-        </div>
+    .logout-button {
+        background-color: #ff4b5c;
+        color: #ffffff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
 
-    </div>
-</body>
-</html>
+    .logout-button:hover {
+        background-color: #EE82EE;
+    }
+
+    .cancel {
+        color: #555555;
+        font-size: 14px;
+        margin-top: 25px;
+    }
+
+    .cancel a {
+        color: #333333;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .cancel a:hover {
+        color: #EE82EE;
+    }
+</style>
+{% endblock %}

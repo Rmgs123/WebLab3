@@ -1,17 +1,18 @@
 /* home/static/home/home.css */
 
 /* Основные стили */
-body {
-    font-family: Arial, sans-serif;
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
     background-color: #f0f0f0;
 }
 
 /* Контейнер для основного макета */
 .container {
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 250px 1fr; /* Изменено на фиксированную ширину боковой панели */
     grid-template-rows: auto 1fr;
     grid-template-areas:
         "header header"
@@ -23,22 +24,23 @@ body {
 header {
     grid-area: header;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 10px;
     background-color: #0078D4;
     color: #fff;
 }
 
-.username-display {
-    font-weight: bold;
-    font-size: 18px;
+.profile-img img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
-.profile_img{
-    weight=32px;
-    height=32px;
-    /*border-radius: 50%*/
+.username-display {
+    flex: 1;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .logout a {
@@ -55,19 +57,14 @@ header {
 .contacts-list {
     grid-area: contacts;
     background-color: #f7f7f7;
-    padding: 20px;
+    padding: 10px;
     overflow-y: auto;
 }
 
 .contacts-list h2 {
     font-size: 18px;
+    margin-top: 0;
     margin-bottom: 10px;
-}
-
-.info-contact {
-    font-size: 18px;
-    font-weight: bold;
-    align-items: center;
 }
 
 .contacts-list ul {
@@ -76,18 +73,33 @@ header {
     margin: 0;
 }
 
-.contacts-list ul li {
+.contacts-list li {
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.contacts-list img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
 .contacts-list ul li a {
-    align-items: center;
     text-decoration: none;
     color: #333333;
+    font-weight: bold;
+    font-size: 16px;
 }
 
 .contacts-list ul li a:hover {
     text-decoration: underline;
+}
+
+.notification-dot {
+    color: red;
+    margin-left: auto;
 }
 
 .add-contact-form {
@@ -123,63 +135,124 @@ header {
     flex-direction: column;
     background-color: #ffffff;
     border-left: 1px solid #ddd;
+    height: 100%;       /* Добавлено */
+    min-height: 0;      /* Добавлено */
 }
 
+/* Заголовок чата */
 .chat-header {
-    padding: 15px;
-    font-size: 18px;
-    font-weight: bold;
+    padding: 10px;
     background-color: #f0f0f0;
     border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    font-weight: bold;
 }
 
+/* Контейнер для сообщений и формы отправки */
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;      /* Добавлено */
+}
+
+/* Область сообщений */
 .chat-messages {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.message {
-    margin-bottom: 15px;
+    flex: 1;
     padding: 10px;
-    border-radius: 8px;
+    overflow-y: auto;
+    background-color: #e5ddd5;
 }
 
-.from-user {
-    background-color: #0078D4;
-    color: white;
-    align-self: flex-end;
-}
-
-.from-contact {
-    background-color: #f0f0f0;
-    color: #333;
-    align-self: flex-start;
-}
-
+/* Форма отправки сообщений */
 .send-message-form {
     display: flex;
-    padding: 15px;
+    align-items: center;
+    padding: 10px;
+    background-color: #f1f1f1;
     border-top: 1px solid #ddd;
 }
 
-.send-message-form input {
+/* Поле ввода сообщения */
+.send-message-form input[type="text"] {
     flex-grow: 1;
     padding: 10px;
+    margin-right: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
+/* Поле для выбора файла */
+#image-input {
+    margin-right: 10px;
+}
+
+/* Кнопка отправки */
 .send-message-form button {
-    padding: 10px;
+    padding: 10px 16px;
     background-color: #0078D4;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 10px;
 }
 
 .send-message-form button:hover {
     background-color: #005a9e;
+}
+
+/* Стили для сообщений */
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.from-user {
+    background-color: #dcf8c6;
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+.from-contact {
+    background-color: #fff;
+    margin-right: auto;
+    align-self: flex-start;
+}
+
+.message img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+/* Дополнительные стили */
+.info-contact {
+    display: flex;
+    align-items: center;
+}
+
+.info-contact img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "chat";
+    }
+
+    .contacts-list {
+        display: none;
+    }
 }

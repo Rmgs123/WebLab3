@@ -1,38 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Выход & Настройки</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/setting.css' %}">
-</head>
-<body>
-<div class="background"></div>
+{% extends "base_settings.html" %}
 
-<div class="container-wrapper">
-    <div class="container">
-        <div class="username-display">
-            <p>Вы вошли как <strong>{{ user.username }}</strong></p>
-        </div>
+{% block title %}
+<h1>Настройки</h1>
+{% endblock %}
 
-        <div class="logo">
-            <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
-        </div>
-        <div class="settings">
-            <h2>Настройки аккаунта:</h2>
+{% block content %}
+<div class="settings">
+    <p><a href="{% url 'account_change_username' %}">Изменить ник</a></p>
+    <p><a href="{% url 'account_change_image' %}">Изменить фото профиля</a></p>
+    <p><a href="{% url 'account_change_email' %}">Изменить email</a></p>
+    <p><a href="{% url 'account_change_password' %}">Сменить пароль</a></p>
 
-
-            <p><a href="{% url 'account_change_username' %}">Изменить ник</a></p>
-            <p><a href="{% url 'account_change_image' %}">Изменить фото профиля</a></p>
-            <p><a href="{% url 'account_change_email' %}">Изменить email</a></p>
-            <p><a href="{% url 'account_change_password' %}">Сменить пароль</a></p>
-
-            <p class="logout"><a href="{% url 'account_logout' %}">Выйти</a></p>
-            <p class="cancel"><a href="{% url 'home' %}">Назад</a></p>
-
-        </div>
-    </div>
-
+    <p class="logout"><a href="{% url 'account_logout' %}">Выйти</a></p>
+    <p class="cancel"><a href="{% url 'home' %}">Назад</a></p>
 </div>
-</body>
-</html>
+<style type="text/css">
+    .logo img {
+        width: 100px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .settings{
+
+        margin: 10px 0;
+        border: none;
+        text-align: center; /* Центрируем текст внутри поля */
+    }
+
+    .settings h2 {
+        font-size: 22px;
+        color: #333333;
+        margin-bottom: 20px;
+    }
+
+    /* Стили ссылок в боковом блоке */
+    .settings p {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 10px;
+    }
+
+    .settings p a {
+        color: #333333;
+        font-size: 20px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .settings p a:hover {
+        color: #EE82EE;
+    }
+
+
+    .logout{
+        color: #333333;
+        font-size: 18px;
+        margin-top: 25px;
+    }
+
+    .logout:hover {
+        color: #EE82EE;
+    }
+
+    /* Ссылка для отмены */
+    .cancel {
+        color: #555555;
+        font-size: 14px;
+        margin-top: 25px;
+    }
+
+    .cancel a {
+        color: #555555;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .cancel a:hover {
+        color: #EE82EE;
+    }
+</style>
+{% endblock %}

@@ -17,6 +17,8 @@ import io
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
+from django.db.models import Q  # Добавляем импорт Q
+
 
 @login_required
 def settings(request):
@@ -106,50 +108,50 @@ def get_new_messages(request, chat_user=None):
     try:
         # Попробуем найти пользователя с именем chat_user
         sender = User.objects.get(username=chat_user)
-        messages = Message.objects.filter(sender=sender, receiver=request.user, read=False)
+        messages = Message.objects.filter(sender=sender, receiver=request.user, is_read=False).order_by('timestamp') # ИЗМЕНЕНО С READ на IS_READ
 
         # Формируем список новых сообщений
         new_messages = [{"content": message.content, "image_url": message.image.url if message.image else None} for
                         message in messages]
 
         # Помечаем сообщения как прочитанные
-        messages.update(read=True)
+        messages.update(is_read=True) # ИЗМЕНЕНО С READ на IS_READ
 
         return JsonResponse({"new_messages": new_messages})
 
     except User.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
 
-
 @login_required
 def home_view(request):
     chat_user = request.GET.get('chat_with')
-    messages = []
+    messages_list = []
 
     if chat_user:
         try:
             chat_partner = User.objects.get(username=chat_user)
-            # Получаем все сообщения между текущим пользователем и выбранным контактом
-            sent_messages = Message.objects.filter(sender=request.user, receiver=chat_partner)
-            received_messages = Message.objects.filter(sender=chat_partner, receiver=request.user)
-            messages = sorted(
-                list(sent_messages) + list(received_messages),
-                key=lambda msg: msg.timestamp
-            )
+
+            initial_load_count = 20
+
+            # Загружаем последние сообщения, отсортированные по убыванию времени
+            messages_qs = Message.objects.filter(
+                Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)
+            ).order_by('-timestamp')[:initial_load_count]
+
+            # Преобразуем в список и реверсируем для правильного порядка отображения
+            messages_list = list(messages_qs)[::-1]
+
         except User.DoesNotExist:
             chat_user = None
 
     return render(request, 'home.html', {
         'username': request.user.username,
-        'messages': messages,
+        'messages': messages_list,
         'chat_user': chat_user,
-
     })
-
 
 def redirect_to_home(request):
     return redirect('/home/')
-
 
 @login_required
 def add_contact(request):
@@ -221,3 +223,38 @@ def change_image(request):
         return redirect('home')
 
     return render(request, 'account/change_image.html')
+
+@login_required
+def load_old_messages(request, chat_user):
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 20))
+
+    try:
+        chat_partner = User.objects.get(username=chat_user)
+
+        # Получаем все сообщения, отсортированные по убыванию времени
+        messages_qs = Message.objects.filter(
+            Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)
+        ).order_by('-timestamp')
+
+        # Вычисляем новые offset и limit
+        start = offset
+        end = offset + limit
+
+        # Получаем нужный срез сообщений
+        messages_slice = messages_qs[start:end]
+
+        # Преобразуем в список и реверсируем для правильного порядка
+        messages = []
+        for message in reversed(messages_slice):
+            messages.append({
+                "sender": message.sender.username,
+                "content": message.content,
+                "image_url": message.image.url if message.image else None,
+                "timestamp": message.timestamp.isoformat()
+            })
+
+        return JsonResponse({"messages": messages})
+
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User does not exist"}, status=404)

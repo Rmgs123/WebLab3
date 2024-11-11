@@ -1,4 +1,3 @@
-/* Общие стили */
 body {
     margin: 0;
     padding: 0;
@@ -7,16 +6,15 @@ body {
     justify-content: center;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Poppins', Arial, sans-serif;
+    font-family: "Permanent Marker", cursive;
     user-select: none;
-    text-align: center;  /* Убедимся, что текст и содержимое остаются по центру */
 }
 
 .background {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background: linear-gradient(135deg, #ff5fa5, #ff95d8);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
     z-index: -1;
@@ -28,19 +26,8 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Контейнер-обертка */
-.container-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto; /* Центрирование контейнера */
-}
-
-/* Основной контейнер */
 .container {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 10px;
     padding: 20px 40px;
     text-align: center;
@@ -48,80 +35,22 @@ body {
     width: 100%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(10px);
-    margin-right: 50px;
-    margin: 0 auto; /* Центрируем основной блок */
 }
 
 .username-display p {
-    font-size: 16px;
-    color: #333;
     margin-bottom: 10px;
+    margin-left: 10px;
 }
 
-/* Логотип */
-.logo img {
-    width: 100px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+.username-display {
+    display: flex;
+    justify-content: center;
 }
 
-.settings{
-
-    margin: 10px 0;
-    border: none;
-    text-align: center; /* Центрируем текст внутри поля */
+.username-display img {
+    margin-top: 12px;
 }
 
-.settings h2 {
-    font-size: 22px;
-    color: #333333;
-    margin-bottom: 20px;
-}
-
-/* Стили ссылок в боковом блоке */
-.settings p {
-    list-style-type: none;
-    padding: 0;
-
-    margin-bottom: 10px;
-}
-
-.settings p a {
-    color: #333333;
+.username_text {
     font-size: 20px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.settings p a:hover {
-    color: #EE82EE;
-}
-
-
-.logout{
-    color: #333333;
-    font-size: 18px;
-    margin-top: 25px;
-}
-
-.logout:hover {
-    color: #EE82EE;
-}
-
-/* Ссылка для отмены */
-.cancel {
-    color: #555555;
-    font-size: 14px;
-    margin-top: 25px;
-}
-
-.cancel a {
-    color: #555555;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.cancel a:hover {
-    color: #EE82EE;
 }

@@ -8,7 +8,7 @@ body {
     justify-content: center;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Poppins', Arial, sans-serif; /* Новый шрифт */
+    font-family: "Permanent Marker", cursive; /* Новый шрифт */
     user-select: none; /* Отключение выделения текста */
 }
 

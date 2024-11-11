@@ -1,65 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Смена Email</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/email.css' %}">
-</head>
-<body>
-    <div class="container">
-        <!-- Отображение имени пользователя -->
-        <div class="username-display">
-            <p>Вы вошли как <strong>{{ user.username }}</strong></p>
-        </div>
+{% extends "base_settings.html" %}
+{% block title %}
+<h2>Изменение электронной почты</h2>
+{% endblock %}
 
-        <div class="logo">
-            <img src="{% static 'home/GirlHub_transparent.png' %}" alt="Лого">
-        </div>
-        <h2>Изменение электронной почты</h2>
+{% block content %}
+<p>Текущий email: {{ user.email }}</p>
+<form method="post" action="{% url 'account_change_email' %}">
+    {% csrf_token %}
+    <label for="password">Current Password:</label>
+    <input type="password" placeholder="Current Password" id="password" name="password" required>
+    <label for="new_email">New Email:</label>
+    <input type="email" placeholder="New Email" id="new_email" name="new_email" required>
+    <button type="submit" class="submit-button">Изменить email</button>
+</form>
+<p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
+<div class="notification" id="notification">Почта была успешно изменена.</div>
+<script>
+    function showNotification(message) {
+        const notification = document.getElementById("notification");
+        notification.innerText = message;
+        notification.classList.add("show");
 
-        <!-- Отображение текущего email -->
-        <p>Текущий email: <strong>{{ user.email }}</strong></p>
+        // Убираем уведомление через 3 секунды
+        setTimeout(() => {
+            notification.classList.remove("show");
+        }, 3000);
+    }
+    {% if messages %}
+        {% for message in messages %}
+            showNotification("{{ message }}");
+        {% endfor %}
+    {% endif %}
+</script>
+<style type="text/css">
+    input::placeholder {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 16px;
+        font-weight: 500;
+    }
 
-        <!-- Форма для смены email -->
-        <form method="post" action="{% url 'account_change_email' %}">
-            {% csrf_token %}
+    h1, h2 {
+        margin-bottom: 10px;
+    }
 
-            <label for="password">Current Password:</label>
-            <input type="password" placeholder="Current Password" id="password" name="password" required>
+    .username-display p {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 15px;
+    }
 
-            <label for="new_email">New Email:</label>
-            <input type="email" placeholder="New Email" id="new_email" name="new_email" required>
+    .logo img {
+        width: 90px;
+        height: auto;
+        margin-bottom: 0px;
+    }
 
-            <button type="submit" class="submit-button">Изменить email</button>
-        </form>
+    input[type="email"],
+    input[type="password"] {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+    }
 
-        <!-- Кнопка назад -->
-        <p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
-    </div>
+    .submit-button {
+        margin-top: 10px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.8s;
+        width: 90%;
+        max-width: 150px;
+    }
 
-    <!-- Уведомление об успехе -->
-    <div class="notification" id="notification">Почта была успешно изменена.</div>
+    .submit-button:hover {
+        background-color: #EE82EE;
+    }
 
-    <script>
-        // Функция показа уведомления
-        function showNotification(message) {
-            const notification = document.getElementById("notification");
-            notification.innerText = message;
-            notification.classList.add("show");
+    .back-link {
+        margin-top: 30px;
+    }
 
-            // Убираем уведомление через 3 секунды
-            setTimeout(() => {
-                notification.classList.remove("show");
-            }, 3000);
-        }
+    .back-link a {
+        color: #000;
+        text-decoration: none;
+        font-weight: normal;
+        transition: color 0.8s;
+        color: #555555;
+        font-size: 14px;
+        margin-top: 20px;
+    }
 
-        // Если есть сообщения об успехе, показать уведомление
-        {% if messages %}
-            {% for message in messages %}
-                showNotification("{{ message }}");
-            {% endfor %}
-        {% endif %}
-    </script>
-</body>
-</html>
+    .back-link a:hover {
+        color: #EE82EE;
+    }
+
+    /* Уведомление об успехе */
+    .notification {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff;
+        color: 	#000000; /* White текст */
+        padding: 10px;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s;
+    }
+
+    .notification.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
