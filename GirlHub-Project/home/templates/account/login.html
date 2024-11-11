@@ -13,7 +13,7 @@
         <div class="logo">
             <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
         </div>
-        <h1>Войти в аккаунт</h1>
+        <h1>Login to your account</h1>
 
         <form method="post" action="{% url 'account_login' %}">
             {% csrf_token %}
@@ -24,11 +24,11 @@
             <!-- Поле Password и его ошибки -->
             <input type="password" name="password" placeholder="Password" required>
 
-            <a href="{% url 'account_reset_password' %}" class="forgot-password">Забыли пароль?</a>
-            <button type="submit">Войти</button>
+            <a href="{% url 'account_reset_password' %}" class="forgot-password">Forget password?</a>
+            <button type="submit">Login</button>
         </form>
 
-        <p class="signup">Еще нет аккаунта? <a href="{% url 'account_signup' %}">Зарегистрироваться</a></p>
+        <p class="signup">No account yet? <a href="{% url 'account_signup' %}">Register</a></p>
 
         <!-- Всплывающее уведомление об ошибке входа -->
         {% if form.errors %}

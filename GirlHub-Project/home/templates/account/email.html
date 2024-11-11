@@ -1,20 +1,20 @@
 {% extends "base_settings.html" %}
 {% block title %}
-<h2>Изменение электронной почты</h2>
+<h2>Change email</h2>
 {% endblock %}
 
 {% block content %}
-<p>Текущий email: {{ user.email }}</p>
+<p>Current email: {{ user.email }}</p>
 <form method="post" action="{% url 'account_change_email' %}">
     {% csrf_token %}
     <label for="password">Current Password:</label>
     <input type="password" placeholder="Current Password" id="password" name="password" required>
     <label for="new_email">New Email:</label>
     <input type="email" placeholder="New Email" id="new_email" name="new_email" required>
-    <button type="submit" class="submit-button">Изменить email</button>
+    <button type="submit" class="submit-button">Change</button>
 </form>
-<p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
-<div class="notification" id="notification">Почта была успешно изменена.</div>
+<p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
+<div class="notification" id="notification">Email has been successfully changed!</div>
 <script>
     function showNotification(message) {
         const notification = document.getElementById("notification");
@@ -63,9 +63,11 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         text-align: center;
+        font-family: "Permanent Marker", cursive;
     }
 
     .submit-button {
+        font-family: "Permanent Marker", cursive;
         margin-top: 10px;
         background-color: #000;
         color: #fff;

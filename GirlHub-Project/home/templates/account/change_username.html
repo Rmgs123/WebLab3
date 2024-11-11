@@ -1,7 +1,7 @@
 {% extends "base_settings.html" %}
 
 {%block title%}
-<h2>Изменение ника</h2>
+<h2>Change username</h2>
 {% endblock %}
 
 
@@ -24,11 +24,11 @@
     <input type="text" placeholder="New username" id="new_username" name="new_username" required
            value="{{ form.username.value|default_if_none:'' }}">
 
-    <button type="submit" class="submit-button">Изменить ник</button>
+    <button type="submit" class="submit-button">Change</button>
 </form>
-<p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
+<p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
 
-<div class="notification" id="notification">Ник был успешно изменен.</div>
+<div class="notification" id="notification">The nickname has been successfully changed.</div>
 <script>
     // Функция показа уведомления
     function showNotification(message) {
@@ -68,9 +68,11 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         text-align: center; /* Центрируем текст внутри поля */
+        font-family: "Permanent Marker", cursive;
     }
 
     .submit-button {
+        font-family: "Permanent Marker", cursive;
         margin-top: 10px;
         background-color: #000;
         color: #fff;

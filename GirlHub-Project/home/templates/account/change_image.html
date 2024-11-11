@@ -1,16 +1,16 @@
 {% extends "base_settings.html" %}
 
 {% block title %}
-<h2>Изменение изображение профиля</h2>
+<h2>Change profile picture</h2>
 {% endblock %}
 
 {% block content %}
 <form method="post"  enctype="multipart/form-data">
     {% csrf_token %}
     <p><input type="file" name="image" accept=".png, .jpg, .jpeg"></p>
-    <p><button class="submit-button" type="submit">Загрузить</button></p>
+    <p><button class="submit-button" type="submit">Upload</button></p>
 </form>
-<p class="back-link"><a href="{% url 'account_settings' %}">Назад</a></p>
+<p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
 <style type="text/css">
     .logo img {
         width: 90px;
