@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Настройки</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/setting.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Permanent+Marker&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background"></div>
+    {% block addition %}
+    {% endblock %}
+    <div class="container">
+        <div class="username-display">
+            <div class="user_img"><img src="{{user.profile.image.url}}" alt="Profile img" class="image"></div>
+            <p><span class="username_text">{{ user.username }}</span></p>
+        </div>
+        <div class="logo">
+            <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
+        </div>
+        {% block title %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
