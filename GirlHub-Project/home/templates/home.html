@@ -83,10 +83,69 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(function() {
-            // Функция для автоматической прокрутки вниз
+            let offset = $('#chat-messages .message').length;  // Инициализируем offset количеством загруженных сообщений
+            const limit = 20;  // Количество сообщений для подгрузки
+
+            // Функция для загрузки старых сообщений
+            function loadOldMessages() {
+                $.ajax({
+                    url: "{% url 'load_old_messages' chat_user=chat_user %}",
+                    type: 'GET',
+                    data: {
+                        'offset': offset,
+                        'limit': limit
+                    },
+                    success: function(response) {
+                        const messages = response.messages;
+                        if (messages.length > 0) {
+                            // Сохраняем текущую позицию прокрутки
+                            let scrollHeightBefore = $('#chat-messages')[0].scrollHeight;
+                            let scrollTopBefore = $('#chat-messages').scrollTop();
+
+                            // Добавляем сообщения в начало
+                            messages.forEach(function(message) {
+                                let messageHtml = `<div class="message ${message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact'}">`;
+                                if (message.image_url) {
+                                    messageHtml += `<img src="${message.image_url}" width="200">`;
+                                }
+                                if (message.content) {
+                                    messageHtml += `<p>${message.content}</p>`;
+                                }
+                                messageHtml += `</div>`;
+                                $('#chat-messages').prepend(messageHtml);
+                            });
+
+                            // Обновляем offset
+                            offset += messages.length;
+
+                            // Восстанавливаем позицию прокрутки
+                            let scrollHeightAfter = $('#chat-messages')[0].scrollHeight;
+                            $('#chat-messages').scrollTop(scrollTopBefore + (scrollHeightAfter - scrollHeightBefore));
+                        } else {
+                            // Больше нет сообщений для загрузки
+                            $('#chat-messages').off('scroll');
+                        }
+                    }
+                });
+            }
+
+            // Обработчик прокрутки вверх для подгрузки старых сообщений
+            $('#chat-messages').on('scroll', function() {
+                if ($(this).scrollTop() === 0) {
+                    loadOldMessages();
+                }
+            });
+
+            // Функция для плавной прокрутки вниз
             function scrollToBottom() {
                 $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
             }
+
+            // Первоначальная прокрутка вниз при загрузке страницы
+            scrollToBottom();
+
+            // Инициализация смещения при загрузке страницы
+            //offset = $('#chat-messages .message').length;
 
             // AJAX отправка сообщений, включая изображение
             $('#send-message-form').on('submit', function(event) {
@@ -182,7 +241,6 @@
             // Запускаем функции с setTimeout вместо setInterval
             checkNewMessages();
             loadNewMessages();
-            scrollToBottom(); // Прокручиваем вниз при загрузке страницы
         });
     </script>
 </body>
