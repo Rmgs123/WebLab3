@@ -29,6 +29,18 @@ def settings(request):
     return render(request, 'account/setting.html')
 
 @login_required
+def get_contacts(request):
+    contacts = request.user.profile.contacts.all()
+    contacts_data = []
+    for contact in contacts:
+        contacts_data.append({
+            'username': contact.user.username,
+            'profile_image_url': contact.user.profile.image.url if contact.user.profile.image else '',
+        })
+    return JsonResponse({'contacts': contacts_data})
+
+
+@login_required
 def change_email_view(request):
     if request.method == 'POST':
         password = request.POST.get('password')
@@ -126,6 +138,13 @@ def get_new_messages(request, chat_user=None):
                 is_read=False
             ).order_by('timestamp', 'id')
 
+        # Добавляем отправителя в контакты получателя, если его там нет
+        if chat_partner != request.user:
+            receiver_profile = request.user.profile
+            sender_profile = chat_partner.profile
+            if not receiver_profile.contacts.filter(id=sender_profile.id).exists():
+                receiver_profile.contacts.add(sender_profile)
+
         new_messages = [{
             "id": message.id,
             "sender": message.sender.username,
@@ -134,6 +153,7 @@ def get_new_messages(request, chat_user=None):
             "timestamp": message.timestamp.isoformat()
         } for message in messages_qs]
 
+        # Обновляем статус is_read только для сообщений, полученных текущим пользователем
         messages_qs.filter(receiver=request.user).update(is_read=True)
 
         return JsonResponse({"new_messages": new_messages})
@@ -198,6 +218,9 @@ def send_message(request):
 
         try:
             receiver_user = User.objects.get(username=receiver_name)
+
+            if request.user.profile not in receiver_user.profile.contacts.all(): # Если у получателя нет отправителя в контактах, то добавляем его
+                receiver_user.profile.contacts.add(request.user.profile)
 
             # Проверяем время последнего сообщения от пользователя
             last_message = Message.objects.filter(sender=request.user).order_by('-timestamp').first()

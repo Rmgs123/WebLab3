@@ -278,6 +278,37 @@
                 });
             }
 
+            function updateContacts() {
+                $.ajax({
+                    url: "{% url 'get_contacts' %}",
+                    type: 'GET',
+                    success: function(response) {
+                        const contacts = response.contacts;
+                        const $contactsList = $('.contacts-list ul');
+                        $contactsList.empty(); // Очищаем текущий список контактов
+
+                        contacts.forEach(function(contact) {
+                            let contactHtml = `
+                                <li id="contact-${contact.username}">
+                                    <div class="info-contact">
+                                        <img src="${contact.profile_image_url}" alt="Profile image">
+                                        <a href="{% url 'home' %}?chat_with=${contact.username}">${contact.username}</a>
+                                    </div>
+                                    <span class="notification-dot" style="display:none;">●</span>
+                                </li>
+                            `;
+                            $contactsList.append(contactHtml);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Ошибка обновления списка контактов: ", error);
+                    }
+                });
+            }
+
+            // Запускаем обновление списка контактов каждые 5 секунд
+            setInterval(updateContacts, 5000);
+
             checkNewMessages();
             loadNewMessages();
         });

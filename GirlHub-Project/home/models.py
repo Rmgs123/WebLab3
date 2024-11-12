@@ -6,7 +6,7 @@ from django.db import models
 # Модель для профиля пользователя, если нужна дополнительная информация
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    contacts = models.ManyToManyField('self', symmetrical=False, related_name='contact_users')
+    contacts = models.ManyToManyField('self', symmetrical=False, related_name='contact_users') # Symmetrical = False - когда пользователь добавляет себе контакт, то контакт НЕ добавляет пользователя (при сообщении он добавляется все равно)
     image = models.ImageField(upload_to='profile_images/', default='profile_images/default.png')
 
     def __str__(self):
