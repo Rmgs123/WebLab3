@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-62*#4*q8y*ir$e6h!&%ww+51lzl0rh%mo*47--&p$*24e#0*sc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com', 'girlhub.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com']
 
 # Регистрация!!!
 
@@ -31,6 +31,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 USE_TZ = True
 TIME_ZONE = 'UTC' # Чтобы избежать проблем с записью временных меток в БД!
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -96,6 +97,7 @@ DATABASES = {
     }
 }
 
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -127,7 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+
 USE_I18N = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

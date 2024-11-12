@@ -1,316 +1,577 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Main page</title>
-        {% load static %}
-        <link rel="stylesheet" href="{% static 'home/home.css' %}">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    </head>
-    <body>
-    <div class="container">
-        <!-- Верхняя панель с именем пользователя и кнопкой выхода -->
-        <header>
-            <div class="profile-img">
-                <img src="{{user.profile.image.url}}" alt="Profile image">
-            </div>
-            <div class="username-display">Welcome, {{user.username}}!</div>
-            <div class="logout"><a href="{% url 'account_settings' %}">Settings</a></div>
-        </header>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/home.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <!-- Верхняя панель с именем пользователя и кнопкой выхода -->
+    <header>
+        <div class="profile-img">
+            <img src="{{user.profile.image.url}}" alt="Profile image">
+        </div>
+        <div class="username-display">Добро пожаловать, {{ user.username }}!</div>
+        <div class="logout"><a href="{% url 'account_settings' %}">Настройки</a></div>
+    </header>
 
-        <!-- Боковая панель для контактов -->
-        <aside class="contacts-list">
-            <h2>Contacts</h2>
-            <ul>
-                {% for contact in user.profile.contacts.all %}
-                <li id="contact-{{ contact.user.username }}">
-                    <div class="info-contact">
-                        <img src="{{contact.user.profile.image.url}}" alt="Profile image">
-                        <a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a>
-                    </div>
-                    <span class="notification-dot" style="display:none;">●</span>
-                </li>
-                {% empty %}
-                <li>No contacts</li>
-                {% endfor %}
-            </ul>
-            <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
-                {% csrf_token %}
-                <input type="text" name="contact_name" placeholder="Add contact" required>
-                <button type="submit">Add</button>
-            </form>
-        </aside>
+    <!-- Боковая панель для контактов -->
+    <aside class="contacts-list">
+        <h2>Контакты</h2>
+        <ul class="contacts">
+            {% for contact in user.profile.contacts.all() %}
+            <li id="contact-{{ contact.user.username }}">
+                <div class="info-contact">
+                    <img src="{{contact.user.profile.image.url}}" alt="Profile image">
+                    <a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a>
 
-        <!-- Основной блок для чата -->
-        <main class="chat">
-            <div class="chat-header">
-                Chat with <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
-            </div>
-            <div class="chat-container">
-                <div class="chat-messages" id="chat-messages">
-                    {% if chat_user %}
-                    {% for message in messages %}
-                    <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}" data-timestamp="{{ message.timestamp|date:'c' }}" data-id="{{ message.id }}">
-                        {% if message.image %}
-                        <img src="{{ message.image.url }}" width="200">
-                        {% endif %}
-                        {% if message.content %}
-                        <p>{{ message.content }}</p>
-                        {% endif %}
-                    </div>
-                    {% empty %}
-                    <p>No messages.</p>
-                    {% endfor %}
-                    {% else %}
-                    <p>Choose contact for start chatting.</p>
+                </div>
+                <span class="notification-dot" style="display:none;">●</span>
+            </li>
+            {% empty %}
+            <li>Нет контактов</li>
+            {% endfor %}
+        </ul>
+        <!-- добавленно-->
+        <h2>Группы</h2>
+        <ul class="groups">
+            {% for group in user.profile.groups.all() %}
+            <li id="group-{{ group.name }}">
+                <div class="info-group">
+                    <img src="{{group.image.url}}" alt="Profile image">
+                    <a href="{% url 'home' %}?group_with={{ group.name }}">{{ group.name }}</a>
+
+                </div>
+                <span class="notification-dot" style="display:none;">●</span>
+            </li>
+            {% empty %}
+            <li>Нет групп</li>
+            {% endfor %}
+        </ul>
+        <!-- добавленноend-->
+        <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
+            {% csrf_token %}
+            <input type="text" name="contact_name" placeholder="Добавить контакт" required>
+            <button type="submit">Добавить</button>
+        </form>
+        <!-- добавленно-->
+        <p><a href="{% url 'create_group' %}">Создать группу</a></p>
+
+        <form class="add-group-form" method="post" action="{% url 'add_group' %}">
+            {% csrf_token %}
+            <input type="text" name="group_name" placeholder="Название группы" required>
+            <button type="submit">Добавить</button>
+        </form>
+        <!-- добавленноend-->
+    </aside>
+
+    <!-- Основной блок для чата -->                   <!-- ИЗМЕНИЛ ПОЛНОСТЬЮ ТУТ ВЕСЬ БЛОК -->
+    <main class="chat">
+        {% if chat_user %}
+        <div class="chat-header">
+            Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
+        </div>
+        {% elif group_id %}
+        <div class="chat-header">
+            Чат с <span id="group-id">{{ group_id|default_if_none:"" }}</span>
+        </div>
+        {% endif %}
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                {% if chat_user %}
+                {% for message in messages %}
+                <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}"
+                     data-timestamp="{{ message.timestamp|date:'c' }}" data-id="{{ message.id }}">
+                    {% if message.image %}
+                    <img src="{{ message.image.url }}" width="200">
+                    {% endif %}
+                    {% if message.content %}
+                    <p>{{ message.content }}</p>
                     {% endif %}
                 </div>
-                {% if chat_user %}
-                <form class="send-message-form" id="send-message-form" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="receiver_name" value="{{ chat_user }}">
-                    <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off">
-                    <input type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
-                    <button type="submit">Send</button>
-                </form>
+                {% empty %}
+                <p>Нет сообщений.</p>
+                {% endfor %}
+                {% elif group_id %}
+                {% for post in posts %}
+                <div class="post_group"
+                     data-timestamp="{{ post.timestamp|date:'c' }}" data-id="{{ post.id }}">
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" width="200">
+                    {% endif %}
+                    {% if post.content %}
+                    <p>{{ post.content }}</p>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p>Нет постов.</p>
+                {% endfor %}
+                {% else %}
+                <p>Выберите контакт или группу.</p>
                 {% endif %}
             </div>
-        </main>
-    </div>
+            {% if chat_user %}
+            <form class="send-message-form" id="send-message-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="receiver_name" value="{{ chat_user }}">
+                <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..."
+                       autocomplete="off">
+                <input type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
+                <button type="submit">Отправить</button>
+            </form>
+            {% elif group_id %}
+            {% if group.sender == user %}
+            <form class="publish-post-form" id="publish-post-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="name_group" value="{{ group_id }}">
+                <input type="text" name="post" id="post-input" placeholder="Напишите текст поста ..."
+                       autocomplete="off">
+                <input type="file" name="post_image" id="post-image-input" accept=".png, .jpg, .jpeg">
+                <button type="submit">Опубликовать</button>
+            </form>
+            {% endif %}
+            {% endif %}
+        </div>
+    </main>
+</div>
 
-    <!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(function() {
-            let offset = $('#chat-messages .message').length;
-            const limit = 20;
-            let lastMessageTime = 0; // Для ограничения скорости отправки сообщений
+<!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function() {
+        let offset = $('#chat-messages .message').length;
+        const limit = 20;
+        let lastMessageTime = 0; // Для ограничения скорости отправки сообщений
 
-            function isUserAtBottom() {
-                const chatMessages = $('#chat-messages')[0];
-                return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
+        function isUserAtBottom() {
+            const chatMessages = $('#chat-messages')[0];
+            return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
+        }
+
+        function loadOldMessages() {
+            console.log("Вызвана функция loadOldMessages");
+            let $oldestMessage = $('#chat-messages .message').first();
+            let oldestMessageTimestamp = $oldestMessage.attr('data-timestamp');
+            let oldestMessageId = parseInt($oldestMessage.attr('data-id'), 10);
+
+            if (!oldestMessageTimestamp) {
+                return;
             }
 
-            function loadOldMessages() {
-                console.log("Вызвана функция loadOldMessages");
-                let $oldestMessage = $('#chat-messages .message').first();
-                let oldestMessageTimestamp = $oldestMessage.attr('data-timestamp');
-                let oldestMessageId = parseInt($oldestMessage.attr('data-id'), 10);
+            $.ajax({
+                url: "{% url 'load_old_messages' chat_user=chat_user %}",
+                type: 'GET',
+                data: {
+                    'before_timestamp': oldestMessageTimestamp,
+                    'before_id': oldestMessageId,
+                    'limit': limit
+                },
+                success: function(response) {
+                    console.log("Получены старые сообщения:", response.messages);
 
-                if (!oldestMessageTimestamp) {
-                    return;
-                }
+                    const messages = response.messages;
+                    if (messages.length > 0) {
+                        let scrollHeightBefore = $('#chat-messages')[0].scrollHeight;
+                        let scrollTopBefore = $('#chat-messages').scrollTop();
 
-                $.ajax({
-                    url: "{% url 'load_old_messages' chat_user=chat_user %}",
-                    type: 'GET',
-                    data: {
-                        'before_timestamp': oldestMessageTimestamp,
-                        'before_id': oldestMessageId,
-                        'limit': limit
-                    },
-                    success: function(response) {
-                        console.log("Получены старые сообщения:", response.messages);
-
-                        const messages = response.messages;
-                        if (messages.length > 0) {
-                            let scrollHeightBefore = $('#chat-messages')[0].scrollHeight;
-                            let scrollTopBefore = $('#chat-messages').scrollTop();
-
-                            messages.forEach(function(message) {
-                                if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
-                                    let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
-                                    let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
-                                    if (message.image_url) {
-                                        messageHtml += `<img src="${message.image_url}" width="200">`;
-                                    }
-                                    if (message.content) {
-                                        messageHtml += `<p>${message.content}</p>`;
-                                    }
-                                    messageHtml += `</div>`;
-
-                                    $('#chat-messages').prepend(messageHtml);
+                        messages.forEach(function(message) {
+                            if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
+                                let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
+                                let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
+                                if (message.image_url) {
+                                    messageHtml += `<img src="${message.image_url}" width="200">`;
                                 }
-                            });
+                                if (message.content) {
+                                    messageHtml += `<p>${message.content}</p>`;
+                                }
+                                messageHtml += `</div>`;
 
-                            let scrollHeightAfter = $('#chat-messages')[0].scrollHeight;
-                            $('#chat-messages').scrollTop(scrollTopBefore + (scrollHeightAfter - scrollHeightBefore));
-                        } else {
-                            $('#chat-messages').off('scroll');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Ошибка загрузки старых сообщений: ", error);
-                    }
-                });
-            }
-
-            $('#chat-messages').on('scroll', function() {
-                if ($(this).scrollTop() === 0) {
-                    console.log("Прокрутка достигла верха, подгружаем старые сообщения");
-                    loadOldMessages();
-                }
-            });
-
-            function scrollToBottom() {
-                $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
-            }
-
-            scrollToBottom();
-
-            $('#send-message-form').on('submit', function(event) {
-                event.preventDefault();
-
-                const now = Date.now();
-                if (now - lastMessageTime < 1000) {
-                    alert("You are sending messages too often. Please, wait for a while.");
-                    return;
-                }
-
-                lastMessageTime = now;
-
-                const formData = new FormData(this);
-
-                $.ajax({
-                    url: "{% url 'send_message' %}",
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            const messageContent = $('#message-input').val();
-                            const imageInput = $('#image-input')[0].files[0];
-
-                            let messageHtml = `<div class="message from-user" data-timestamp="${response.timestamp}" data-id="${response.id}">`;
-                            if (imageInput) {
-                                messageHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
-                            }
-                            if (messageContent) {
-                                messageHtml += `<p>${messageContent}</p>`;
-                            }
-                            messageHtml += `</div>`;
-
-                            $('#chat-messages').append(messageHtml);
-
-                            $('#message-input').val('');
-                            $('#image-input').val('');
-
-                            // Прокручиваем вниз после отправки сообщения
-                            scrollToBottom();
-                        } else {
-                            alert(response.message || "Ошибка отправки сообщения.");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Ошибка отправки сообщения: ", error);
-                    }
-                });
-            });
-
-            function checkNewMessages() {
-                $.ajax({
-                    url: "{% url 'check_new_messages' %}",
-                    type: 'GET',
-                    success: function(response) {
-                        $('.notification-dot').hide();
-                        response.contacts_with_unread.forEach(function(contact) {
-                            if (contact !== "{{ chat_user|escapejs }}") {
-                                $(`#contact-${contact} .notification-dot`).show();
+                                $('#chat-messages').prepend(messageHtml);
                             }
                         });
-                        setTimeout(checkNewMessages, 1000);
-                    },
-                    error: function() {
-                        setTimeout(checkNewMessages, 2000);
+
+                        let scrollHeightAfter = $('#chat-messages')[0].scrollHeight;
+                        $('#chat-messages').scrollTop(scrollTopBefore + (scrollHeightAfter - scrollHeightBefore));
+                    } else {
+                        $('#chat-messages').off('scroll');
                     }
-                });
-            }
-
-            function loadNewMessages() {
-                let $latestMessage = $('#chat-messages .message').last();
-                let latestMessageTimestamp = $latestMessage.attr('data-timestamp');
-                let latestMessageId = parseInt($latestMessage.attr('data-id'), 10);
-
-                if (!latestMessageTimestamp) {
-                    latestMessageTimestamp = new Date().toISOString();
-                    latestMessageId = 0;
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка загрузки старых сообщений: ", error);
                 }
+            });
+        }
 
-                $.ajax({
-                    url: "{% url 'get_new_messages' chat_user=chat_user %}",
-                    type: 'GET',
-                    data: {
-                        'after_timestamp': latestMessageTimestamp,
-                        'after_id': latestMessageId
-                    },
-                    success: function(response) {
-                        if (response.new_messages) {
-                            const wasAtBottom = isUserAtBottom();
-
-                            response.new_messages.forEach(function(message) {
-                                if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
-                                    let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
-                                    let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
-                                    if (message.image_url) {
-                                        messageHtml += `<img src="${message.image_url}" width="200">`;
-                                    }
-                                    if (message.content) {
-                                        messageHtml += `<p>${message.content}</p>`;
-                                    }
-                                    messageHtml += `</div>`;
-                                    $('#chat-messages').append(messageHtml);
-                                }
-                            });
-
-                            // Прокручиваем вниз, только если пользователь был внизу чата
-                            if (response.new_messages.length > 0 && wasAtBottom) {
-                                scrollToBottom();
-                            }
-                        }
-                        setTimeout(loadNewMessages, 500);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Ошибка загрузки новых сообщений: ", error);
-                        setTimeout(loadNewMessages, 1000);
-                    }
-                });
+        $('#chat-messages').on('scroll', function() {
+            if ($(this).scrollTop() === 0) {
+                console.log("Прокрутка достигла верха, подгружаем старые сообщения");
+                loadOldMessages();
             }
-
-            function updateContacts() {
-                $.ajax({
-                    url: "{% url 'get_contacts' %}",
-                    type: 'GET',
-                    success: function(response) {
-                        const contacts = response.contacts;
-                        const $contactsList = $('.contacts-list ul');
-                        $contactsList.empty(); // Очищаем текущий список контактов
-
-                        contacts.forEach(function(contact) {
-                            let contactHtml = `
-                                <li id="contact-${contact.username}">
-                                    <div class="info-contact">
-                                        <img src="${contact.profile_image_url}" alt="Profile image">
-                                        <a href="{% url 'home' %}?chat_with=${contact.username}">${contact.username}</a>
-                                    </div>
-                                    <span class="notification-dot" style="display:none;">●</span>
-                                </li>
-                            `;
-                            $contactsList.append(contactHtml);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Ошибка обновления списка контактов: ", error);
-                    }
-                });
-            }
-
-            // Запускаем обновление списка контактов каждые 5 секунд
-            setInterval(updateContacts, 5000);
-
-            checkNewMessages();
-            loadNewMessages();
         });
-    </script>
+
+        function scrollToBottom() {
+            $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
+        }
+
+        scrollToBottom();
+
+        $('#send-message-form').on('submit', function(event) {
+            event.preventDefault();
+
+            const now = Date.now();
+            if (now - lastMessageTime < 1000) {
+                alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                return;
+            }
+
+            lastMessageTime = now;
+
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: "{% url 'send_message' %}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const messageContent = $('#message-input').val();
+                        const imageInput = $('#image-input')[0].files[0];
+
+                        let messageHtml = `<div class="message from-user" data-timestamp="${response.timestamp}" data-id="${response.id}">`;
+                        if (imageInput) {
+                            messageHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
+                        }
+                        if (messageContent) {
+                            messageHtml += `<p>${messageContent}</p>`;
+                        }
+                        messageHtml += `</div>`;
+
+                        $('#chat-messages').append(messageHtml);
+
+                        $('#message-input').val('');
+                        $('#image-input').val('');
+
+                        // Прокручиваем вниз после отправки сообщения
+                        scrollToBottom();
+                    } else {
+                        alert(response.message || "Ошибка отправки сообщения.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка отправки сообщения: ", error);
+                }
+            });
+        });
+
+        function checkNewMessages() {
+            $.ajax({
+                url: "{% url 'check_new_messages' %}",
+                type: 'GET',
+                success: function(response) {
+                    $('.notification-dot').hide();
+                    response.contacts_with_unread.forEach(function(contact) {
+                        if (contact !== "{{ chat_user|escapejs }}") {
+                            $(`#contact-${contact} .notification-dot`).show();
+                        }
+                    });
+                    setTimeout(checkNewMessages, 1000);
+                },
+                error: function() {
+                    setTimeout(checkNewMessages, 2000);
+                }
+            });
+        }
+
+        function loadNewMessages() {
+            let $latestMessage = $('#chat-messages .message').last();
+            let latestMessageTimestamp = $latestMessage.attr('data-timestamp');
+            let latestMessageId = parseInt($latestMessage.attr('data-id'), 10);
+
+            if (!latestMessageTimestamp) {
+                latestMessageTimestamp = new Date().toISOString();
+                latestMessageId = 0;
+            }
+
+            $.ajax({
+                url: "{% url 'get_new_messages' chat_user=chat_user %}",
+                type: 'GET',
+                data: {
+                    'after_timestamp': latestMessageTimestamp,
+                    'after_id': latestMessageId
+                },
+                success: function(response) {
+                    if (response.new_messages) {
+                        const wasAtBottom = isUserAtBottom();
+
+                        response.new_messages.forEach(function(message) {
+                            if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
+                                let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
+                                let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
+                                if (message.image_url) {
+                                    messageHtml += `<img src="${message.image_url}" width="200">`;
+                                }
+                                if (message.content) {
+                                    messageHtml += `<p>${message.content}</p>`;
+                                }
+                                messageHtml += `</div>`;
+                                $('#chat-messages').append(messageHtml);
+                            }
+                        });
+
+                        // Прокручиваем вниз, только если пользователь был внизу чата
+                        if (response.new_messages.length > 0 && wasAtBottom) {
+                            scrollToBottom();
+                        }
+                    }
+                    setTimeout(loadNewMessages, 500);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка загрузки новых сообщений: ", error);
+                    setTimeout(loadNewMessages, 1000);
+                }
+            });
+        }
+
+        function updateContacts() {
+            $.ajax({
+                url: "{% url 'get_contacts' %}",
+                type: 'GET',
+                success: function(response) {
+                    const contacts = response.contacts;
+                    const $contactsList = $('.contacts-list .contacts');
+                    $contactsList.empty(); // Очищаем текущий список контактов
+
+                    contacts.forEach(function(contact) {
+                        let contactHtml = `
+                            <li id="contact-${contact.username}">
+                                <div class="info-contact">
+                                    <img src="${contact.profile_image_url}" alt="Profile image">
+                                    <a href="{% url 'home' %}?chat_with=${contact.username}">${contact.username}</a>
+                                </div>
+                                <span class="notification-dot" style="display:none;">●</span>
+                            </li>
+                        `;
+                        $contactsList.append(contactHtml);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка обновления списка контактов: ", error);
+                }
+            });
+        }
+
+
+
+
+
+        let offset_group = $('#chat-messages .post_group').length;
+
+        let lastPostTime = 0; // Для ограничения скорости отправки сообщений
+
+        function isUserAtBottom() {
+            const chatMessages = $('#chat-messages')[0];
+            return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
+        }
+
+        function loadOldPosts() {
+            console.log("Вызвана функция loadOldPosts");
+            let $oldestPost = $('#chat-messages .post_group').first();
+            let oldestPostTimestamp = $oldestPost.attr('data-timestamp');
+            let oldestPostId = parseInt($oldestPost.attr('data-id'), 10);
+
+            if (!oldestPostTimestamp) {
+                return;
+            }
+
+            $.ajax({
+                url: "{% url 'load_old_posts' group_id=group_id %}",
+                type: 'GET',
+                data: {
+                    'before_timestamp': oldestPostTimestamp,
+                    'before_id': oldestPostId,
+                    'limit': limit
+                },
+                success: function(response) {
+                    console.log("Получены старые посты:", response.posts);
+
+                    const posts = response.posts;
+                    if (posts.length > 0) {
+                        let scrollHeightBefore = $('#chat-messages')[0].scrollHeight;
+                        let scrollTopBefore = $('#chat-messages').scrollTop();
+
+                        posts.forEach(function(post) {
+                            if ($('#chat-messages .post_group[data-id="' + post.id + '"]').length === 0) {
+                                let postHtml = `<div class="post_group" data-timestamp="${post.timestamp}" data-id="${post.id}">`;
+                                if (post.image_url) {
+                                    postHtml += `<img src="${post.image_url}" width="200">`;
+                                }
+                                if (post.content) {
+                                    postHtml += `<p>${post.content}</p>`;
+                                }
+                                postHtml += `</div>`;
+
+                                $('#chat-messages').prepend(postHtml);
+                            }
+                        });
+
+                        let scrollHeightAfter = $('#chat-messages')[0].scrollHeight;
+                        $('#chat-messages').scrollTop(scrollTopBefore + (scrollHeightAfter - scrollHeightBefore));
+                    } else {
+                        $('#chat-messages').off('scroll');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка загрузки старых сообщений: ", error);
+                }
+            });
+        }
+
+        $('#chat-messages').on('scroll', function() {
+            if ($(this).scrollTop() === 0) {
+                console.log("Прокрутка достигла верха, подгружаем старые сообщения");
+                loadOldPosts();
+            }
+        });
+
+        function scrollToBottom() {
+            $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
+        }
+
+        scrollToBottom();
+
+        $('#publish-post-form').on('submit', function(event) {
+            event.preventDefault();
+
+            const now = Date.now();
+            if (now - lastPostTime < 1000) {
+                alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                return;
+            }
+
+            lastPostTime = now;
+
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: "{% url 'publish_post' %}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const postContent = $('#post-input').val();
+                        const imageInput = $('#post-image-input')[0].files[0];
+
+                        let postHtml = `<div class="post_group" data-timestamp="${response.timestamp}" data-id="${response.id}">`;
+                        if (imageInput) {
+                            postHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
+                        }
+                        if (postContent) {
+                            postHtml += `<p>${postContent}</p>`;
+                        }
+                        postHtml += `</div>`;
+
+                        $('#chat-messages').append(postHtml);
+
+                        $('#post-input').val('');
+                        $('#post-image-input').val('');
+
+                        // Прокручиваем вниз после отправки сообщения
+                        scrollToBottom();
+                    } else {
+                        alert(response.post || "Ошибка отправки сообщения.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка отправки сообщения: ", error);
+                }
+            });
+        });
+
+        function checkNewPosts() {
+            $.ajax({
+                url: "{% url 'check_new_posts' %}",
+                type: 'GET',
+                success: function(response) {
+                    $('.notification-dot').hide();
+                    response.groups_with_unread.forEach(function(group) {
+                        if (group !== "{{ group_id|escapejs }}") {
+                            $(`#group-${group.name} .notification-dot`).show();
+                        }
+                    });
+                    setTimeout(checkNewPosts, 1000);
+                },
+                error: function() {
+                    setTimeout(checkNewPosts, 2000);
+                }
+            });
+        }
+
+        function loadNewPosts() {
+            let $latestPost = $('#chat-messages .post_group').last();
+            let latestPostTimestamp = $latestPost.attr('data-timestamp');
+            let latestPostId = parseInt($latestPost.attr('data-id'), 10);
+
+            if (!latestPostTimestamp) {
+                latestPostTimestamp = new Date().toISOString();
+                latestPostId = 0;
+            }
+
+            $.ajax({
+                url: "{% url 'get_new_posts' group_id=group_id %}",
+                type: 'GET',
+                data: {
+                    'after_timestamp': latestPostTimestamp,
+                    'after_id': latestPostId
+                },
+                success: function(response) {
+                    if (response.new_posts) {
+                        const wasAtBottom = isUserAtBottom();
+
+                        response.new_posts.forEach(function(Post) {
+                            if ($('#chat-messages .post_group[data-id="' + post.id + '"]').length === 0) {
+
+                                let postHtml = `<div class="post_group" data-timestamp="${post.timestamp}" data-id="${post.id}">`;
+                                if (post.image_url) {
+                                    postHtml += `<img src="${post.image_url}" width="200">`;
+                                }
+                                if (post.content) {
+                                    postHtml += `<p>${post.content}</p>`;
+                                }
+                                postHtml += `</div>`;
+                                $('#chat-messages').append(postHtml);
+                            }
+                        });
+
+                        // Прокручиваем вниз, только если пользователь был внизу чата
+                        if (response.new_posts.length > 0 && wasAtBottom) {
+                            scrollToBottom();
+                        }
+                    }
+                    setTimeout(loadNewPosts, 500);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Ошибка загрузки новых сообщений: ", error);
+                    setTimeout(loadNewPosts, 1000);
+                }
+            });
+        }
+
+
+        setInterval(updateContacts, 5000);
+
+        checkNewMessages();
+        loadNewMessages();
+
+        checkNewPosts();
+        loadNewPosts();
+    });
+</script>
 </body>
 </html>
