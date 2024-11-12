@@ -16,10 +16,22 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #ff5fa5, #ff95d8);
+    background: linear-gradient(19deg, #3EECAC 0%, #EE74E1 100%);
     background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+    animation: gradient 10s ease infinite;
     z-index: -1;
+}
+
+/* Анимация градиента */
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+h1 {
+    font-size: 35px;
+    text-shadow: 2px 2px 1px #3EECAC;
 }
 
 .container-wrapper {
@@ -61,18 +73,27 @@ body {
 }
 
 button {
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    padding: 10px 25px;
+    font-family: "Permanent Marker", cursive;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    color: black;
+    font-size: 20px;
+    border: 2px solid white;
+    padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.8s;
-    margin-top: 15px;
+    transition: background-color 0.45s, box-shadow 0.2s;
+    width: 90%; /* Ширина кнопки совпадает с шириной полей */
+    max-width: 150px;
 }
 
 button:hover {
-    background-color: #FF8C00;
+    background-color: white;
+    box-shadow: 0 0 20px #3EECAC;
+}
+
+button:active {
+    background-color: #e8e8e8;
 }
 
 p.signup {
@@ -85,11 +106,11 @@ p.signup {
 p.signup a {
     color: #000000;
     text-decoration: none;
-    transition: color 0.8s;
+    transition: text-shadow 0.2s ease, color 0.8s;
 }
 
 p.signup a:hover {
-    color: #FF8C00;
+    text-shadow: 1px 2px 2px #3EECAC;
 }
 
 input[type="text"],
@@ -99,9 +120,17 @@ input[type="password"] {
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 15px;
+    font-family: "Permanent Marker", cursive;
     text-align: center;
     font-size: 16px;
+    transition: box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    box-shadow: 0 0 10px #3EECAC;
 }
 
 input::placeholder {

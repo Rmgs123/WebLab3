@@ -15,7 +15,7 @@
         <div class="logo">
             <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
         </div>
-        <h1>Регистрация</h1>
+        <h1>Registration</h1>
 
         <form method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
@@ -52,10 +52,10 @@
             {% endif %}
             <input type="password" name="password1" placeholder="Password" required>
 
-            <button type="submit">Зарегистрироваться</button>
+            <button type="submit">Register</button>
         </form>
 
-        <p class="signup">Уже есть аккаунт? <a href="{% url 'account_login' %}">Войти</a></p>
+        <p class="signup">Already have an account? <a href="{% url 'account_login' %}">Login</a></p>
     </div>
 </div>
 
