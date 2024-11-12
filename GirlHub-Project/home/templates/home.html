@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Главная страница</title>
+        <title>Main page</title>
         {% load static %}
         <link rel="stylesheet" href="{% static 'home/home.css' %}">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -14,13 +14,13 @@
             <div class="profile-img">
                 <img src="{{user.profile.image.url}}" alt="Profile image">
             </div>
-            <div class="username-display">Добро пожаловать, {{user.username}}!</div>
-            <div class="logout"><a href="{% url 'account_settings' %}">Настройки</a></div>
+            <div class="username-display">Welcome, {{user.username}}!</div>
+            <div class="logout"><a href="{% url 'account_settings' %}">Settings</a></div>
         </header>
 
         <!-- Боковая панель для контактов -->
         <aside class="contacts-list">
-            <h2>Контакты</h2>
+            <h2>Contacts</h2>
             <ul>
                 {% for contact in user.profile.contacts.all %}
                 <li id="contact-{{ contact.user.username }}">
@@ -31,20 +31,20 @@
                     <span class="notification-dot" style="display:none;">●</span>
                 </li>
                 {% empty %}
-                <li>Нет контактов</li>
+                <li>No contacts</li>
                 {% endfor %}
             </ul>
             <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
                 {% csrf_token %}
                 <input type="text" name="contact_name" placeholder="Добавить контакт" required>
-                <button type="submit">Добавить</button>
+                <button type="submit">Add</button>
             </form>
         </aside>
 
         <!-- Основной блок для чата -->
         <main class="chat">
             <div class="chat-header">
-                Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
+                Chat with <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
             </div>
             <div class="chat-container">
                 <div class="chat-messages" id="chat-messages">
@@ -59,10 +59,10 @@
                         {% endif %}
                     </div>
                     {% empty %}
-                    <p>Нет сообщений.</p>
+                    <p>No messages.</p>
                     {% endfor %}
                     {% else %}
-                    <p>Выберите контакт для начала чата.</p>
+                    <p>Choose contact for start chatting.</p>
                     {% endif %}
                 </div>
                 {% if chat_user %}
@@ -71,7 +71,7 @@
                     <input type="hidden" name="receiver_name" value="{{ chat_user }}">
                     <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off">
                     <input type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
-                    <button type="submit">Отправить</button>
+                    <button type="submit">Send</button>
                 </form>
                 {% endif %}
             </div>
@@ -163,7 +163,7 @@
 
                 const now = Date.now();
                 if (now - lastMessageTime < 1000) {
-                    alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                    alert("You are sending messages too often. Please, wait for a while.");
                     return;
                 }
 

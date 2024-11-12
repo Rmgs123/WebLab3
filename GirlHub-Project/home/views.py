@@ -49,14 +49,14 @@ def change_email_view(request):
         # Проверяем пароль пользователя
         user = authenticate(username=request.user.username, password=password)
         if user is None:
-            messages.error(request, "Неверный пароль.")
+            messages.error(request, "Incorrect password.")
             return redirect('account_change_email')  # Остаемся на той же странице
 
         # Проверка корректности нового email
         try:
             validate_email(new_email)
         except ValidationError:
-            messages.error(request, "Некорректный формат электронной почты.")
+            messages.error(request, "Incorrect email format.")
             return redirect('account_change_email')
 
         # Устанавливаем новый email
@@ -64,7 +64,7 @@ def change_email_view(request):
         user.save()
 
         # Сообщение об успешной смене email
-        messages.success(request, "Email успешно изменен.")
+        messages.success(request, "Email has been successfully changed!")
         return redirect('account_change_email')  # Остаемся на странице изменения email
 
     return render(request, 'account/email.html', {'user': request.user})
@@ -79,24 +79,24 @@ def change_username(request):
         # Проверяем пароль пользователя
         user = authenticate(username=request.user.username, password=password)
         if user is None:
-            messages.error(request, "Неверный пароль.")
+            messages.error(request, "Incorrect password.")
             return redirect('account_change_username')  # Остаемся на той же странице
 
         if User.objects.filter(username=new_username).exists():
-            messages.error(request, "Такой ник уже есть")
+            messages.error(request, "This username already exists.")
             return redirect('account_change_username')  # Остаемся на той же странице
         try:
             validators.UnicodeUsernameValidator(new_username)
             validators.ASCIIUsernameValidator(new_username)  # Не знаю, какой у нас стандарт
         except ValidationError:
-            messages.error(request, "Некорректный формат ника.")
+            messages.error(request, "Incorrect username format.")
             return redirect('account_change_username')
 
         user.username = new_username
         user.save()
 
         # Сообщение об успешной смене email
-        messages.success(request, "Username успешно изменен.")
+        messages.success(request, "Username has been successfully changed!")
         return redirect('account_change_username')  # Остаемся на странице изменения email
 
     return render(request, 'account/change_username.html', {'user': request.user})
@@ -203,9 +203,9 @@ def add_contact(request):
             contact_user = User.objects.get(username=contact_name)
             profile = Profile.objects.get(user=request.user)
             profile.contacts.add(contact_user.profile)
-            messages.success(request, f'Контакт {contact_name} успешно добавлен!')
+            messages.success(request, f'Contact {contact_name} has been successfully added!')
         except User.DoesNotExist:
-            messages.error(request, 'Пользователь с таким именем не найден.')
+            messages.error(request, 'User with this name has not been found.')
         return redirect('home')
     return redirect('home')
 
@@ -227,7 +227,7 @@ def send_message(request):
             if last_message:
                 time_since_last_message = timezone.now() - last_message.timestamp
                 if time_since_last_message < timedelta(seconds=1):
-                    return JsonResponse({'status': 'error', 'message': 'Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.'})
+                    return JsonResponse({'status': 'error', 'message': 'You are sending messages too often. Please, wait for a while.'})
 
             message = Message.objects.create(
                 sender=request.user,
@@ -238,8 +238,8 @@ def send_message(request):
             message.save()
             return JsonResponse({'status': 'success', 'timestamp': message.timestamp.isoformat(), 'id': message.id})
         except User.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Получатель не найден'})
-    return JsonResponse({'status': 'error', 'message': 'Неверный запрос'})
+            return JsonResponse({'status': 'error', 'message': 'Recipient not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 def change_image(request):
     if request.method == 'POST':

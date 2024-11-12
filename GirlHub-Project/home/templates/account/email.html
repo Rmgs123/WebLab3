@@ -4,12 +4,15 @@
 {% endblock %}
 
 {% block content %}
-<p>Current email: {{ user.email }}</p>
+<div class="email">
+    <p class="email-line"></p>
+</div>
+<p class="current-email-place"><span class="current-email-place-title">Current email</span>: {{ user.email }}</p>
 <form method="post" action="{% url 'account_change_email' %}">
     {% csrf_token %}
-    <label for="password">Current Password:</label>
+    <label for="password" class="current-title">Current Password:</label>
     <input type="password" placeholder="Current Password" id="password" name="password" required>
-    <label for="new_email">New Email:</label>
+    <label for="new_email" class="new-email-title">New Email:</label>
     <input type="email" placeholder="New Email" id="new_email" name="new_email" required>
     <button type="submit" class="submit-button">Change</button>
 </form>
@@ -33,14 +36,63 @@
     {% endif %}
 </script>
 <style type="text/css">
+    .background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #FEE140 0%, #FA709A 100%);
+        background-size: 400% 400%;
+        animation: gradient 10s ease infinite;
+        z-index: -1;
+    }
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
     input::placeholder {
         color: rgba(0, 0, 0, 0.5);
         font-size: 16px;
         font-weight: 500;
     }
 
-    h1, h2 {
-        margin-bottom: 10px;
+    h2 {
+        margin: 0 0 0 10px;
+        font-size: 35px;
+        text-shadow: 2px 2px 1px #FFEF08;
+    }
+
+    .current-email-place {
+        font-size: 20px;
+    }
+
+    .current-email-place-title {
+        font-size: 30px;
+    }
+
+    .current-title {
+        font-size: 20px;
+        text-shadow: 1px 1px 1px #FFEF08;
+    }
+
+    .new-email-title {
+        font-size: 20px;
+        text-shadow: 1px 1px 1px #FFEF08;
+    }
+
+    .email-line {
+        border: 2px solid black;
+        border-radius: 50%;
+        width: 90%;
+        margin: auto;
+        transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
+        transform-origin: center; /* Начало анимации из центра */
+        transition: transform 0.5s ease; /* Плавная анимация */
+    }
+
+    .email-line-loaded .email-line {
+        transform: scaleX(1); /* Конечный масштаб по горизонтали - 1 */
     }
 
     .username-display p {
@@ -61,27 +113,39 @@
         padding: 10px;
         margin: 10px 0;
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 15px;
         text-align: center;
         font-family: "Permanent Marker", cursive;
+        transition: box-shadow 0.3s ease;
+    }
+
+    input[type="password"]:focus,
+    input[type="email"]:focus {
+        box-shadow: 0 0 15px #FFEF08;
     }
 
     .submit-button {
         font-family: "Permanent Marker", cursive;
         margin-top: 10px;
-        background-color: #000;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.15);
+        color: black;
+        font-size: 25px;
+        border: 2px solid white;
+        padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.8s;
-        width: 90%;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 90%; /* Ширина кнопки совпадает с шириной полей */
         max-width: 150px;
     }
 
     .submit-button:hover {
-        background-color: #EE82EE;
+        background: white;
+        box-shadow: 0 0 20px #FFEF08;
+    }
+
+    .submit-button:active {
+        background-color: #e8e8e8;
     }
 
     .back-link {
@@ -89,17 +153,32 @@
     }
 
     .back-link a {
-        color: #000;
+        color: black;
         text-decoration: none;
-        font-weight: normal;
+        font-weight: normal; /* Убираем жирность */
         transition: color 0.8s;
-        color: #555555;
-        font-size: 14px;
+        font-size: 25px;
         margin-top: 20px;
+        transition: text-shadow 0.15s;
     }
 
     .back-link a:hover {
-        color: #EE82EE;
+        text-shadow: 1px 1px 1px #FFEF08;
+    }
+
+    .back-link::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 3px;
+        border-radius: 50%;
+        background-color: #FFEF08;
+        margin: auto;
+        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+    }
+
+    .back-link:hover::after {
+        width: 20%;
     }
 
     /* Уведомление об успехе */
@@ -136,4 +215,11 @@
         text-align: center;
     }
 </style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        document.querySelector(".email").classList.add("email-line-loaded");
+    }, 50); // Небольшая задержка в 50 миллисекунд
+});
+</script>
 {% endblock %}

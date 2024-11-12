@@ -7,13 +7,13 @@
 {% block content %}
 <div class="settings">
     <p class="setting-line"></p>
-    <p><a href="{% url 'account_change_username' %}" class="settings-username">Change username</a></p>
-    <p><a href="{% url 'account_change_image' %}" class="settings-picture">Change profile picture</a></p>
-    <p><a href="{% url 'account_change_email' %}" class="settings-email">Change email</a></p>
-    <p><a href="{% url 'account_change_password' %}" class="settings-password">Change password</a></p>
+    <p><a href="{% url 'account_change_username' %}" class="settings-username"><span class="settings-username-text">Change username</span></a></p>
+    <p><a href="{% url 'account_change_image' %}" class="settings-picture"><span class="settings-picture-text">Change profile picture</span></a></p>
+    <p><a href="{% url 'account_change_email' %}" class="settings-email"><span class="settings-email-text">Change email</span></a></p>
+    <p><a href="{% url 'account_change_password' %}" class="settings-password"><span class="settings-password-text">Change password</span></a></p>
 
-    <p class="logout"><a href="{% url 'account_logout' %}" class="settings-logout">Logout</a></p>
-    <p class="cancel"><a href="{% url 'home' %}" class="settings-back">Back</a></p>
+    <p class="logout"><a href="{% url 'account_logout' %}" class="settings-logout"><span class="settings-logout-text">Logout</span></a></p>
+    <p class="cancel"><a href="{% url 'home' %}" class="settings-back"><span class="settings-back-text">Back</span></a></p>
 </div>
 <style type="text/css">
     .background {
@@ -34,7 +34,7 @@
     .setting-line {
         border: 2px solid black;
         border-radius: 50%;
-        width: 50%;
+        width: 70%;
         margin: auto;
         transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
         transform-origin: center; /* Начало анимации из центра */
@@ -57,7 +57,7 @@
     }
 
     .settings-username:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
+        width: 60%; /* Подчеркивание, появляется с центра */
     }
 
     .settings-picture::after {
@@ -72,7 +72,7 @@
     }
 
     .settings-picture:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
+        width: 75%; /* Подчеркивание, появляется с центра */
     }
 
     .settings-email:hover::after {
@@ -91,7 +91,7 @@
     }
 
     .settings-password:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
+        width: 55%; /* Подчеркивание, появляется с центра */
     }
 
     .settings-password::after {
@@ -103,10 +103,6 @@
         background-color: #0A8528;
         margin: auto;
         transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-password:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
     }
 
     .settings-logout::after {
@@ -121,7 +117,7 @@
     }
 
     .settings-logout:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
+        width: 30%; /* Подчеркивание, появляется с центра */
     }
 
     .settings-back::after {
@@ -136,7 +132,7 @@
     }
 
     .settings-back:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
+        width: 20%; /* Подчеркивание, появляется с центра */
     }
 
     .logo img {
@@ -181,28 +177,51 @@
         text-shadow: 1px 1px 1px #E60808;
     }
 
-    .settings-username {
+    .settings-username-text{
         transition: text-shadow 0.3s ease;
+    }
+
+    .settings-username-text:hover {
         text-shadow: 1px 1px 1px #E60808;
     }
 
-    .settings-picture {
+    .settings-picture-text {
+        transition: text-shadow 0.3s ease;
+    }
+
+    .settings-picture-text:hover {
         text-shadow: 1px 1px 1px #FF9108;
     }
 
-    .settings-email {
+    .settings-email-text {
+        transition: text-shadow 0.3s ease;
+    }
+
+    .settings-email-text:hover {
         text-shadow: 1px 1px 1px #FFEF08;
     }
 
-    .settings-password {
+    .settings-password-text {
+        transition: text-shadow 0.3s ease;
+    }
+
+    .settings-password-text:hover {
         text-shadow: 1px 1px 1px #0A8528;
     }
 
-    .settings-logout {
+    .settings-logout-text {
+        transition: text-shadow 0.3s ease;
+    }
+
+    .settings-logout-text:hover {
         text-shadow: 1px 1px 1px #0852FF;
     }
 
-    .settings-back {
+    .settings-back-text {
+        transition: text-shadow 0.3s ease;
+    }
+
+    .settings-back-text:hover {
         text-shadow: 1px 1px 1px #7B088C;
     }
 </style>
