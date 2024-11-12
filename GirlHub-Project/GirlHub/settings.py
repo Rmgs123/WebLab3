@@ -41,6 +41,9 @@ LOGOUT_REDIRECT_URL = '/home'  # Перенаправление на главн�
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+USE_TZ = True
+TIME_ZONE = 'UTC' # Чтобы избежать проблем с записью временных меток в БД!
+
 # Application definition
 INSTALLED_APPS = [
     # Базовые приложения Django

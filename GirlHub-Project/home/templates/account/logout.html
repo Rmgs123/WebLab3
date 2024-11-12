@@ -1,15 +1,15 @@
 {% extends "base_settings.html" %}
 
 {% block title %}
-    <h1>Are you sure you want to exit?</h1>
+    <h1>Вы уверены, что хотите выйти?</h1>
 {% endblock %}
 
 {% block content %}
 <form method="post" action="{% url 'account_logout' %}">
     {% csrf_token %}
-    <button type="submit" class="logout-button">Logout</button>
+    <button type="submit" class="logout-button">Выйти</button>
 </form>
-<p class="cancel"><a href="{% url 'account_settings' %}">Back</a></p>
+<p class="cancel"><a href="{% url 'account_settings' %}">Назад</a></p>
 <style type="text/css">
     .logo img {
         width: 100px;
@@ -25,7 +25,6 @@
     }
 
     .logout-button {
-        font-family: "Permanent Marker", cursive;
         background-color: #ff4b5c;
         color: #ffffff;
         border: none;

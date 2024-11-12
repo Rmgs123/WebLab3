@@ -1,144 +1,20 @@
 {% extends "base_settings.html" %}
 
 {% block title %}
-<h1 class="settings-title">SETTINGS</h1>
+<h1>Настройки</h1>
 {% endblock %}
 
 {% block content %}
 <div class="settings">
-    <p class="setting-line"></p>
-    <p><a href="{% url 'account_change_username' %}" class="settings-username">Change username</a></p>
-    <p><a href="{% url 'account_change_image' %}" class="settings-picture">Change profile picture</a></p>
-    <p><a href="{% url 'account_change_email' %}" class="settings-email">Change email</a></p>
-    <p><a href="{% url 'account_change_password' %}" class="settings-password">Change password</a></p>
+    <p><a href="{% url 'account_change_username' %}">Изменить ник</a></p>
+    <p><a href="{% url 'account_change_image' %}">Изменить фото профиля</a></p>
+    <p><a href="{% url 'account_change_email' %}">Изменить email</a></p>
+    <p><a href="{% url 'account_change_password' %}">Сменить пароль</a></p>
 
-    <p class="logout"><a href="{% url 'account_logout' %}" class="settings-logout">Logout</a></p>
-    <p class="cancel"><a href="{% url 'home' %}" class="settings-back">Back</a></p>
+    <p class="logout"><a href="{% url 'account_logout' %}">Выйти</a></p>
+    <p class="cancel"><a href="{% url 'home' %}">Назад</a></p>
 </div>
 <style type="text/css">
-    .background {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
-        background-size: 400% 400%;
-        animation: gradient 7s ease infinite;
-        z-index: -1;
-    }
-    @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    .setting-line {
-        border: 2px solid black;
-        border-radius: 50%;
-        width: 50%;
-        margin: auto;
-        transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
-        transform-origin: center; /* Начало анимации из центра */
-        transition: transform 0.5s ease; /* Плавная анимация */
-    }
-
-    .setting-line-loaded .setting-line {
-        transform: scaleX(1); /* Конечный масштаб по горизонтали - 1 */
-    }
-
-    .settings-username::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #E60808;
-        margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-username:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
-    .settings-picture::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #FF9108;
-        margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-picture:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
-    .settings-email:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
-    .settings-email::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #FFEF08;
-        margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-password:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
-    .settings-password::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #0A8528;
-        margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-password:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
-    .settings-logout::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #0852FF;
-        margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-logout:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
-    .settings-back::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #7B088C;
-        margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
-    }
-
-    .settings-back:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
-    }
-
     .logo img {
         width: 100px;
         margin-top: 10px;
@@ -146,6 +22,7 @@
     }
 
     .settings{
+
         margin: 10px 0;
         border: none;
         text-align: center; /* Центрируем текст внутри поля */
@@ -166,51 +43,42 @@
 
     .settings p a {
         color: #333333;
-        font-size: 25px;
+        font-size: 20px;
         font-weight: bold;
         text-decoration: none;
         transition: color 0.3s;
     }
 
-    .settings-title {
-        font-size: 45px;
-        color: #333;
-        margin-bottom: 20px;
-        text-align: center;
-        transition: text-shadow 0.3s;
-        text-shadow: 1px 1px 1px #E60808;
+    .settings p a:hover {
+        color: #EE82EE;
     }
 
-    .settings-username {
-        transition: text-shadow 0.3s ease;
-        text-shadow: 1px 1px 1px #E60808;
+
+    .logout{
+        color: #333333;
+        font-size: 18px;
+        margin-top: 25px;
     }
 
-    .settings-picture {
-        text-shadow: 1px 1px 1px #FF9108;
+    .logout:hover {
+        color: #EE82EE;
     }
 
-    .settings-email {
-        text-shadow: 1px 1px 1px #FFEF08;
+    /* Ссылка для отмены */
+    .cancel {
+        color: #555555;
+        font-size: 14px;
+        margin-top: 25px;
     }
 
-    .settings-password {
-        text-shadow: 1px 1px 1px #0A8528;
+    .cancel a {
+        color: #555555;
+        text-decoration: none;
+        transition: color 0.3s;
     }
 
-    .settings-logout {
-        text-shadow: 1px 1px 1px #0852FF;
-    }
-
-    .settings-back {
-        text-shadow: 1px 1px 1px #7B088C;
+    .cancel a:hover {
+        color: #EE82EE;
     }
 </style>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        document.querySelector(".settings").classList.add("setting-line-loaded");
-    }, 50); // Небольшая задержка в 50 миллисекунд
-});
-</script>
 {% endblock %}
