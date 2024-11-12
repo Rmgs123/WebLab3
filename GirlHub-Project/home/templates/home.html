@@ -83,10 +83,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(function() {
-            let offset = $('#chat-messages .message').length;  // Инициализируем offset количеством загруженных сообщений
-            const limit = 20;  // Количество сообщений для подгрузки
+            let offset = $('#chat-messages .message').length;
+            const limit = 20;
+            let lastMessageTime = 0; // Для ограничения скорости отправки сообщений
 
-            // Функция для загрузки старых сообщений
+            function isUserAtBottom() {
+                const chatMessages = $('#chat-messages')[0];
+                return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // 250 - пиксели прокрученные вверх, при которых пользователя все равно проскроллит вниз для нового сообщения
+            }
+
             function loadOldMessages() {
                 console.log("Вызвана функция loadOldMessages");
                 let $oldestMessage = $('#chat-messages .message').first();
@@ -94,7 +99,6 @@
                 let oldestMessageId = parseInt($oldestMessage.attr('data-id'), 10);
 
                 if (!oldestMessageTimestamp) {
-                    // If there are no messages, stop loading
                     return;
                 }
 
@@ -107,17 +111,14 @@
                         'limit': limit
                     },
                     success: function(response) {
-                        // console.log("Получены старые сообщения:", response.messages);
+                        console.log("Получены старые сообщения:", response.messages);
 
                         const messages = response.messages;
                         if (messages.length > 0) {
-                            // Save current scroll position
                             let scrollHeightBefore = $('#chat-messages')[0].scrollHeight;
                             let scrollTopBefore = $('#chat-messages').scrollTop();
 
-                            // We need to add messages in the correct order
                             messages.forEach(function(message) {
-                                // Check if the message already exists to avoid duplicates
                                 if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
                                     let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
                                     let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
@@ -129,46 +130,45 @@
                                     }
                                     messageHtml += `</div>`;
 
-                                    // Prepend the message to the chat
                                     $('#chat-messages').prepend(messageHtml);
                                 }
                             });
 
-                            // Restore scroll position
                             let scrollHeightAfter = $('#chat-messages')[0].scrollHeight;
                             $('#chat-messages').scrollTop(scrollTopBefore + (scrollHeightAfter - scrollHeightBefore));
                         } else {
-                            // No more messages to load
                             $('#chat-messages').off('scroll');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.log("Error loading older messages: ", error);
+                        console.log("Ошибка загрузки старых сообщений: ", error);
                     }
                 });
             }
 
-            // Обработчик прокрутки вверх для подгрузки старых сообщений
             $('#chat-messages').on('scroll', function() {
                 if ($(this).scrollTop() === 0) {
+                    console.log("Прокрутка достигла верха, подгружаем старые сообщения");
                     loadOldMessages();
                 }
             });
 
-            // Функция для плавной прокрутки вниз
             function scrollToBottom() {
                 $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
             }
 
-            // Первоначальная прокрутка вниз при загрузке страницы
             scrollToBottom();
 
-            // Инициализация смещения при загрузке страницы
-            //offset = $('#chat-messages .message').length;
-
-            // AJAX отправка сообщений, включая изображение
             $('#send-message-form').on('submit', function(event) {
                 event.preventDefault();
+
+                const now = Date.now();
+                if (now - lastMessageTime < 1000) {
+                    alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                    return;
+                }
+
+                lastMessageTime = now;
 
                 const formData = new FormData(this);
 
@@ -199,6 +199,8 @@
 
                             // Прокручиваем вниз после отправки сообщения
                             scrollToBottom();
+                        } else {
+                            alert(response.message || "Ошибка отправки сообщения.");
                         }
                     },
                     error: function(xhr, status, error) {
@@ -207,37 +209,31 @@
                 });
             });
 
-            // Функция для проверки новых сообщений с использованием setTimeout
             function checkNewMessages() {
                 $.ajax({
                     url: "{% url 'check_new_messages' %}",
                     type: 'GET',
                     success: function(response) {
-                        $('.notification-dot').hide();  // Скрываем все точки уведомлений
+                        $('.notification-dot').hide();
                         response.contacts_with_unread.forEach(function(contact) {
-                            // Если чат с этим контактом не открыт, показываем уведомление
                             if (contact !== "{{ chat_user|escapejs }}") {
                                 $(`#contact-${contact} .notification-dot`).show();
                             }
                         });
-                        // Планируем следующий вызов через 1 секунду
                         setTimeout(checkNewMessages, 1000);
                     },
                     error: function() {
-                        // В случае ошибки также планируем следующий вызов, но можем увеличить интервал
-                        setTimeout(checkNewMessages, 2000);  // Делаем 2 секунды, чтобы снизить нагрузку при ошибках
+                        setTimeout(checkNewMessages, 2000);
                     }
                 });
             }
 
-            // Функция для загрузки новых сообщений с использованием setTimeout
             function loadNewMessages() {
                 let $latestMessage = $('#chat-messages .message').last();
                 let latestMessageTimestamp = $latestMessage.attr('data-timestamp');
                 let latestMessageId = parseInt($latestMessage.attr('data-id'), 10);
 
                 if (!latestMessageTimestamp) {
-                    // Если нет сообщений, используем текущую дату
                     latestMessageTimestamp = new Date().toISOString();
                     latestMessageId = 0;
                 }
@@ -251,8 +247,9 @@
                     },
                     success: function(response) {
                         if (response.new_messages) {
+                            const wasAtBottom = isUserAtBottom();
+
                             response.new_messages.forEach(function(message) {
-                                // Проверяем, существует ли уже сообщение с таким ID
                                 if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
                                     let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
                                     let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
@@ -267,8 +264,8 @@
                                 }
                             });
 
-                            // Прокручиваем вниз, если есть новые сообщения
-                            if (response.new_messages.length > 0) {
+                            // Прокручиваем вниз, только если пользователь был внизу чата
+                            if (response.new_messages.length > 0 && wasAtBottom) {
                                 scrollToBottom();
                             }
                         }
@@ -281,7 +278,6 @@
                 });
             }
 
-            // Запускаем функции с setTimeout вместо setInterval
             checkNewMessages();
             loadNewMessages();
         });

@@ -21,6 +21,9 @@ from django.db.models import Q  # Добавляем импорт Q
 
 from django.utils.dateparse import parse_datetime
 
+from django.utils import timezone
+from datetime import timedelta
+
 @login_required
 def settings(request):
     return render(request, 'account/setting.html')
@@ -195,6 +198,14 @@ def send_message(request):
 
         try:
             receiver_user = User.objects.get(username=receiver_name)
+
+            # Проверяем время последнего сообщения от пользователя
+            last_message = Message.objects.filter(sender=request.user).order_by('-timestamp').first()
+            if last_message:
+                time_since_last_message = timezone.now() - last_message.timestamp
+                if time_since_last_message < timedelta(seconds=1):
+                    return JsonResponse({'status': 'error', 'message': 'Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.'})
+
             message = Message.objects.create(
                 sender=request.user,
                 receiver=receiver_user,
@@ -205,7 +216,7 @@ def send_message(request):
             return JsonResponse({'status': 'success', 'timestamp': message.timestamp.isoformat(), 'id': message.id})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Получатель не найден'})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+    return JsonResponse({'status': 'error', 'message': 'Неверный запрос'})
 
 def change_image(request):
     if request.method == 'POST':
