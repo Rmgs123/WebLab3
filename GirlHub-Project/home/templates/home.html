@@ -36,7 +36,7 @@
             </ul>
             <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
                 {% csrf_token %}
-                <input type="text" name="contact_name" placeholder="Добавить контакт" required>
+                <input type="text" name="contact_name" placeholder="Add contact" required>
                 <button type="submit">Add</button>
             </form>
         </aside>
