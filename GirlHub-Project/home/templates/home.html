@@ -12,46 +12,45 @@
         <!-- Верхняя панель с именем пользователя и кнопкой выхода -->
         <header>
             <div class="profile-img">
-                <img src="{{user.profile.image.url}}" alt="Progile image">
+                <img src="{{user.profile.image.url}}" alt="Profile image">
             </div>
-            <div class="username-display">Welcome, {{ user.username }}!</div>
-            <div class="logout"><a href="{% url 'account_settings' %}">Settings</a></div>
+            <div class="username-display">Добро пожаловать, {{user.username}}!</div>
+            <div class="logout"><a href="{% url 'account_settings' %}">Настройки</a></div>
         </header>
 
         <!-- Боковая панель для контактов -->
         <aside class="contacts-list">
-            <h2>Contacts</h2>
+            <h2>Контакты</h2>
             <ul>
                 {% for contact in user.profile.contacts.all %}
                 <li id="contact-{{ contact.user.username }}">
                     <div class="info-contact">
-                        <img src="{{contact.user.profile.image.url}}" alt="Progile image">
+                        <img src="{{contact.user.profile.image.url}}" alt="Profile image">
                         <a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a>
-
                     </div>
                     <span class="notification-dot" style="display:none;">●</span>
                 </li>
                 {% empty %}
-                <li>No contacts</li>
+                <li>Нет контактов</li>
                 {% endfor %}
             </ul>
             <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
                 {% csrf_token %}
-                <input type="text" name="contact_name" placeholder="Add contact" required>
-                <button type="submit">Add</button>
+                <input type="text" name="contact_name" placeholder="Добавить контакт" required>
+                <button type="submit">Добавить</button>
             </form>
         </aside>
 
-        <!-- Основной блок для чата -->                   <!-- ИЗМЕНИЛ ПОЛНОСТЬЮ ТУТ ВЕСЬ БЛОК -->
+        <!-- Основной блок для чата -->
         <main class="chat">
             <div class="chat-header">
-                Chat with <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
+                Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
             </div>
             <div class="chat-container">
                 <div class="chat-messages" id="chat-messages">
                     {% if chat_user %}
                     {% for message in messages %}
-                    <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}">
+                    <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}" data-timestamp="{{ message.timestamp|date:'c' }}" data-id="{{ message.id }}">
                         {% if message.image %}
                         <img src="{{ message.image.url }}" width="200">
                         {% endif %}
@@ -60,10 +59,10 @@
                         {% endif %}
                     </div>
                     {% empty %}
-                    <p>No messages.</p>
+                    <p>Нет сообщений.</p>
                     {% endfor %}
                     {% else %}
-                    <p>Select a contact to start a chat.</p>
+                    <p>Выберите контакт для начала чата.</p>
                     {% endif %}
                 </div>
                 {% if chat_user %}
@@ -72,84 +71,103 @@
                     <input type="hidden" name="receiver_name" value="{{ chat_user }}">
                     <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off">
                     <input type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
-                    <button type="submit">Send</button>
+                    <button type="submit">Отправить</button>
                 </form>
                 {% endif %}
             </div>
         </main>
     </div>
 
-    <!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->          <!-- ПОМЕНЯЛ ТУТ ВСЕ СКРИПТЫ -->
+    <!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(function() {
-            let offset = $('#chat-messages .message').length;  // Инициализируем offset количеством загруженных сообщений
-            const limit = 20;  // Количество сообщений для подгрузки
+            let offset = $('#chat-messages .message').length;
+            const limit = 20;
+            let lastMessageTime = 0; // Для ограничения скорости отправки сообщений
 
-            // Функция для загрузки старых сообщений
+            function isUserAtBottom() {
+                const chatMessages = $('#chat-messages')[0];
+                return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
+            }
+
             function loadOldMessages() {
+                console.log("Вызвана функция loadOldMessages");
+                let $oldestMessage = $('#chat-messages .message').first();
+                let oldestMessageTimestamp = $oldestMessage.attr('data-timestamp');
+                let oldestMessageId = parseInt($oldestMessage.attr('data-id'), 10);
+
+                if (!oldestMessageTimestamp) {
+                    return;
+                }
+
                 $.ajax({
                     url: "{% url 'load_old_messages' chat_user=chat_user %}",
                     type: 'GET',
                     data: {
-                        'offset': offset,
+                        'before_timestamp': oldestMessageTimestamp,
+                        'before_id': oldestMessageId,
                         'limit': limit
                     },
                     success: function(response) {
+                        console.log("Получены старые сообщения:", response.messages);
+
                         const messages = response.messages;
                         if (messages.length > 0) {
-                            // Сохраняем текущую позицию прокрутки
                             let scrollHeightBefore = $('#chat-messages')[0].scrollHeight;
                             let scrollTopBefore = $('#chat-messages').scrollTop();
 
-                            // Добавляем сообщения в начало
                             messages.forEach(function(message) {
-                                let messageHtml = `<div class="message ${message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact'}">`;
-                                if (message.image_url) {
-                                    messageHtml += `<img src="${message.image_url}" width="200">`;
+                                if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
+                                    let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
+                                    let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
+                                    if (message.image_url) {
+                                        messageHtml += `<img src="${message.image_url}" width="200">`;
+                                    }
+                                    if (message.content) {
+                                        messageHtml += `<p>${message.content}</p>`;
+                                    }
+                                    messageHtml += `</div>`;
+
+                                    $('#chat-messages').prepend(messageHtml);
                                 }
-                                if (message.content) {
-                                    messageHtml += `<p>${message.content}</p>`;
-                                }
-                                messageHtml += `</div>`;
-                                $('#chat-messages').prepend(messageHtml);
                             });
 
-                            // Обновляем offset
-                            offset += messages.length;
-
-                            // Восстанавливаем позицию прокрутки
                             let scrollHeightAfter = $('#chat-messages')[0].scrollHeight;
                             $('#chat-messages').scrollTop(scrollTopBefore + (scrollHeightAfter - scrollHeightBefore));
                         } else {
-                            // Больше нет сообщений для загрузки
                             $('#chat-messages').off('scroll');
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Ошибка загрузки старых сообщений: ", error);
                     }
                 });
             }
 
-            // Обработчик прокрутки вверх для подгрузки старых сообщений
             $('#chat-messages').on('scroll', function() {
                 if ($(this).scrollTop() === 0) {
+                    console.log("Прокрутка достигла верха, подгружаем старые сообщения");
                     loadOldMessages();
                 }
             });
 
-            // Функция для плавной прокрутки вниз
             function scrollToBottom() {
                 $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
             }
 
-            // Первоначальная прокрутка вниз при загрузке страницы
             scrollToBottom();
 
-            // Инициализация смещения при загрузке страницы
-            //offset = $('#chat-messages .message').length;
-
-            // AJAX отправка сообщений, включая изображение
             $('#send-message-form').on('submit', function(event) {
                 event.preventDefault();
+
+                const now = Date.now();
+                if (now - lastMessageTime < 1000) {
+                    alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                    return;
+                }
+
+                lastMessageTime = now;
 
                 const formData = new FormData(this);
 
@@ -164,7 +182,7 @@
                             const messageContent = $('#message-input').val();
                             const imageInput = $('#image-input')[0].files[0];
 
-                            let messageHtml = `<div class="message from-user">`;
+                            let messageHtml = `<div class="message from-user" data-timestamp="${response.timestamp}" data-id="${response.id}">`;
                             if (imageInput) {
                                 messageHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
                             }
@@ -177,6 +195,11 @@
 
                             $('#message-input').val('');
                             $('#image-input').val('');
+
+                            // Прокручиваем вниз после отправки сообщения
+                            scrollToBottom();
+                        } else {
+                            alert(response.message || "Ошибка отправки сообщения.");
                         }
                     },
                     error: function(xhr, status, error) {
@@ -185,60 +208,106 @@
                 });
             });
 
-            // Функция для проверки новых сообщений с использованием setTimeout
             function checkNewMessages() {
                 $.ajax({
                     url: "{% url 'check_new_messages' %}",
                     type: 'GET',
                     success: function(response) {
-                        $('.notification-dot').hide();  // Скрываем все точки уведомлений
+                        $('.notification-dot').hide();
                         response.contacts_with_unread.forEach(function(contact) {
-                            // Если чат с этим контактом не открыт, показываем уведомление
                             if (contact !== "{{ chat_user|escapejs }}") {
                                 $(`#contact-${contact} .notification-dot`).show();
                             }
                         });
-                        // Планируем следующий вызов через 1 секунду
                         setTimeout(checkNewMessages, 1000);
                     },
                     error: function() {
-                        // В случае ошибки также планируем следующий вызов, но можем увеличить интервал
-                        setTimeout(checkNewMessages, 2000);  // Делаем 2 секунды, чтобы снизить нагрузку при ошибках
+                        setTimeout(checkNewMessages, 2000);
                     }
                 });
             }
 
-            // Функция для загрузки новых сообщений с использованием setTimeout
             function loadNewMessages() {
+                let $latestMessage = $('#chat-messages .message').last();
+                let latestMessageTimestamp = $latestMessage.attr('data-timestamp');
+                let latestMessageId = parseInt($latestMessage.attr('data-id'), 10);
+
+                if (!latestMessageTimestamp) {
+                    latestMessageTimestamp = new Date().toISOString();
+                    latestMessageId = 0;
+                }
+
                 $.ajax({
                     url: "{% url 'get_new_messages' chat_user=chat_user %}",
                     type: 'GET',
+                    data: {
+                        'after_timestamp': latestMessageTimestamp,
+                        'after_id': latestMessageId
+                    },
                     success: function(response) {
-                        response.new_messages.forEach(function(message) {
-                            // Создаем HTML для сообщения
-                            let messageHtml = `<div class="message from-contact">`;
-                            if (message.image_url) {
-                                messageHtml += `<img src="${message.image_url}" width="200">`;
-                            }
-                            if (message.content) {
-                                messageHtml += `<p>${message.content}</p>`;
-                            }
-                            messageHtml += `</div>`;
+                        if (response.new_messages) {
+                            const wasAtBottom = isUserAtBottom();
 
-                            // Добавляем сообщение в чат
-                            $('#chat-messages').append(messageHtml);
-                        });
-                        // Планируем следующий запрос через 0.5 секунд
+                            response.new_messages.forEach(function(message) {
+                                if ($('#chat-messages .message[data-id="' + message.id + '"]').length === 0) {
+                                    let senderClass = message.sender === '{{ user.username }}' ? 'from-user' : 'from-contact';
+                                    let messageHtml = `<div class="message ${senderClass}" data-timestamp="${message.timestamp}" data-id="${message.id}">`;
+                                    if (message.image_url) {
+                                        messageHtml += `<img src="${message.image_url}" width="200">`;
+                                    }
+                                    if (message.content) {
+                                        messageHtml += `<p>${message.content}</p>`;
+                                    }
+                                    messageHtml += `</div>`;
+                                    $('#chat-messages').append(messageHtml);
+                                }
+                            });
+
+                            // Прокручиваем вниз, только если пользователь был внизу чата
+                            if (response.new_messages.length > 0 && wasAtBottom) {
+                                scrollToBottom();
+                            }
+                        }
                         setTimeout(loadNewMessages, 500);
                     },
-                    error: function() {
-                        // В случае ошибки увеличиваем интервал, чтобы избежать повторных сбоев
-                        setTimeout(loadNewMessages, 1000);  // Увеличиваем интервал до 1 секунд на случай ошибки
+                    error: function(xhr, status, error) {
+                        console.log("Ошибка загрузки новых сообщений: ", error);
+                        setTimeout(loadNewMessages, 1000);
                     }
                 });
             }
 
-            // Запускаем функции с setTimeout вместо setInterval
+            function updateContacts() {
+                $.ajax({
+                    url: "{% url 'get_contacts' %}",
+                    type: 'GET',
+                    success: function(response) {
+                        const contacts = response.contacts;
+                        const $contactsList = $('.contacts-list ul');
+                        $contactsList.empty(); // Очищаем текущий список контактов
+
+                        contacts.forEach(function(contact) {
+                            let contactHtml = `
+                                <li id="contact-${contact.username}">
+                                    <div class="info-contact">
+                                        <img src="${contact.profile_image_url}" alt="Profile image">
+                                        <a href="{% url 'home' %}?chat_with=${contact.username}">${contact.username}</a>
+                                    </div>
+                                    <span class="notification-dot" style="display:none;">●</span>
+                                </li>
+                            `;
+                            $contactsList.append(contactHtml);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Ошибка обновления списка контактов: ", error);
+                    }
+                });
+            }
+
+            // Запускаем обновление списка контактов каждые 5 секунд
+            setInterval(updateContacts, 5000);
+
             checkNewMessages();
             loadNewMessages();
         });
