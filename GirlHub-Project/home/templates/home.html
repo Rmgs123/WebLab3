@@ -12,7 +12,7 @@
         <!-- Верхняя панель с именем пользователя и кнопкой выхода -->
         <header>
             <div class="profile-img">
-                <img src="{{user.profile.image.url}}" alt="Progile image">
+                <img src="{{user.profile.image.url}}" alt="Profile image">
             </div>
             <div class="username-display">Добро пожаловать, {{user.username}}!</div>
             <div class="logout"><a href="{% url 'account_settings' %}">Настройки</a></div>
@@ -25,9 +25,8 @@
                 {% for contact in user.profile.contacts.all %}
                 <li id="contact-{{ contact.user.username }}">
                     <div class="info-contact">
-                        <img src="{{contact.user.profile.image.url}}" alt="Progile image">
+                        <img src="{{contact.user.profile.image.url}}" alt="Profile image">
                         <a href="{% url 'home' %}?chat_with={{ contact.user.username }}">{{ contact.user.username }}</a>
-
                     </div>
                     <span class="notification-dot" style="display:none;">●</span>
                 </li>
@@ -42,7 +41,7 @@
             </form>
         </aside>
 
-        <!-- Основной блок для чата -->                   <!-- ИЗМЕНИЛ ПОЛНОСТЬЮ ТУТ ВЕСЬ БЛОК -->
+        <!-- Основной блок для чата -->
         <main class="chat">
             <div class="chat-header">
                 Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
@@ -79,7 +78,7 @@
         </main>
     </div>
 
-    <!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->          <!-- ПОМЕНЯЛ ТУТ ВСЕ СКРИПТЫ -->
+    <!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(function() {
@@ -89,7 +88,7 @@
 
             function isUserAtBottom() {
                 const chatMessages = $('#chat-messages')[0];
-                return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // 250 - пиксели прокрученные вверх, при которых пользователя все равно проскроллит вниз для нового сообщения
+                return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
             }
 
             function loadOldMessages() {
