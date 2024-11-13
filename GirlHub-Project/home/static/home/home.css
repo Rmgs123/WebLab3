@@ -1,11 +1,9 @@
-/* home/static/home/home.css */
-
 /* Основные стили */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Permanent Marker", cursive;
     background-color: #f0f0f0;
 }
 
@@ -26,8 +24,8 @@ header {
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: #0078D4;
-    color: #fff;
+    background-color: #f7f7f7;
+    color: #333;
 }
 
 .profile-img img {
@@ -40,11 +38,11 @@ header {
 .username-display {
     flex: 1;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 30px;
 }
 
 .logout a {
-    color: #ffffff;
+    color: #333;
     text-decoration: none;
     font-size: 14px;
 }
@@ -110,22 +108,31 @@ header {
 
 .add-contact-form input {
     flex-grow: 1;
+    font-family: "Permanent Marker", cursive;
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
+.add-contact-form input:focus {
+    outline: none;
+}
+
 .add-contact-form button {
     padding: 5px 10px;
-    background-color: #0078D4;
-    color: white;
-    border: none;
+    font-family: "Permanent Marker", cursive;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(51, 51, 51, 0.15);
+    color: black;
     border-radius: 4px;
     cursor: pointer;
+    transition: box-shadow 0.3s ease, text-shadow 0.3s ease, border 0.3s ease;
 }
 
 .add-contact-form button:hover {
-    background-color: #005a9e;
+    box-shadow: 0 0 7px #D9AFD9;
+    text-shadow: 3px 3px 2px #D9AFD9;
+    border: 1px solid rgba(51, 51, 51, 0.15);
 }
 
 /* Основная часть чата */
@@ -134,7 +141,6 @@ header {
     display: flex;
     flex-direction: column;
     background-color: #ffffff;
-    border-left: 1px solid #ddd;
     height: 100%;       /* Добавлено */
     min-height: 0;      /* Добавлено */
 }
@@ -142,8 +148,11 @@ header {
 /* Заголовок чата */
 .chat-header {
     padding: 10px;
-    background-color: #f0f0f0;
+    background-color: #f7f7f7;
     border-bottom: 1px solid #ddd;
+    border-top: 2px solid #ddd;
+    border-top-left-radius: 10px;
+    border-left: 2px solid #ddd;
     font-size: 18px;
     font-weight: bold;
 }
@@ -157,12 +166,13 @@ header {
     min-height: 0;      /* Добавлено */
 }
 
+
 /* Область сообщений */
 .chat-messages {
     flex: 1;
     padding: 10px;
     overflow-y: auto;
-    background-color: #e5ddd5;
+    background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
 }
 
 /* Форма отправки сообщений */
@@ -170,7 +180,7 @@ header {
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: #f1f1f1;
+    background-color: #f7f7f7;
     border-top: 1px solid #ddd;
 }
 
@@ -179,27 +189,112 @@ header {
     flex-grow: 1;
     padding: 10px;
     margin-right: 10px;
+    border: none;
+    font-family: "Permanent Marker", cursive;
+    border-radius: 4px;
+    background: #f7f7f7;
+}
+
+.send-message-form input[type="text"]:focus {
+    outline: none;
+}
+
+#image-input-label {
+    margin-right: 30px;
+}
+
+.make-group-link {
+    text-decoration: none;
+    color: black;
+    transition: text-shadow 0.3s ease
+}
+
+.make-group-link:hover {
+    text-shadow: 3px 3px 2px #D9AFD9;
+}
+
+.input-group-name {
+    font-family: "Permanent Marker", cursive;
+    padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
-/* Поле для выбора файла */
-#image-input {
-    margin-right: 10px;
+.input-group-name:hover {
+    outline: none;
+}
+
+.submit-group-name {
+    padding: 5px 10px;
+    font-family: "Permanent Marker", cursive;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(51, 51, 51, 0.15);
+    color: black;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, text-shadow 0.3s ease, border 0.3s ease;
+}
+
+.submit-group-name:hover {
+    box-shadow: 0 0 7px #D9AFD9;
+    text-shadow: 3px 3px 2px #D9AFD9;
+    border: 1px solid rgba(51, 51, 51, 0.15);
+}
+
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile + label {
+    font-size: 15px;
+    text-align: center;
+    font-weight: 700;
+    color: black;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(51, 51, 51, 0.3);
+    border-radius: 5px;
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    min-width: 100px;
+    max-width: 100px; /* Ограничение ширины кнопки */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, text-shadow 0.3s ease;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: white;
+    box-shadow: 0 0 10px #D9AFD9;
+    border: 1px solid rgba(51, 51, 51, 0.15);
+    text-shadow: 3px 3px 2px #D9AFD9;
 }
 
 /* Кнопка отправки */
 .send-message-form button {
+    font-family: "Permanent Marker", cursive;
     padding: 10px 16px;
-    background-color: #0078D4;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    font-size: 15px;
+    background-color: #f7f7f7;
+    color: #333;
+    border: 1px solid rgba(51, 51, 51, 0.3);
+    border-radius: 5px;
     cursor: pointer;
+    transition: box-shadow 0.2s ease, text-shadow 0.2s ease, border 0.3s ease;
 }
 
 .send-message-form button:hover {
-    background-color: #005a9e;
+    box-shadow: 0 0 7px #D9AFD9;
+    text-shadow: 3px 3px 2px #D9AFD9;
+    border: 1px solid rgba(51, 51, 51, 0.15);
 }
 
 /* Стили для сообщений */
@@ -212,13 +307,14 @@ header {
 }
 
 .from-user {
-    background-color: #dcf8c6;
+    background-color: #FFEFFF;
     margin-left: auto;
     align-self: flex-end;
+    max-width
 }
 
 .from-contact {
-    background-color: #fff;
+    background-color: #CBFBFF;
     margin-right: auto;
     align-self: flex-start;
 }

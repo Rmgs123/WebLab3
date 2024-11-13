@@ -5,6 +5,7 @@
     <title>Главная страница</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'home/home.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Permanent+Marker&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -14,13 +15,13 @@
         <div class="profile-img">
             <img src="{{user.profile.image.url}}" alt="Profile image">
         </div>
-        <div class="username-display">Добро пожаловать, {{ user.username }}!</div>
-        <div class="logout"><a href="{% url 'account_settings' %}">Настройки</a></div>
+        <div class="username-display">Welcome, {{ user.username }}!</div>
+        <div class="logout"><a href="{% url 'account_settings' %}"><img src="{% static 'icons8-settings.svg' %}" alt=""></a></div>
     </header>
 
     <!-- Боковая панель для контактов -->
     <aside class="contacts-list">
-        <h2>Контакты</h2>
+        <h2>Contacts</h2>
         <ul class="contacts">
             {% for contact in user.profile.contacts.all %}
             <li id="contact-{{ contact.user.username }}">
@@ -32,11 +33,11 @@
                 <span class="notification-dot" style="display:none;">●</span>
             </li>
             {% empty %}
-            <li>Нет контактов</li>
+            <li>No contacts</li>
             {% endfor %}
         </ul>
         <!-- добавленно-->
-        <h2>Группы</h2>
+        <h2>Groups</h2>
         <ul class="groups">
             {% for group in user.profile.groups.all %}
             <li id="group-{{ group.name }}">
@@ -48,22 +49,22 @@
                 <span class="notification-dot" style="display:none;">●</span>
             </li>
             {% empty %}
-            <li>Нет групп</li>
+            <li>No groups</li>
             {% endfor %}
         </ul>
         <!-- добавленноend-->
         <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
             {% csrf_token %}
-            <input type="text" name="contact_name" placeholder="Добавить контакт" required>
-            <button type="submit">Добавить</button>
+            <input type="text" name="contact_name" placeholder="Add contact" required>
+            <button type="submit">Add</button>
         </form>
         <!-- добавленно-->
-        <p><a href="{% url 'create_group' %}">Создать группу</a></p>
+        <p><a class="make-group-link" href="{% url 'create_group' %}">Make group</a></p>
 
         <form class="add-group-form" method="post" action="{% url 'add_group' %}">
             {% csrf_token %}
-            <input type="text" name="group_name" placeholder="Название группы" required>
-            <button type="submit">Добавить</button>
+            <input class="input-group-name" type="text" name="group_name" placeholder="Group name" required>
+            <button class="submit-group-name" type="submit">Add</button>
         </form>
         <!-- добавленноend-->
     </aside>
@@ -72,7 +73,7 @@
     <main class="chat">
         {% if chat_user %}
         <div class="chat-header">
-            Чат с <span id="chat-user">{{ chat_user|default_if_none:"[Имя собеседника]" }}</span>
+            Chat with <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
         </div>
         {% elif group_id %}
         <div class="chat-header">
@@ -93,7 +94,7 @@
                     {% endif %}
                 </div>
                 {% empty %}
-                <p>Нет сообщений.</p>
+                <p>No messages</p>
                 {% endfor %}
                 {% elif group_id %}
                 {% for post in posts %}
@@ -107,10 +108,10 @@
                     {% endif %}
                 </div>
                 {% empty %}
-                <p>Нет постов.</p>
+                <p>No posts</p>
                 {% endfor %}
                 {% else %}
-                <p>Выберите контакт или группу.</p>
+                <p>Choose contact or group</p>
                 {% endif %}
             </div>
             {% if chat_user %}
@@ -119,8 +120,9 @@
                 <input type="hidden" name="receiver_name" value="{{ chat_user }}">
                 <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..."
                        autocomplete="off">
-                <input type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
-                <button type="submit">Отправить</button>
+                <input class="inputfile" type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
+                <label for="image-input" id="image-input-label">Choose a file</label>
+                <button type="submit">SEND</button>
             </form>
             {% elif group_id %}
             {% if group.sender == user %}
@@ -130,7 +132,7 @@
                 <input type="text" name="post" id="post-input" placeholder="Напишите текст поста ..."
                        autocomplete="off">
                 <input type="file" name="post_image" id="post-image-input" accept=".png, .jpg, .jpeg">
-                <button type="submit">Опубликовать</button>
+                <button type="submit">Publish</button>
             </form>
             {% endif %}
             {% endif %}

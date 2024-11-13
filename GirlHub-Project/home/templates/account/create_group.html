@@ -1,25 +1,25 @@
 {% extends "base_settings.html" %}
 
 {%block title%}
-<h2>Изменение ника</h2>
+<h2>Make new group</h2>
 {% endblock %}
 
 {% block content %}
 <form method="post" action="{% url 'create_group' %}" enctype="multipart/form-data">
     {% csrf_token %}
-    <p><label for="name_group">New group:</label></p>
-    <p><input type="text" placeholder="Name group" id="name_group" name="name_group" required
+    <p><label for="name_group" class="title">New group:</label></p>
+    <p><input class="input-name" type="text" placeholder="Name group" id="name_group" name="name_group" required
               value="{{ form.username.value|default_if_none:'' }}"></p>
-    <p><input type="file" name="image" accept=".png, .jpg, .jpeg"></p>
+    <p><input class="inputfile" id="file" type="file" name="image" accept=".png, .jpg, .jpeg"> <label for="file" id="file-label">Upload image</label></p>
     <p>
-        <button type="submit">Создать</button>
+        <button class="submit-button" type="submit">Make</button>
     </p>
 </form>
 
 <!-- Кнопка назад -->
-<p class="back-link"><a href="{% url 'home' %}">Назад</a></p>
+<p class="back-link"><a href="{% url 'home' %}">Back</a></p>
 
-<div class="notification" id="notification">Ник был успешно изменен.</div>
+<div class="notification" id="notification">The nickname has been successfully changed.</div>
 <script>
     // Функция показа уведомления
     function showNotification(message) {
@@ -32,7 +32,11 @@
             notification.classList.remove("show");
         }, 3000);
     }
-
+    document.getElementById("file").addEventListener("change", function() {
+        const fileLabel = document.getElementById("file-label");
+        const fileName = this.files[0] ? this.files[0].name : "Upload image";
+        fileLabel.textContent = fileName;
+    });
     // Если есть сообщения об успехе, показать уведомление
     {% if messages %}
         {% for message in messages %}
@@ -41,8 +45,107 @@
     {% endif %}
 </script>
 <style type="text/css">
-    h1, h2 {
-        margin-bottom: 10px;
+    .background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%);
+        background-size: 400% 400%;
+        animation: gradient 10s ease infinite;
+        z-index: -1;
+    }
+
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    h2 {
+        color: #000000;
+        font-weight: 600;
+        font-size: 35px;
+        margin: 0 0 0 10px;
+        text-shadow: 2px 2px 1px #21D4FD;
+    }
+
+    input[type="text"] {
+        background-color: #f2f2f2;
+        font-size: 16px;
+        width: 90%; /* Уменьшаем ширину для лучшего центрирования */
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        text-align: center; /* Центрируем текст внутри поля */
+        font-family: "Permanent Marker", cursive;
+        transition: box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+        box-shadow: 0 0 15px #21D4FD;
+    }
+
+    .inputfile {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+
+    .inputfile + label {
+        font-size: 1.25em;
+        font-weight: 700;
+        color: black;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid white;
+        border-radius: 5px;
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+        min-width: 140px;
+        max-width: 140px; /* Ограничение ширины кнопки */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .inputfile:focus + label,
+    .inputfile + label:hover {
+        background-color: white;
+        box-shadow: 0 0 20px #21D4FD;
+    }
+
+    .submit-button {
+        font-family: "Permanent Marker", cursive;
+        margin-top: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        color: black;
+        font-size: 25px;
+        border: 2px solid white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 90%; /* Ширина кнопки совпадает с шириной полей */
+        max-width: 150px;
+    }
+
+    .submit-button:hover {
+        background: white;
+        box-shadow: 0 0 20px #21D4FD;
+    }
+
+    .submit-button:active {
+        background-color: #e8e8e8;
+    }
+
+    .title {
+        font-size: 20px;
     }
 
     .logo img {
@@ -60,39 +163,37 @@
         text-align: center; /* Центрируем текст внутри поля */
     }
 
-    .submit-button {
-        margin-top: 10px;
-        background-color: #000;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.8s;
-        width: 90%; /* Ширина кнопки совпадает с шириной полей */
-        max-width: 150px;
-    }
-
-    .submit-button:hover {
-        background-color: #EE82EE;
-    }
-
     .back-link {
         margin-top: 30px;
     }
 
     .back-link a {
-        color: #000;
+        color: black;
         text-decoration: none;
         font-weight: normal; /* Убираем жирность */
         transition: color 0.8s;
-        color: #555555;
-        font-size: 14px;
+        font-size: 25px;
         margin-top: 20px;
+        transition: text-shadow 0.15s;
     }
 
     .back-link a:hover {
-        color: #EE82EE;
+        text-shadow: 1px 1px 1px #21D4FD;
+    }
+
+    .back-link::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 3px;
+        border-radius: 50%;
+        background-color: #21D4FD;
+        margin: auto;
+        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+    }
+
+    .back-link:hover::after {
+        width: 20%;
     }
 
     /* Уведомление об успехе */
