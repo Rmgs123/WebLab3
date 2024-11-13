@@ -68,7 +68,7 @@ def home_view(request):
             # Обновляем поле is_read и сохраняем изменения
             status.is_read = True
             status.save()
-        except (Group.DoesNotExist):
+        except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
             group_id = None
 
     return render(request, 'home.html', {
@@ -105,12 +105,47 @@ def add_contact(request):
 def get_contacts(request):
     contacts = request.user.profile.contacts.all()
     contacts_data = []
+
     for contact in contacts:
+        is_read = False
+        unread_messages = Message.objects.filter(sender=contact.user, receiver=request.user, is_read=False)
+
+        if unread_messages.exists():
+            is_read = True
+
         contacts_data.append({
             'username': contact.user.username,
             'profile_image_url': contact.user.profile.image.url if contact.user.profile.image else '',
+            'is_read': is_read,
         })
+
     return JsonResponse({'contacts': contacts_data})
+
+
+@login_required
+def get_groups(request):
+    groups = request.user.profile.groups.all()
+    groups_data = []
+    profile = Profile.objects.get(user=request.user)
+
+    for group in groups:
+        is_read = False
+
+        unread_posts = GroupMemberStatus.objects.filter(
+            member=profile,
+            group=group,
+            is_read=False
+        )
+
+        if unread_posts.exists():
+            is_read = True
+        print(is_read)
+        groups_data.append({
+            'name': group.name,
+            'image_url': group.image.url if group.image else '',
+            'is_read': is_read,
+        })
+    return JsonResponse({'groups': groups_data})
 
 
 @login_required
@@ -279,14 +314,14 @@ def publish_post(request):
 
             for member in group_sender.members.all():
                 chat_partner = User.objects.get(username=member)
-                print(chat_partner)
+
                 profile = Profile.objects.get(user=chat_partner)
                 status = GroupMemberStatus.objects.get(group=group_sender, member=profile)
                 status.is_read = False
                 status.save()
 
             return JsonResponse({'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id})
-        except Group.DoesNotExist:
+        except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
             return JsonResponse({'status': 'error', 'message': 'Группа не найден'})
     return JsonResponse({'status': 'error', 'message': 'Неверный запрос'})
 
@@ -296,16 +331,15 @@ def check_new_posts(request):
     groups_with_unread = []
     profile = Profile.objects.get(user=request.user)
 
-    for group in request.user.profile.groups.all():
+    for group_user in request.user.profile.groups.all():
         unread_posts = GroupMemberStatus.objects.filter(
             member=profile,
-            group=group,
+            group=group_user,
             is_read=False
         )
 
         if unread_posts.exists():
-
-            groups_with_unread.append(group.name)
+            groups_with_unread.append(group_user.name)
     return JsonResponse({'groups_with_unread': groups_with_unread})
 
 
@@ -339,7 +373,7 @@ def get_new_posts(request, group_id=None):
 
         new_posts = [{
             "id": post.id,
-            "group_sender": group_sender,
+            "group_sender": group_id,
             "content": post.content,
             "image_url": post.image.url if post.image else None,
             "timestamp": post.timestamp.isoformat()
@@ -530,10 +564,10 @@ def create_group(request):
             group.image.save('group_images.png', ContentFile(buffer.getvalue()))
 
         profile = Profile.objects.get(user=request.user)
-        profile.groups.add(group)
-        GroupMemberStatus.objects.create(group=group, member=profile)
         group.save()
 
+        profile.groups.add(group)
+        GroupMemberStatus.objects.create(group=group, member=profile)
         messages.success(request, "Группа создана.")
         return redirect('home')  # Остаемся на странице изменения email
     return render(request, 'account/create_group.html', {'user': request.user})
