@@ -22,7 +22,7 @@
     <aside class="contacts-list">
         <h2>Контакты</h2>
         <ul class="contacts">
-            {% for contact in user.profile.contacts.all() %}
+            {% for contact in user.profile.contacts.all %}
             <li id="contact-{{ contact.user.username }}">
                 <div class="info-contact">
                     <img src="{{contact.user.profile.image.url}}" alt="Profile image">
@@ -38,7 +38,7 @@
         <!-- добавленно-->
         <h2>Группы</h2>
         <ul class="groups">
-            {% for group in user.profile.groups.all() %}
+            {% for group in user.profile.groups.all %}
             <li id="group-{{ group.name }}">
                 <div class="info-group">
                     <img src="{{group.image.url}}" alt="Profile image">
