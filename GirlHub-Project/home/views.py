@@ -155,6 +155,13 @@ def send_message(request):
         receiver_name = request.POST.get('receiver_name')
         image = request.FILES.get('image')
 
+        # Проверяем, что сообщение не пустое и не состоит только из пробелов
+        if not message_content and not image:
+            return JsonResponse({'status': 'error', 'message': 'Сообщение не может быть пустым.'})
+
+        if len(message_content) > 500:
+            return JsonResponse({'status': 'error', 'message': 'Сообщение слишком длинное. Максимальная длина — 500 символов.'})
+
         try:
             receiver_user = User.objects.get(username=receiver_name)
 
@@ -293,6 +300,14 @@ def publish_post(request):
         name_group = request.POST.get('name_group')
         image = request.FILES.get('post_image')
 
+        # Проверка на пустоту поста (без содержания и изображения)
+        if not post_content and not image:
+            return JsonResponse({'status': 'error', 'message': 'Пост не может быть пустым.'})
+
+        # Проверка на длину поста
+        if len(post_content) > 800:
+            return JsonResponse({'status': 'error', 'message': 'Пост слишком длинный. Максимальная длина — 500 символов.'})
+
         try:
             group_sender = Group.objects.get(name=name_group)
 
@@ -418,7 +433,7 @@ def load_old_posts(request, group_id):
         for post in posts_qs:
             posts.append({
                 "id": post.id,
-                "sender": post.group_sender,
+                "sender": group_id,
                 "content": post.content,
                 "image_url": post.image.url if post.image else None,
                 "timestamp": post.timestamp.isoformat()

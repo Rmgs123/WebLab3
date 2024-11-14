@@ -120,8 +120,7 @@
             <form class="send-message-form" id="send-message-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="receiver_name" value="{{ chat_user }}">
-                <input type="text" name="message" id="message-input" placeholder="Напишите сообщение..."
-                       autocomplete="off">
+                <textarea name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off" maxlength="500"></textarea>
                 <input class="input-file" type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
                 <label for="image-input" id="image-input-label">Choose a file</label>
                 <button type="submit">SEND</button>
@@ -131,8 +130,7 @@
             <form class="publish-post-form" id="publish-post-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="name_group" value="{{ group_id }}">
-                <input type="text" name="post" id="post-input" placeholder="Напишите текст поста ..."
-                       autocomplete="off">
+                <textarea name="post" id="post-input" placeholder="Напишите текст поста ..." autocomplete="off" maxlength="800"></textarea>
                 <input class="input-file-post" type="file" name="post_image" id="post-image-input"
                        accept=".png, .jpg, .jpeg">
                 <label for="post-image-input" id="image-input-label-post">Choose a file</label>
@@ -218,6 +216,21 @@
             }
         });
 
+        // Обработчик для поля ввода сообщения
+        $('#message-input').on('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Предотвращаем добавление новой строки
+                $('#send-message-form').submit(); // Отправляем форму
+            }
+        });
+
+        $('#post-input').on('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                $('#publish-post-form').submit();
+            }
+        });
+
         function scrollToBottom() {
             $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight }, 300);
         }
@@ -226,6 +239,20 @@
 
         $('#send-message-form').on('submit', function(event) {
             event.preventDefault();
+
+            const messageContent = $('#message-input').val().trim();
+            const imageInput = $('#image-input')[0].files[0];
+
+            // Проверяем, что сообщение не пустое и не состоит только из пробелов и переносов строк
+            if (!messageContent && !imageInput) {
+                alert("Нельзя отправлять пустое сообщение.");
+                return;
+            }
+
+            if (messageContent.length > 500) {
+                alert("Сообщение слишком длинное. Максимальная длина — 500 символов.");
+                return;
+            }
 
             const now = Date.now();
             if (now - lastMessageTime < 1000) {
@@ -458,6 +485,21 @@
 
         $('#publish-post-form').on('submit', function(event) {
             event.preventDefault();
+
+            const postContent = $('#post-input').val().trim();
+            const imageInput = $('#post-image-input')[0].files[0];
+
+             // Проверяем, что пост не пустой и не состоит только из пробелов и переносов строк
+            if (!postContent && !imageInput) {
+                alert("Пост не может быть пустым.");
+                return;
+            }
+
+            // Проверка на максимальную длину поста
+            if (postContent.length > 800) {
+                alert("Пост слишком длинный. Максимальная длина — 800 символов.");
+                return;
+            }
 
             const now = Date.now();
             if (now - lastPostTime < 1000) {
