@@ -36,13 +36,13 @@
         border-radius: 50%;
         width: 70%;
         margin: auto;
-        transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
-        transform-origin: center; /* Начало анимации из центра */
-        transition: transform 0.5s ease; /* Плавная анимация */
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s ease;
     }
 
     .setting-line-loaded .setting-line {
-        transform: scaleX(1); /* Конечный масштаб по горизонтали - 1 */
+        transform: scaleX(1);
     }
 
     .settings-username::after {
@@ -53,11 +53,11 @@
         border-radius: 50%;
         background-color: #E60808;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .settings-username:hover::after {
-        width: 60%; /* Подчеркивание, появляется с центра */
+        width: 60%;
     }
 
     .settings-picture::after {
@@ -68,15 +68,15 @@
         border-radius: 50%;
         background-color: #FF9108;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .settings-picture:hover::after {
-        width: 75%; /* Подчеркивание, появляется с центра */
+        width: 75%;
     }
 
     .settings-email:hover::after {
-        width: 50%; /* Подчеркивание, появляется с центра */
+        width: 50%;
     }
 
     .settings-email::after {
@@ -87,11 +87,11 @@
         border-radius: 50%;
         background-color: #FFEF08;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .settings-password:hover::after {
-        width: 55%; /* Подчеркивание, появляется с центра */
+        width: 55%;
     }
 
     .settings-password::after {
@@ -102,7 +102,7 @@
         border-radius: 50%;
         background-color: #0A8528;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .settings-logout::after {
@@ -113,11 +113,11 @@
         border-radius: 50%;
         background-color: #0852FF;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .settings-logout:hover::after {
-        width: 30%; /* Подчеркивание, появляется с центра */
+        width: 30%;
     }
 
     .settings-back::after {
@@ -128,11 +128,11 @@
         border-radius: 50%;
         background-color: #7B088C;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .settings-back:hover::after {
-        width: 20%; /* Подчеркивание, появляется с центра */
+        width: 20%;
     }
 
     .logo img {
@@ -144,7 +144,7 @@
     .settings{
         margin: 10px 0;
         border: none;
-        text-align: center; /* Центрируем текст внутри поля */
+        text-align: center;
     }
 
     .settings h2 {
@@ -153,7 +153,6 @@
         margin-bottom: 20px;
     }
 
-    /* Стили ссылок в боковом блоке */
     .settings p {
         list-style-type: none;
         padding: 0;
@@ -229,7 +228,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         document.querySelector(".settings").classList.add("setting-line-loaded");
-    }, 50); // Небольшая задержка в 50 миллисекунд
+    }, 50);
 });
 </script>
 {% endblock %}

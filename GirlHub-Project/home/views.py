@@ -1,4 +1,3 @@
-# home/views.py
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -18,7 +17,7 @@ import io
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
-from django.db.models import Q  # Добавляем импорт Q
+from django.db.models import Q
 from django.utils.dateparse import parse_datetime
 
 from django.utils import timezone
@@ -38,15 +37,12 @@ def home_view(request):
         try:
             chat_partner = User.objects.get(username=chat_user)
 
-            # Загружаем последние сообщения, отсортированные по убыванию времени
             messages_qs = Message.objects.filter(
                 Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)
             ).order_by('-timestamp', '-id')[:initial_load_count]
 
-            # Преобразуем QuerySet в список и переворачиваем его
             messages_list = list(messages_qs)[::-1]
 
-            # Помечаем непрочитанные сообщения как прочитанные
             Message.objects.filter(sender=chat_partner, receiver=request.user, is_read=False).update(is_read=True)
         except User.DoesNotExist:
             chat_user = None
@@ -56,17 +52,13 @@ def home_view(request):
 
             group_object = Group.objects.get(name=group_id)
             profile = Profile.objects.get(user=request.user)
-            # Загружаем последние сообщения, отсортированные по убыванию времени
             posts_qs = Post.objects.filter(
                 Q(group_sender=group_object)
             ).order_by('-timestamp', '-id')[:initial_load_count]
 
-            # Преобразуем QuerySet в список и переворачиваем его
             posts_list = list(posts_qs)[::-1]
 
             status = GroupMemberStatus.objects.get(group=group_object, member=profile)
-            # print( 124351111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111)
-            # Обновляем поле is_read и сохраняем изменения
             status.is_read = True
             status.save()
         except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
@@ -81,7 +73,6 @@ def home_view(request):
         'posts': posts_list,
         'group': group_object
     })
-
 
 @login_required
 def home_delete(request):
@@ -112,7 +103,6 @@ def home_delete(request):
                 GroupMemberStatus.objects.get(group=group, member=profile).delete()
                 profile.groups.remove(group)
                 profile.save()
-                print(group.sender, request.user)
                 if group.sender == request.user:
                     new_sender = GroupMemberStatus.objects.filter(group=group)
 
@@ -145,7 +135,6 @@ def home_delete(request):
         'group_id': group_id,
 
     })
-
 
 @login_required
 def home_clear(request):
@@ -202,7 +191,6 @@ def home_clear(request):
         'group_id': group_id,
 
     })
-
 
 @login_required
 def home_pop_back(request):
@@ -264,10 +252,8 @@ def home_pop_back(request):
 
     })
 
-
 def redirect_to_home(request):
     return redirect('/home/')
-
 
 @login_required
 def add_contact(request):
@@ -282,7 +268,6 @@ def add_contact(request):
             messages.error(request, 'User with this name not found.')
         return redirect('home')
     return redirect('home')
-
 
 @login_required
 def get_contacts(request):
@@ -304,7 +289,6 @@ def get_contacts(request):
 
     return JsonResponse({'contacts': contacts_data})
 
-
 @login_required
 def get_groups(request):
     groups = request.user.profile.groups.all()
@@ -322,14 +306,12 @@ def get_groups(request):
 
         if unread_posts.exists():
             is_read = True
-        print(is_read)
         groups_data.append({
             'name': group.name,
             'image_url': group.image.url if group.image else '',
             'is_read': is_read,
         })
     return JsonResponse({'groups': groups_data})
-
 
 @login_required
 def send_message(request):
@@ -338,7 +320,6 @@ def send_message(request):
         receiver_name = request.POST.get('receiver_name')
         image = request.FILES.get('image')
 
-        # Проверяем, что сообщение не пустое и не состоит только из пробелов
         if not message_content and not image:
             return JsonResponse({'status': 'error', 'message': 'Message cannot be empty.'})
 
@@ -349,10 +330,9 @@ def send_message(request):
         try:
             receiver_user = User.objects.get(username=receiver_name)
 
-            if request.user not in receiver_user.profile.contacts.all():  # Если у получателя нет отправителя в контактах, то добавляем его
+            if request.user not in receiver_user.profile.contacts.all():
                 receiver_user.profile.contacts.add(request.user.profile)
 
-            # Проверяем время последнего сообщения от пользователя
             last_message = Message.objects.filter(sender=request.user).order_by('-timestamp').first()
             if last_message:
                 time_since_last_message = timezone.now() - last_message.timestamp
@@ -372,7 +352,6 @@ def send_message(request):
             return JsonResponse({'status': 'error', 'message': 'Recipient not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
-
 @login_required
 def check_new_messages(request):
     contacts_with_unread = []
@@ -383,7 +362,6 @@ def check_new_messages(request):
         if unread_messages.exists():
             contacts_with_unread.append(contact.user.username)
     return JsonResponse({'contacts_with_unread': contacts_with_unread})
-
 
 @login_required
 def get_new_messages(request, chat_user=None):
@@ -411,7 +389,6 @@ def get_new_messages(request, chat_user=None):
                 is_read=False
             ).order_by('timestamp', 'id')
 
-        # Добавляем отправителя в контакты получателя, если его там нет
         if chat_partner != request.user:
             receiver_profile = request.user.profile
             sender_profile = chat_partner.profile
@@ -426,14 +403,12 @@ def get_new_messages(request, chat_user=None):
             "timestamp": message.timestamp.isoformat()
         } for message in messages_qs]
 
-        # Обновляем статус is_read только для сообщений, полученных текущим пользователем
         messages_qs.filter(receiver=request.user).update(is_read=True)
 
         return JsonResponse({"new_messages": new_messages})
 
     except User.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
-
 
 @login_required
 def load_old_messages(request, chat_user):
@@ -444,19 +419,16 @@ def load_old_messages(request, chat_user):
     try:
         chat_partner = User.objects.get(username=chat_user)
 
-        # Parse the timestamp
         before_datetime = parse_datetime(before_timestamp)
         if before_datetime is None:
             return JsonResponse({"error": "Invalid timestamp"}, status=400)
 
-        # Corrected filtering logic with proper grouping
         messages_qs = Message.objects.filter(
             Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)
         ).filter(
             Q(timestamp__lt=before_datetime) | (Q(timestamp=before_datetime) & Q(id__lt=before_id))
         ).order_by('-timestamp', '-id')[:limit]
 
-        # Since we are fetching messages in descending order, we need to reverse them for correct display
         messages = []
         for message in messages_qs:
             messages.append({
@@ -467,14 +439,10 @@ def load_old_messages(request, chat_user):
                 "timestamp": message.timestamp.isoformat()
             })
 
-        # Reverse the messages to display them in ascending order
-        # messages.reverse() - Эта тварь все ломала! убейте
-
         return JsonResponse({"messages": messages})
 
     except User.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
-
 
 @login_required
 def publish_post(request):
@@ -484,19 +452,15 @@ def publish_post(request):
         name_group = request.POST.get('name_group')
         image = request.FILES.get('post_image')
 
-        # Проверка на пустоту поста (без содержания и изображения)
         if not post_content and not image:
             return JsonResponse({'status': 'error', 'message': 'The post cannot be empty.'})
 
-        # Проверка на длину поста
         if len(post_content) > 8000:
             return JsonResponse(
                 {'status': 'error', 'message': 'The post is too long. Maximum length is 8000 characters.'})
-
         try:
             group_sender = Group.objects.get(name=name_group)
 
-            # Проверяем время последнего сообщения от пользователя
             last_post = Post.objects.filter(group_sender=group_sender).order_by('-timestamp').first()
 
             if last_post:
@@ -525,7 +489,6 @@ def publish_post(request):
             return JsonResponse({'status': 'error', 'message': 'Group not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
-
 @login_required
 def check_new_posts(request):
     groups_with_unread = []
@@ -541,7 +504,6 @@ def check_new_posts(request):
         if unread_posts.exists():
             groups_with_unread.append(group_user.name)
     return JsonResponse({'groups_with_unread': groups_with_unread})
-
 
 @login_required
 def get_new_posts(request, group_id=None):
@@ -579,10 +541,8 @@ def get_new_posts(request, group_id=None):
             "timestamp": post.timestamp.isoformat()
         } for post in posts_qs]
 
-        # Обновляем статус is_read только для сообщений, полученных текущим пользователем
         status = GroupMemberStatus.objects.get(group=group_sender, member=profile)
 
-        # Обновляем поле is_read и сохраняем изменения
         status.is_read = True
         status.save()
 
@@ -590,7 +550,6 @@ def get_new_posts(request, group_id=None):
 
     except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
         return JsonResponse({"error": "User does not exist"}, status=404)
-
 
 @login_required
 def load_old_posts(request, group_id):
@@ -624,28 +583,20 @@ def load_old_posts(request, group_id):
                 "timestamp": post.timestamp.isoformat()
             })
 
-        # Reverse the messages to display them in ascending order
-        # messages.reverse() - Эта тварь все ломала! убейте
-
         return JsonResponse({"posts": posts})
 
     except Group.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
 
-
 def change_image_1(image_file, size):
-    # Загружаем изображение с помощью PIL
     image = Image.open(image_file)
 
-    # Уменьшаем изображение до нужного размера
     image = image.resize(size, Image.Resampling.LANCZOS)
 
-    # Создаем маску для обрезки по кругу
     mask = Image.new("L", size, 0)
     mask_draw = ImageDraw.Draw(mask)
     mask_draw.ellipse((0, 0, *size), fill=255)
 
-    # Применяем маску и создаем итоговое изображение
     result = ImageOps.fit(image, size, centering=(0.5, 0.5))
     result.putalpha(mask)
 
@@ -653,11 +604,9 @@ def change_image_1(image_file, size):
 
     return result
 
-
 @login_required
 def settings(request):
     return render(request, 'account/setting.html')
-
 
 @login_required
 def change_email_view(request):
@@ -665,29 +614,24 @@ def change_email_view(request):
         password = request.POST.get('password')
         new_email = request.POST.get('new_email')
 
-        # Проверяем пароль пользователя
         user = authenticate(username=request.user.username, password=password)
         if user is None:
             messages.error(request, "Incorrect password")
-            return redirect('account_change_email')  # Остаемся на той же странице
+            return redirect('account_change_email')
 
-        # Проверка корректности нового email
         try:
             validate_email(new_email)
         except ValidationError:
             messages.error(request, "Incorrect email format.")
             return redirect('account_change_email')
 
-        # Устанавливаем новый email
         user.email = new_email
         user.save()
 
-        # Сообщение об успешной смене email
         messages.success(request, "Email has been successfully changed!")
-        return redirect('account_change_email')  # Остаемся на странице изменения email
+        return redirect('account_change_email')
 
     return render(request, 'account/email.html', {'user': request.user})
-
 
 @login_required
 def change_username(request):
@@ -695,18 +639,17 @@ def change_username(request):
         password = request.POST.get('password')
         new_username = request.POST.get('new_username')
 
-        # Проверяем пароль пользователя
         user = authenticate(username=request.user.username, password=password)
         if user is None:
             messages.error(request, "Incorrect password.")
-            return redirect('account_change_username')  # Остаемся на той же странице
+            return redirect('account_change_username')
 
         if User.objects.filter(username=new_username).exists():
             messages.error(request, "There is already such a nickname")
-            return redirect('account_change_username')  # Остаемся на той же странице
+            return redirect('account_change_username')
         try:
             validators.UnicodeUsernameValidator(new_username)
-            validators.ASCIIUsernameValidator(new_username)  # Не знаю, какой у нас стандарт
+            validators.ASCIIUsernameValidator(new_username)
         except ValidationError:
             messages.error(request, "Incorrect nickname format.")
             return redirect('account_change_username')
@@ -714,12 +657,10 @@ def change_username(request):
         user.username = new_username
         user.save()
 
-        # Сообщение об успешной смене email
         messages.success(request, "Username has been successfully changed.")
-        return redirect('account_change_username')  # Остаемся на странице изменения email
+        return redirect('account_change_username')
 
     return render(request, 'account/change_username.html', {'user': request.user})
-
 
 @login_required
 def change_image(request):
@@ -727,12 +668,10 @@ def change_image(request):
         if request.FILES.get('image'):
             image_file = request.FILES.get('image')
             size = (32, 32)
-            # Создаем профиль пользователя с загруженным изображением
             profile = Profile.objects.get(user=request.user)
 
             result = change_image_1(image_file, size)
 
-            # Сохраняем изображение в формате PNG для сохранения прозрачности
             buffer = io.BytesIO()
             result.save(buffer, format='PNG')
             profile.image.save('profile_images.png', ContentFile(buffer.getvalue()))
@@ -758,7 +697,6 @@ def create_group(request):
             size = (32, 32)
             result = change_image_1(image_file, size)
 
-            # Сохраняем изображение в формате PNG для сохранения прозрачности
             buffer = io.BytesIO()
             result.save(buffer, format='PNG')
             group.image.save('group_images.png', ContentFile(buffer.getvalue()))
@@ -769,9 +707,8 @@ def create_group(request):
         profile.groups.add(group)
         GroupMemberStatus.objects.create(group=group, member=profile)
         messages.success(request, "The group has been created.")
-        return redirect('home')  # Остаемся на странице изменения email
+        return redirect('home')
     return render(request, 'account/create_group.html', {'user': request.user})
-
 
 @login_required
 def add_group(request):
@@ -789,4 +726,3 @@ def add_group(request):
             messages.error(request, 'User with this name not found.')
         return redirect('home')
     return redirect('home')
-# изменены

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Главная страница</title>
+    <title>Chats</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'home/home.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Permanent+Marker&display=swap"
@@ -11,7 +11,6 @@
 </head>
 <body>
 <div class="container">
-    <!-- Верхняя панель с именем пользователя и кнопкой выхода -->
     <header>
         <div class="profile-img">
             <img src="{{user.profile.image.url}}" alt="Profile image">
@@ -21,7 +20,6 @@
         <div class="logout"><a href="{% url 'account_settings' %}"><img src="{% static 'setting.svg' %}" alt=""></a></div>
     </header>
 
-    <!-- Боковая панель для контактов -->
     <aside class="contacts-list">
         <h2>Contacts</h2>
         <ul class="contacts">
@@ -38,7 +36,6 @@
             <li>No contacts</li>
             {% endfor %}
         </ul>
-        <!-- добавленно-->
         <h2>Groups</h2>
         <ul class="groups">
             {% for group in user.profile.groups.all %}
@@ -54,13 +51,11 @@
             <li>No groups</li>
             {% endfor %}
         </ul>
-        <!-- добавленноend-->
         <form class="add-contact-form" method="post" action="{% url 'add_contact' %}">
             {% csrf_token %}
             <input type="text" name="contact_name" placeholder="Add contact" required>
             <button type="submit">Add</button>
         </form>
-        <!-- добавленно-->
         <p><a class="make-group-link" href="{% url 'create_group' %}">Make group</a></p>
 
         <form class="add-group-form" method="post" action="{% url 'add_group' %}">
@@ -68,10 +63,9 @@
             <input class="input-group-name" type="text" name="group_name" placeholder="Group name" required>
             <button class="submit-group-name" type="submit">Add</button>
         </form>
-        <!-- добавленноend-->
+
     </aside>
 
-    <!-- Основной блок для чата -->                   <!-- ИЗМЕНИЛ ПОЛНОСТЬЮ ТУТ ВЕСЬ БЛОК -->
     <main class="chat">
         {% if chat_user %}
         <div class="chat-header">
@@ -94,31 +88,28 @@
         <div class="chat-container">
             <div class="chat-messages" id="chat-messages">
                 {% if chat_user %}
-                {% for message in messages %}
-                <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}"
-                     data-timestamp="{{ message.timestamp|date:'c' }}" data-id="{{ message.id }}">
-                    {% if message.image %}
-                    <img src="{{ message.image.url }}" width="200">
-                    {% endif %}
-                    {% if message.content %}
-                    <p>{{ message.content }}</p>
-                    {% endif %}
-                </div>
-                {% empty %}
-                {% endfor %}
+                    {% for message in messages %}{% spaceless %}
+                        <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}"
+                             data-timestamp="{{ message.timestamp|date:'c' }}" data-id="{{ message.id }}">
+                            {% if message.image %}
+                                <img src="{{ message.image.url }}" width="200">
+                            {% endif %}
+                            {% if message.content %}
+                                <p>{{ message.content|safe }}</p>
+                            {% endif %}
+                        </div>
+                    {% endspaceless %}{% endfor %}
                 {% elif group_id %}
-                {% for post in posts %}
-                <div class="post_group"
-                     data-timestamp="{{ post.timestamp|date:'c' }}" data-id="{{ post.id }}">
-                    {% if post.image %}
-                    <img src="{{ post.image.url }}" width="200">
-                    {% endif %}
-                    {% if post.content %}
-                    <p>{{ post.content }}</p>
-                    {% endif %}
-                </div>
-                {% empty %}
-                {% endfor %}
+                    {% for post in posts %}{% spaceless %}
+                        <div class="post_group" data-timestamp="{{ post.timestamp|date:'c' }}" data-id="{{ post.id }}">
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" width="200">
+                            {% endif %}
+                            {% if post.content %}
+                                <p>{{ post.content|safe }}</p>
+                            {% endif %}
+                        </div>
+                    {% endspaceless %}{% endfor %}
                 {% else %}
                 <p class="standard-title">Choose contact or group</p>
                 {% endif %}
@@ -151,14 +142,13 @@
     </main>
 </div>
 
-<!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const messageTextarea = document.getElementById('message-input');
-    if (messageTextarea) {  // Проверяем, что элемент существует
+    if (messageTextarea) {
         messageTextarea.addEventListener('input', () => {
             messageTextarea.style.height = 'auto';
-            const newHeight = Math.min(messageTextarea.scrollHeight, 120); // Предел 120px или другой, если нужно
+            const newHeight = Math.min(messageTextarea.scrollHeight, 120);
             messageTextarea.style.height = `${newHeight}px`;
         });
     }
@@ -166,7 +156,7 @@
 <script>
     $(function() {
         const postTextarea = document.getElementById('post-input');
-        if (postTextarea) {  // Проверяем, что элемент существует
+        if (postTextarea) {
             postTextarea.addEventListener('input', () => {
                 postTextarea.style.height = 'auto';
                 const newHeight = Math.min(postTextarea.scrollHeight, 120);
@@ -176,15 +166,14 @@
 
         let offset = $('#chat-messages .message').length;
         const limit = 20;
-        let lastMessageTime = 0; // Для ограничения скорости отправки сообщений
+        let lastMessageTime = 0;
 
         function isUserAtBottom() {
             const chatMessages = $('#chat-messages')[0];
-            return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
+            return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250;
         }
 
         function loadOldMessages() {
-            console.log("Вызвана функция loadOldMessages");
             let $oldestMessage = $('#chat-messages .message').first();
             let oldestMessageTimestamp = $oldestMessage.attr('data-timestamp');
             let oldestMessageId = parseInt($oldestMessage.attr('data-id'), 10);
@@ -202,7 +191,6 @@
                     'limit': limit
                 },
                 success: function(response) {
-                    console.log("Получены старые сообщения:", response.messages);
 
                     const messages = response.messages;
                     if (messages.length > 0) {
@@ -232,23 +220,21 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка загрузки старых сообщений: ", error);
+                    console.log("Error loading old messages: ", error);
                 }
             });
         }
 
         $('#chat-messages').on('scroll', function() {
             if ($(this).scrollTop() === 0) {
-                console.log("Прокрутка достигла верха, подгружаем старые сообщения");
                 loadOldMessages();
             }
         });
 
-        // Обработчик для поля ввода сообщения
         $('#message-input').on('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault(); // Предотвращаем добавление новой строки
-                $('#send-message-form').submit(); // Отправляем форму
+                event.preventDefault();
+                $('#send-message-form').submit();
                  $('#message-input').css('height', 'auto');
             }
         });
@@ -273,7 +259,6 @@
             const messageContent = $('#message-input').val().trim();
             const imageInput = $('#image-input')[0].files[0];
 
-            // Проверяем, что сообщение не пустое и не состоит только из пробелов и переносов строк
             if (!messageContent && !imageInput) {
                  alert("You cannot send an empty message.");
                 return;
@@ -322,14 +307,13 @@
 
                         $('#image-input').val('');
 
-                        // Прокручиваем вниз после отправки сообщения
                         scrollToBottom();
                     } else {
-                        alert(response.message || "Ошибка отправки сообщения.");
+                        alert(response.message || "Error sending message.");
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка отправки сообщения: ", error);
+                    console.log("Error sending message: ", error);
                 }
             });
         });
@@ -391,7 +375,6 @@
                             }
                         });
 
-                        // Прокручиваем вниз, только если пользователь был внизу чата
                         if (response.new_messages.length > 0 && wasAtBottom) {
                             scrollToBottom();
                         }
@@ -399,7 +382,6 @@
                     setTimeout(loadNewMessages, 500);
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка загрузки новых сообщений: ", error);
                     setTimeout(loadNewMessages, 1000);
                 }
             });
@@ -412,7 +394,7 @@
                 success: function(response) {
                     const contacts = response.contacts;
                     const $contactsList = $('.contacts-list .contacts');
-                    $contactsList.empty(); // Очищаем текущий список контактов
+                    $contactsList.empty();
 
                     if (contacts.length === 0) {
                             $contactsList.append('<li>No contacts</li>'); // Display message if empty
@@ -436,26 +418,21 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка обновления списка контактов: ", error);
+                    console.log("Error reloading contacts: ", error);
                 }
             });
         }
 
-
-
-
-
         let offset_group = $('#chat-messages .post_group').length;
 
-        let lastPostTime = 0; // Для ограничения скорости отправки сообщений
+        let lastPostTime = 0;
 
         function isUserAtBottom() {
             const chatMessages = $('#chat-messages')[0];
-            return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250; // Порог 250 пикселей
+            return chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 250;
         }
 
         function loadOldPosts() {
-            console.log("Вызвана функция loadOldPosts");
             let $oldestPost = $('#chat-messages .post_group').first();
             let oldestPostTimestamp = $oldestPost.attr('data-timestamp');
             let oldestPostId = parseInt($oldestPost.attr('data-id'), 10);
@@ -473,7 +450,6 @@
                     'limit': limit
                 },
                 success: function(response) {
-                    console.log("Получены старые посты:", response.posts);
 
                     const posts = response.posts;
                     if (posts.length > 0) {
@@ -502,14 +478,13 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка загрузки старых сообщений: ", error);
+                    console.log("Error loading old posts: ", error);
                 }
             });
         }
 
         $('#chat-messages').on('scroll', function() {
             if ($(this).scrollTop() === 0) {
-                console.log("Прокрутка достигла верха, подгружаем старые сообщения");
                 loadOldPosts();
             }
         });
@@ -526,13 +501,11 @@
             const postContent = $('#post-input').val().trim();
             const imageInput = $('#post-image-input')[0].files[0];
 
-             // Проверяем, что пост не пустой и не состоит только из пробелов и переносов строк
             if (!postContent && !imageInput) {
                 alert("The post cannot be empty.");
                 return;
             }
 
-            // Проверка на максимальную длину поста
             if (postContent.length > 8000) {
                 alert("The post is too long. Maximum length is 8000 characters.");
                 return;
@@ -574,14 +547,13 @@
                         $('#post-input').css('height', 'auto');
                         $('#post-image-input').val('');
 
-                        // Прокручиваем вниз после отправки сообщения
                         scrollToBottom();
                     } else {
-                        alert(response.post || "Ошибка отправки сообщения.");
+                        alert(response.post || "Error sending message.");
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка отправки сообщения: ", error);
+                    console.log("Error sending message: ", error);
                 }
             });
         });
@@ -641,7 +613,6 @@
                             }
                         });
 
-                        // Прокручиваем вниз, только если пользователь был внизу чата
                         if (response.new_posts.length > 0 && wasAtBottom) {
                             scrollToBottom();
                         }
@@ -649,7 +620,6 @@
                     setTimeout(loadNewPosts, 500);
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка загрузки новых сообщений: ", error);
                     setTimeout(loadNewPosts, 1000);
                 }
             });
@@ -662,7 +632,7 @@
                 success: function(response) {
                     const groups = response.groups;
                     const $groupsList = $('.contacts-list .groups');
-                    $groupsList.empty(); // Очищаем текущий список контактов
+                    $groupsList.empty();
 
                     if (groups.length === 0) {
                             $groupsList.append('<li>No groups</li>'); // Display message if empty
@@ -684,17 +654,13 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("Ошибка обновления списка групп: ", error);
+                    console.log("Error reloading groups: ", error);
                 }
             });
         }
 
-
-
         checkNewMessages();
         loadNewMessages();
-
-
 
         checkNewPosts();
         loadNewPosts();

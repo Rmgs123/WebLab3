@@ -1,5 +1,3 @@
-/* home/static/home/signup.css */
-
 body {
     margin: 0;
     padding: 0;
@@ -22,7 +20,6 @@ body {
     z-index: -1;
 }
 
-/* Анимация градиента */
 @keyframes gradient {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -41,7 +38,6 @@ h1 {
     align-items: center;
 }
 
-/* Стиль для сообщений об ошибках */
 .error {
     color: #d9534f;
     font-size: 14px;
@@ -66,8 +62,8 @@ h1 {
 }
 
 .logo img {
-    width: 100px; /* Задаем фиксированную ширину для логотипа */
-    height: auto; /* Автоматическая высота, чтобы сохранить пропорции */
+    width: 100px;
+    height: auto;
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -83,7 +79,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.45s, box-shadow 0.2s;
-    width: 90%; /* Ширина кнопки совпадает с шириной полей */
+    width: 90%;
     max-width: 150px;
 }
 

@@ -1,4 +1,3 @@
-/* Градиентный фон */
 body {
     margin: 0;
     padding: 0;
@@ -27,7 +26,6 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Основной контейнер */
 .container {
     background: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
@@ -38,13 +36,11 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* УДАЛИТЬ ЭТО ЧТОБЫ УБРАТЬ СУЩА */
 .image-container img {
     width: 100px;
     margin-bottom: 10px;
 }
 
-/* Заголовок и текст */
 h1 {
     color: #d32f2f;
     font-size: 24px;

@@ -1,4 +1,3 @@
-# home/apps.py
 from django.apps import AppConfig
 
 class HomeConfig(AppConfig):
@@ -6,4 +5,4 @@ class HomeConfig(AppConfig):
     name = 'home'
 
     def ready(self):
-        import home.signals  # Регистрация сигналов
+        import home.signals

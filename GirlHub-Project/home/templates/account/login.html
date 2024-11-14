@@ -18,10 +18,8 @@
         <form method="post" action="{% url 'account_login' %}">
             {% csrf_token %}
 
-            <!-- Поле Email и его ошибки -->
             <input class="input-email" type="email" name="login" placeholder="Email" required value="{{ form.login.value|default_if_none:'' }}">
 
-            <!-- Поле Password и его ошибки -->
             <input class="input-password" type="password" name="password" placeholder="Password" required>
 
             <a href="{% url 'account_reset_password' %}" class="forgot-password">Forget password?</a>
@@ -30,7 +28,6 @@
 
         <p class="signup">No account yet? <a href="{% url 'account_signup' %}">Register</a></p>
 
-        <!-- Всплывающее уведомление об ошибке входа -->
         {% if form.errors %}
         <div class="error-message show">
             {{ form.non_field_errors.as_text }}

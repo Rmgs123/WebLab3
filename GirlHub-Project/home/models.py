@@ -1,4 +1,3 @@
-# home/models.py
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -38,8 +37,8 @@ class GroupMemberStatus(models.Model):
 
 class Post(models.Model):
     group_sender = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_post')
-    content = models.TextField(blank=True, null=True)  # Поле для текста сообщения
-    image = models.ImageField(upload_to='group_chat_images/', blank=True, null=True)  # Новое поле для изображения
+    content = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='group_chat_images/', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -52,8 +51,8 @@ class Post(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-    content = models.TextField(blank=True, null=True)  # Поле для текста сообщения
-    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)  # Новое поле для изображения
+    content = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 

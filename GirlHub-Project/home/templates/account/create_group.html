@@ -1,7 +1,7 @@
 {% extends "base_settings.html" %}
 
 {%block title%}
-<h2>Make new group</h2>
+<h2>Make a new group</h2>
 {% endblock %}
 
 {% block content %}
@@ -16,18 +16,15 @@
     </p>
 </form>
 
-<!-- Кнопка назад -->
 <p class="back-link"><a href="{% url 'home' %}">Back</a></p>
 
 <div class="notification" id="notification">The nickname has been successfully changed.</div>
 <script>
-    // Функция показа уведомления
     function showNotification(message) {
         const notification = document.getElementById("notification");
         notification.innerText = message;
         notification.classList.add("show");
 
-        // Убираем уведомление через 3 секунды
         setTimeout(() => {
             notification.classList.remove("show");
         }, 3000);
@@ -37,7 +34,6 @@
         const fileName = this.files[0] ? this.files[0].name : "Upload image";
         fileLabel.textContent = fileName;
     });
-    // Если есть сообщения об успехе, показать уведомление
     {% if messages %}
         {% for message in messages %}
             showNotification("{{ message }}");
@@ -72,12 +68,12 @@
     input[type="text"] {
         background-color: #f2f2f2;
         font-size: 16px;
-        width: 90%; /* Уменьшаем ширину для лучшего центрирования */
+        width: 90%;
         padding: 10px;
         margin: 10px 0;
         border: 1px solid #ccc;
         border-radius: 15px;
-        text-align: center; /* Центрируем текст внутри поля */
+        text-align: center;
         font-family: "Open Sans", sans-serif;
         transition: box-shadow 0.3s ease;
     }
@@ -107,7 +103,7 @@
         cursor: pointer;
         transition: background 0.3s;
         min-width: 140px;
-        max-width: 140px; /* Ограничение ширины кнопки */
+        max-width: 140px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -131,7 +127,7 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 90%; /* Ширина кнопки совпадает с шириной полей */
+        width: 90%;
         max-width: 150px;
     }
 
@@ -149,18 +145,18 @@
     }
 
     .logo img {
-        width: 90px; /* Ограничиваем размер логотипа */
+        width: 90px;
         height: auto;
         margin-bottom: 0px;
     }
 
     input[type="text"] {
-        width: 90%; /* Уменьшаем ширину для лучшего центрирования */
+        width: 90%;
         padding: 10px;
         margin: 10px 0;
         border: 1px solid #ccc;
         border-radius: 5px;
-        text-align: center; /* Центрируем текст внутри поля */
+        text-align: center;
     }
 
     .back-link {
@@ -170,7 +166,7 @@
     .back-link a {
         color: black;
         text-decoration: none;
-        font-weight: normal; /* Убираем жирность */
+        font-weight: normal;
         transition: color 0.8s;
         font-size: 25px;
         margin-top: 20px;
@@ -189,21 +185,20 @@
         border-radius: 50%;
         background-color: #21D4FD;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .back-link:hover::after {
         width: 20%;
     }
 
-    /* Уведомление об успехе */
     .notification {
         position: fixed;
         top: 10px;
         left: 50%;
         transform: translateX(-50%);
-        background: #fff; /* Белый фон для уведомления */
-        color: 	#000000; /* White текст */
+        background: #fff;
+        color: 	#000000;
         padding: 10px;
         border: 2px solid #fff;
         border-radius: 5px;
@@ -213,24 +208,21 @@
         transition: opacity 0.5s ease, visibility 0.5s;
     }
 
-    /* Показ уведомления */
     .notification.show {
         opacity: 1;
         visibility: visible;
     }
 
-    /* Исчезновение уведомления через 3 секунды */
     @keyframes fadeOut {
         0% { opacity: 1; }
         100% { opacity: 0; }
     }
 
-    /* Стили для ошибок */
     .error-message {
         color: red;
         font-size: 14px;
         margin-bottom: 10px;
-        text-align: center; /* Центрируем ошибки */
+        text-align: center;
     }
 </style>
 {% endblock %}

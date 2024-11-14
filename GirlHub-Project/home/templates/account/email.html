@@ -24,7 +24,6 @@
         notification.innerText = message;
         notification.classList.add("show");
 
-        // Убираем уведомление через 3 секунды
         setTimeout(() => {
             notification.classList.remove("show");
         }, 3000);
@@ -86,13 +85,13 @@
         border-radius: 50%;
         width: 90%;
         margin: auto;
-        transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
-        transform-origin: center; /* Начало анимации из центра */
-        transition: transform 0.5s ease; /* Плавная анимация */
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s ease;
     }
 
     .email-line-loaded .email-line {
-        transform: scaleX(1); /* Конечный масштаб по горизонтали - 1 */
+        transform: scaleX(1);
     }
 
     .username-display p {
@@ -135,7 +134,7 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 90%; /* Ширина кнопки совпадает с шириной полей */
+        width: 90%;
         max-width: 150px;
     }
 
@@ -155,7 +154,7 @@
     .back-link a {
         color: black;
         text-decoration: none;
-        font-weight: normal; /* Убираем жирность */
+        font-weight: normal;
         transition: color 0.8s;
         font-size: 25px;
         margin-top: 20px;
@@ -174,21 +173,20 @@
         border-radius: 50%;
         background-color: #FFEF08;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .back-link:hover::after {
         width: 20%;
     }
 
-    /* Уведомление об успехе */
     .notification {
         position: fixed;
         top: 10px;
         left: 50%;
         transform: translateX(-50%);
         background: #fff;
-        color: 	#000000; /* White текст */
+        color: 	#000000;
         padding: 10px;
         border: 2px solid #fff;
         border-radius: 5px;
@@ -219,7 +217,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         document.querySelector(".email").classList.add("email-line-loaded");
-    }, 50); // Небольшая задержка в 50 миллисекунд
+    }, 50);
 });
 </script>
 {% endblock %}

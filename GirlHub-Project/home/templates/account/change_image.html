@@ -51,13 +51,13 @@
         border-radius: 50%;
         width: 75%;
         margin: auto;
-        transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
-        transform-origin: center; /* Начало анимации из центра */
-        transition: transform 0.5s ease; /* Плавная анимация */
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s ease;
     }
 
     .picture-line-loaded .picture-line {
-        transform: scaleX(1); /* Конечный масштаб по горизонтали - 1 */
+        transform: scaleX(1);
     }
 
     .inputfile {
@@ -81,7 +81,7 @@
         cursor: pointer;
         transition: background 0.3s;
         min-width: 107px;
-        max-width: 107px; /* Ограничение ширины кнопки */
+        max-width: 107px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -105,7 +105,7 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 90%; /* Ширина кнопки совпадает с шириной полей */
+        width: 90%;
         max-width: 150px;
     }
 
@@ -125,7 +125,7 @@
     .back-link a {
         color: black;
         text-decoration: none;
-        font-weight: normal; /* Убираем жирность */
+        font-weight: normal;
         transition: color 0.8s;
         font-size: 25px;
         margin-top: 20px;
@@ -144,7 +144,7 @@
         border-radius: 50%;
         background-color: #FF9108;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .back-link:hover::after {
@@ -157,7 +157,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelector(".picture").classList.add("picture-line-loaded");
     }, 50);
 
-    // Обновление отображаемого имени файла при выборе
     document.getElementById("file").addEventListener("change", function() {
         const fileLabel = document.getElementById("file-label");
         const fileName = this.files[0] ? this.files[0].name : "Choose a file";
