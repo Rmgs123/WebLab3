@@ -89,10 +89,12 @@ header {
     color: #333333;
     font-weight: bold;
     font-size: 16px;
+    transition: color 0.3s ease
 }
 
 .contacts-list ul li a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    color: #5c5c5c;
 }
 
 .notification-dot,.notification-dot-group {
@@ -108,7 +110,7 @@ header {
 
 .add-contact-form input, .add-group-form input {
     flex-grow: 1;
-    font-family: "Permanent Marker", cursive;
+    font-family: "Open Sans", sans-cursive;
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -120,7 +122,8 @@ header {
 
 .add-contact-form button, .add-group-form button {
     padding: 5px 10px;
-    font-family: "Permanent Marker", cursive;
+    font-family: "Open Sans", sans-serif;
+    font-weight: bold;
     background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(51, 51, 51, 0.15);
     color: black;
@@ -159,13 +162,13 @@ header {
 
 /* Контейнер для сообщений и формы отправки */
 .chat-container {
+    font-family: "Open Sans", sans-serif;
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     min-height: 0;      /* Добавлено */
 }
-
 
 /* Область сообщений */
 .chat-messages {
@@ -177,6 +180,7 @@ header {
 
 #image-input-label, #image-input-label-post {
     margin-right: 30px;
+    margin-top: auto;
 }
 
 .make-group-link {
@@ -281,7 +285,8 @@ header {
 
 /* Кнопка отправки */
 .send-message-form button, .publish-post-form button {
-    font-family: "Permanent Marker", cursive;
+    font-family: "Open Sans", sans-cursive;
+    font-weight: bold;
     padding: 10px 16px;
     font-size: 15px;
     background-color: #f7f7f7;
@@ -363,6 +368,63 @@ header {
     height: 32px;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+.standard-title {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 5px;
+    width: 190px;
+    border-radius: 15px;
+    background: #f7f7f7;
+}
+
+.contacts,
+ .groups{
+    font-family: "Open Sans", sans-serif;
+}
+
+.textarea-message,
+.textarea-post{
+    font-family: "Open Sans", sans-serif;
+    margin-right: 25px;
+    border: none;
+    background: #f7f7f7;
+    width: 100%;
+    resize: none;
+    overflow-y: auto;
+    max-height: 200px;
+}
+
+.textarea-message::-webkit-scrollbar,
+.textarea-post::-webkit-scrollbar {
+    display: none;
+}
+
+.textarea-message,
+.textarea-post {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.textarea-message:focus,
+.textarea-post:focus {
+    outline: none;
+}
+
+.post-publish-button {
+    margin-top: auto;
+}
+
+.send-submit {
+    margin-top: auto;
+}
+
+#group-id,
+ #chat-user{
+    font-family: "Open Sans", sans-serif;
 }
 
 /* Адаптивность для мобильных устройств */

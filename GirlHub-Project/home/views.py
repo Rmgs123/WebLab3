@@ -157,10 +157,10 @@ def send_message(request):
 
         # Проверяем, что сообщение не пустое и не состоит только из пробелов
         if not message_content and not image:
-            return JsonResponse({'status': 'error', 'message': 'Сообщение не может быть пустым.'})
+            return JsonResponse({'status': 'error', 'message': 'Message cannot be empty.'})
 
-        if len(message_content) > 500:
-            return JsonResponse({'status': 'error', 'message': 'Сообщение слишком длинное. Максимальная длина — 500 символов.'})
+        if len(message_content) > 5000:
+            return JsonResponse({'status': 'error', 'message': 'The message is too long. The maximum length is 5000 characters.'})
 
         try:
             receiver_user = User.objects.get(username=receiver_name)
@@ -174,7 +174,7 @@ def send_message(request):
                 time_since_last_message = timezone.now() - last_message.timestamp
                 if time_since_last_message < timedelta(seconds=1):
                     return JsonResponse({'status': 'error',
-                                         'message': 'Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.'})
+                                         'message': 'You are sending messages too frequently. Please wait a bit.'})
 
             message = Message.objects.create(
                 sender=request.user,
@@ -302,11 +302,11 @@ def publish_post(request):
 
         # Проверка на пустоту поста (без содержания и изображения)
         if not post_content and not image:
-            return JsonResponse({'status': 'error', 'message': 'Пост не может быть пустым.'})
+            return JsonResponse({'status': 'error', 'message': 'The post cannot be empty.'})
 
         # Проверка на длину поста
-        if len(post_content) > 800:
-            return JsonResponse({'status': 'error', 'message': 'Пост слишком длинный. Максимальная длина — 500 символов.'})
+        if len(post_content) > 8000:
+            return JsonResponse({'status': 'error', 'message': 'The post is too long. Maximum length is 8000 characters.'})
 
         try:
             group_sender = Group.objects.get(name=name_group)
@@ -318,7 +318,7 @@ def publish_post(request):
                 time_since_last_message = timezone.now() - last_post.timestamp
                 if time_since_last_message < timedelta(seconds=1):
                     return JsonResponse({'status': 'error',
-                                         'message': 'Вы слишком часто публикуете посты. Пожалуйста, подождите немного.'})
+                                         'message': 'You are posting too frequently. Please wait a bit.'})
 
             post = Post.objects.create(
                 group_sender=group_sender,

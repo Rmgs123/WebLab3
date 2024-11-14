@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{% static 'home/home.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Permanent+Marker&display=swap"
           rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Permanent+Marker&display=swap"
+          rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -75,11 +77,11 @@
     <main class="chat">
         {% if chat_user %}
         <div class="chat-header">
-            Chat with <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
+            <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
         </div>
         {% elif group_id %}
         <div class="chat-header">
-            Чат с <span id="group-id">{{ group_id|default_if_none:"" }}</span>
+            <span id="group-id">{{ group_id|default_if_none:"" }}</span>
         </div>
         {% endif %}
         <div class="chat-container">
@@ -96,7 +98,7 @@
                     {% endif %}
                 </div>
                 {% empty %}
-                <p>No messages</p>
+                <p class="standard-title">No messages</p>
                 {% endfor %}
                 {% elif group_id %}
                 {% for post in posts %}
@@ -110,31 +112,33 @@
                     {% endif %}
                 </div>
                 {% empty %}
-                <p>No posts</p>
+                <p class="standard-title">No posts</p>
                 {% endfor %}
                 {% else %}
-                <p>Choose contact or group</p>
+                <p class="standard-title">Choose contact or group</p>
                 {% endif %}
             </div>
             {% if chat_user %}
             <form class="send-message-form" id="send-message-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="receiver_name" value="{{ chat_user }}">
-                <textarea name="message" id="message-input" placeholder="Напишите сообщение..." autocomplete="off" maxlength="500"></textarea>
+                <textarea class="textarea-message" name="message" id="message-input" placeholder="Write message..."
+                          autocomplete="off" rows="2"></textarea>
                 <input class="input-file" type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
                 <label for="image-input" id="image-input-label">Choose a file</label>
-                <button type="submit">SEND</button>
+                <button type="submit" class="send-submit">Send</button>
             </form>
             {% elif group_id %}
             {% if group.sender == user %}
             <form class="publish-post-form" id="publish-post-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="name_group" value="{{ group_id }}">
-                <textarea name="post" id="post-input" placeholder="Напишите текст поста ..." autocomplete="off" maxlength="800"></textarea>
+                <textarea class="textarea-post" name="post" id="post-input" placeholder="Write the text of the post..."
+                          autocomplete="off" rows="2"></textarea>
                 <input class="input-file-post" type="file" name="post_image" id="post-image-input"
                        accept=".png, .jpg, .jpeg">
                 <label for="post-image-input" id="image-input-label-post">Choose a file</label>
-                <button type="submit">Publish</button>
+                <button type="submit" class="post-publish-button">Publish</button>
             </form>
             {% endif %}
             {% endif %}
@@ -145,7 +149,26 @@
 <!-- Подключаем jQuery и ваш JavaScript-код перед закрывающим тегом body -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    const messageTextarea = document.getElementById('message-input');
+    if (messageTextarea) {  // Проверяем, что элемент существует
+        messageTextarea.addEventListener('input', () => {
+            messageTextarea.style.height = 'auto';
+            const newHeight = Math.min(messageTextarea.scrollHeight, 120); // Предел 120px или другой, если нужно
+            messageTextarea.style.height = `${newHeight}px`;
+        });
+    }
+</script>
+<script>
     $(function() {
+        const postTextarea = document.getElementById('post-input');
+        if (postTextarea) {  // Проверяем, что элемент существует
+            postTextarea.addEventListener('input', () => {
+                postTextarea.style.height = 'auto';
+                const newHeight = Math.min(postTextarea.scrollHeight, 120);
+                postTextarea.style.height = `${newHeight}px`;
+            });
+        }
+
         let offset = $('#chat-messages .message').length;
         const limit = 20;
         let lastMessageTime = 0; // Для ограничения скорости отправки сообщений
@@ -245,18 +268,18 @@
 
             // Проверяем, что сообщение не пустое и не состоит только из пробелов и переносов строк
             if (!messageContent && !imageInput) {
-                alert("Нельзя отправлять пустое сообщение.");
+                alert("You cannot send an empty message.");
                 return;
             }
 
-            if (messageContent.length > 500) {
-                alert("Сообщение слишком длинное. Максимальная длина — 500 символов.");
+            if (messageContent.length > 5000) {
+                alert("The message is too long. The maximum length is 5000 characters.");
                 return;
             }
 
             const now = Date.now();
             if (now - lastMessageTime < 1000) {
-                alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                alert("You are sending messages too frequently. Please wait a bit.");
                 return;
             }
 
@@ -491,19 +514,19 @@
 
              // Проверяем, что пост не пустой и не состоит только из пробелов и переносов строк
             if (!postContent && !imageInput) {
-                alert("Пост не может быть пустым.");
+                alert("The post cannot be empty.");
                 return;
             }
 
             // Проверка на максимальную длину поста
-            if (postContent.length > 800) {
-                alert("Пост слишком длинный. Максимальная длина — 800 символов.");
+            if (postContent.length > 8000) {
+                alert("The post is too long. Maximum length is 8000 characters.");
                 return;
             }
 
             const now = Date.now();
             if (now - lastPostTime < 1000) {
-                alert("Вы слишком часто отправляете сообщения. Пожалуйста, подождите немного.");
+                alert("You are sending messages too frequently. Please wait a bit.");
                 return;
             }
 
