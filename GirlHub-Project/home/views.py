@@ -8,7 +8,7 @@ from django.contrib.auth import validators
 from .models import Profile, Message, Group, Post, GroupMemberStatus
 from django.contrib import messages
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
@@ -98,7 +98,7 @@ def home_delete(request):
                 profile.contacts.remove(chat_partner.profile)
                 profile.save()
 
-                messages.success(request, "Контакт удален.")
+                messages.success(request, "Contact deleted")
             except User.DoesNotExist:
                 chat_user = None
 
@@ -167,7 +167,7 @@ def home_clear(request):
 
                 messages_qs.delete()
 
-                messages.success(request, "Чат очищен.")
+                messages.success(request, "Chat cleared")
             except User.DoesNotExist:
                 chat_user = None
 
@@ -188,7 +188,7 @@ def home_clear(request):
 
                 posts_qs.delete()
 
-                messages.success(request, "Чат очищен.")
+                messages.success(request, "Chat cleared")
             except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
                 group_id = None
 
@@ -226,7 +226,7 @@ def home_pop_back(request):
 
                     message.delete()
 
-                messages.success(request, "Сообщение удалено.")
+                messages.success(request, "Message deleted")
             except User.DoesNotExist:
                 chat_user = None
 
@@ -249,7 +249,7 @@ def home_pop_back(request):
 
                     post.delete()
 
-                messages.success(request, "Пост удален.")
+                messages.success(request, "Post deleted")
             except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
                 group_id = None
 
@@ -369,8 +369,8 @@ def send_message(request):
             message.save()
             return JsonResponse({'status': 'success', 'timestamp': message.timestamp.isoformat(), 'id': message.id})
         except User.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Получатель не найден'})
-    return JsonResponse({'status': 'error', 'message': 'Неверный запрос'})
+            return JsonResponse({'status': 'error', 'message': 'Recipient not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
 @login_required
@@ -750,7 +750,7 @@ def create_group(request):
 
         if Group.objects.filter(name=new_name).exists():
             messages.error(request, "Such a group already exists")
-            return redirect('home/create_group')  # Остаемся на той же странице
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         group = Group(name=new_name, sender=request.user)
         if request.FILES.get('image'):

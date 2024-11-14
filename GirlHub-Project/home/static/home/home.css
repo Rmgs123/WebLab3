@@ -28,6 +28,23 @@ header {
     color: white;
 }
 
+.logout {
+    overflow: hidden;
+}
+
+.logout img {
+    transition: transform 0.5s ease;
+}
+
+.logout img:hover {
+    transform: rotate(90deg); /* Поворот вправо на 90 градусов при наведении */
+}
+
+/* Для плавного возвращения на начальную позицию при отведении */
+.logout img {
+    transition: transform 0.5s ease;
+}
+
 .profile-img img {
     width: 40px;
     height: 40px;
@@ -36,6 +53,7 @@ header {
 }
 
 .username-display {
+    user-select: none;
     flex: 1;
     font-weight: bold;
     font-size: 30px;
@@ -61,6 +79,7 @@ header {
 }
 
 .contacts-list h2 {
+    user-select: none;
     font-size: 18px;
     margin-top: 0;
     margin-bottom: 10px;
@@ -360,6 +379,7 @@ header {
     margin-right: 10px;
 }
 .standard-title {
+    user-select: none;
     text-align: center;
     font-family: "Permanent Marker", sans-serif;
     position: absolute;
@@ -418,6 +438,33 @@ header {
     font-family: "Open Sans", sans-serif;
 }
 
+.delete_link {
+    margin-left: 280px;
+    margin-right: 50px;
+}
+
+.clear_link {
+    margin-right: 50px;
+}
+
+.pop_back_link {
+    margin-right: 50px;
+}
+
+.delete_link,
+ .clear_link,
+ .pop_back_link{
+    text-decoration: none;
+    color: white;
+    font-weight: normal;
+    transition: text-shadow 0.2s ease;
+}
+
+.delete_link:hover,
+ .clear_link:hover,
+ .pop_back_link:hover {
+    text-shadow: 3px 3px 2px #D9AFD9;
+ }
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {

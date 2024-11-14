@@ -18,8 +18,7 @@
         </div>
         <div class="username-display">Welcome, {{ user.username }}!</div>
         
-        <div class="logout"><a href="{% url 'account_settings' %}"><img src="{% static 'icons8-settings.svg' %}" alt=""></a>
-        </div>
+        <div class="logout"><a href="{% url 'account_settings' %}"><img src="{% static 'setting.svg' %}" alt=""></a></div>
     </header>
 
     <!-- Боковая панель для контактов -->
@@ -79,8 +78,7 @@
             <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
             <a class="delete_link" href="{% url 'home_delete' %}?chat_with={{ chat_user }}">Delete chat</a>
             <a class="clear_link" href="{% url 'home_clear' %}?chat_with={{ chat_user }}">Clear chat</a>
-            <a class="pop_back_link" href="{% url 'home_pop_back' %}?chat_with={{ chat_user }}">Delete last message
-                chat</a>
+            <a class="pop_back_link" href="{% url 'home_pop_back' %}?chat_with={{ chat_user }}">Delete last message</a>
         </div>
         {% elif group_id %}
         <div class="chat-header">
@@ -88,8 +86,7 @@
             <a class="delete_link" href="{% url 'home_delete' %}?group_with={{ group_id}}">Leave group</a>
             {% if group.sender == user %}
             <a class="clear_link" href="{% url 'home_clear' %}?group_with={{ group_id}}">Clear group</a>
-            <a class="pop_back_link" href="{% url 'home_pop_back' %}?group_with={{ group_id}}">Delete last post
-                group</a>
+            <a class="pop_back_link" href="{% url 'home_pop_back' %}?group_with={{ group_id}}">Delete last post</a>
             {% endif %}
 
         </div>
@@ -108,7 +105,6 @@
                     {% endif %}
                 </div>
                 {% empty %}
-                <p class="standard-title">No messages</p>
                 {% endfor %}
                 {% elif group_id %}
                 {% for post in posts %}
@@ -122,7 +118,6 @@
                     {% endif %}
                 </div>
                 {% empty %}
-                <p class="standard-title">No posts</p>
                 {% endfor %}
                 {% else %}
                 <p class="standard-title">Choose contact or group</p>
