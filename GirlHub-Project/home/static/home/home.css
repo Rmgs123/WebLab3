@@ -24,8 +24,8 @@ header {
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: #f7f7f7;
-    color: #333;
+    background-color: #1C2633;
+    color: white;
 }
 
 .profile-img img {
@@ -54,7 +54,8 @@ header {
 /* Боковая панель контактов */
 .contacts-list {
     grid-area: contacts;
-    background-color: #f7f7f7;
+    color: white;
+    background-color: #121B24;
     padding: 10px;
     overflow-y: auto;
 }
@@ -86,7 +87,7 @@ header {
 
 .contacts-list ul li a {
     text-decoration: none;
-    color: #333333;
+    color: white;
     font-weight: bold;
     font-size: 16px;
     transition: color 0.3s ease
@@ -111,9 +112,11 @@ header {
 .add-contact-form input, .add-group-form input {
     flex-grow: 1;
     font-family: "Open Sans", sans-cursive;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 10px;
+    background: #1C2633;
+    border: none;
+    color: white;
+    border-radius: 25px;
 }
 
 .add-contact-form input:focus, .add-group-form input:focus {
@@ -122,20 +125,17 @@ header {
 
 .add-contact-form button, .add-group-form button {
     padding: 5px 10px;
-    font-family: "Open Sans", sans-serif;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(51, 51, 51, 0.15);
-    color: black;
-    border-radius: 4px;
+    font-family: "Permanent Marker", cursive;
+    font-size: 15px;
+    background-color: #121B24;
+    border: none;
+    color: white;
     cursor: pointer;
-    transition: box-shadow 0.3s ease, text-shadow 0.3s ease, border 0.3s ease;
+    transition: text-shadow 0.3s ease;
 }
 
 .add-contact-form button:hover, .add-group-form button:hover {
-    box-shadow: 0 0 7px #D9AFD9;
     text-shadow: 3px 3px 2px #D9AFD9;
-    border: 1px solid rgba(51, 51, 51, 0.15);
 }
 
 /* Основная часть чата */
@@ -151,11 +151,10 @@ header {
 /* Заголовок чата */
 .chat-header {
     padding: 10px;
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #ddd;
-    border-top: 2px solid #ddd;
-    border-top-left-radius: 10px;
-    border-left: 2px solid #ddd;
+    color: white;
+    background-color: #121B24;
+    border-bottom: 1px solid #121B24;
+    border-left: 1px solid black;
     font-size: 18px;
     font-weight: bold;
 }
@@ -175,7 +174,7 @@ header {
     flex: 1;
     padding: 10px;
     overflow-y: auto;
-    background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
+    background: #0A111B;
 }
 
 #image-input-label, #image-input-label-post {
@@ -185,7 +184,7 @@ header {
 
 .make-group-link {
     text-decoration: none;
-    color: black;
+    color: white;
     transition: text-shadow 0.3s ease
 }
 
@@ -208,17 +207,14 @@ header {
     padding: 5px 10px;
     font-family: "Permanent Marker", cursive;
     background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(51, 51, 51, 0.15);
-    color: black;
-    border-radius: 4px;
+    border: none;
+    color: white;
     cursor: pointer;
-    transition: box-shadow 0.3s ease, text-shadow 0.3s ease, border 0.3s ease;
+    transition: text-shadow 0.3s ease;
 }
 
 .submit-group-name:hover {
-    box-shadow: 0 0 7px #D9AFD9;
     text-shadow: 3px 3px 2px #D9AFD9;
-    border: 1px solid rgba(51, 51, 51, 0.15);
 }
 
 .input-file,.input-file-post {
@@ -233,13 +229,11 @@ header {
 .input-file + label,.input-file-post + label {
     font-size: 15px;
     text-align: center;
-    font-weight: 700;
-    color: black;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(51, 51, 51, 0.3);
-    border-radius: 5px;
+    color: white;
+    background: r#121B24;
     display: inline-block;
     padding: 10px 20px;
+    font-family: "Permanent Marker", sans-serif;
     cursor: pointer;
     transition: background 0.3s;
     min-width: 100px;
@@ -247,14 +241,12 @@ header {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, text-shadow 0.3s ease;
+    transition: text-shadow 0.3s ease;
 }
 
 .input-file:focus + label,
 .input-file + label:hover,.input-file-post:focus + label,
 .input-file-post + label:hover {
-    background-color: white;
-    box-shadow: 0 0 10px #D9AFD9;
     border: 1px solid rgba(51, 51, 51, 0.15);
     text-shadow: 3px 3px 2px #D9AFD9;
 }
@@ -264,8 +256,8 @@ header {
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: #f7f7f7;
-    border-top: 1px solid #ddd;
+    background-color: #121B24;
+    border-left: 1px solid black;
 }
 
 /* Поле ввода сообщения */
@@ -285,22 +277,18 @@ header {
 
 /* Кнопка отправки */
 .send-message-form button, .publish-post-form button {
-    font-family: "Open Sans", sans-cursive;
-    font-weight: bold;
+    font-family: "Permanent Marker", sans-serif ;
     padding: 10px 16px;
     font-size: 15px;
-    background-color: #f7f7f7;
-    color: #333;
-    border: 1px solid rgba(51, 51, 51, 0.3);
-    border-radius: 5px;
+    background-color: #121B24;
+    color: white;
+    border: none;
     cursor: pointer;
-    transition: box-shadow 0.2s ease, text-shadow 0.2s ease, border 0.3s ease;
+    transition: text-shadow 0.2s ease;
 }
 
 .send-message-form button:hover, .publish-post-form button:hover {
-    box-shadow: 0 0 7px #D9AFD9;
     text-shadow: 3px 3px 2px #D9AFD9;
-    border: 1px solid rgba(51, 51, 51, 0.15);
 }
 
 /* Стили для сообщений */
@@ -316,14 +304,15 @@ header {
 }
 
 .from-user {
-    background-color: #FFEFFF;
+    background-color: #1F4264;
+    color: white;
     margin-left: auto;
     align-self: flex-end;
     max-width
 }
 
 .from-contact {
-    background-color: #CBFBFF;
+    background-color: #111D2A;
     margin-right: auto;
     align-self: flex-start;
 }
@@ -341,7 +330,8 @@ header {
     border-radius: 8px;
     max-width: 70%;
     word-wrap: break-word;
-    background-color: #CBFBFF;
+    background-color: #111D2A;
+    color: white;
     margin-right: auto;
     align-self: flex-start;
     word-wrap: break-word;
@@ -372,12 +362,13 @@ header {
 
 .standard-title {
     text-align: center;
+    font-family: "Permanent Marker", sans-serif;
     position: absolute;
     top: 50%;
     left: 50%;
-    padding: 5px;
-    width: 190px;
-    border-radius: 15px;
+    padding: 10px;
+    width: 210px;
+    border-radius: 25px;
     background: #f7f7f7;
 }
 
@@ -391,7 +382,8 @@ header {
     font-family: "Open Sans", sans-serif;
     margin-right: 25px;
     border: none;
-    background: #f7f7f7;
+    background: #121B24;
+    color: white;
     width: 100%;
     resize: none;
     overflow-y: auto;
