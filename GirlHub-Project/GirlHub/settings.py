@@ -22,9 +22,6 @@ LOGIN_REDIRECT_URL = '/home'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/home'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 USE_TZ = True
 TIME_ZONE = 'UTC'
 
@@ -139,7 +136,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 ACCOUNT_RATE_LIMITS = {
     "login": "10/m",

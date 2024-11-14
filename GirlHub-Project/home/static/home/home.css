@@ -322,6 +322,7 @@ header {
 
 .from-contact {
     background-color: #111D2A;
+    color: white;
     margin-right: auto;
     align-self: flex-start;
 }

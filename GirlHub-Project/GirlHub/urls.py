@@ -10,7 +10,7 @@ urlpatterns = [
     path('accounts/', include('home.accounts_urls')),
     path('home/', include('home.urls')),
     path('', home_views.redirect_to_home, name='redirect_to_home'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
