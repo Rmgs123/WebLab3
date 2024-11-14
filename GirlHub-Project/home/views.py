@@ -94,9 +94,9 @@ def add_contact(request):
             contact_user = User.objects.get(username=contact_name)
             profile = Profile.objects.get(user=request.user)
             profile.contacts.add(contact_user.profile)
-            messages.success(request, f'Контакт {contact_name} успешно добавлен!')
+            messages.success(request, f'Contact {contact_name} has been successfully added!')
         except User.DoesNotExist:
-            messages.error(request, 'Пользователь с таким именем не найден.')
+            messages.error(request, 'User with this name not found.')
         return redirect('home')
     return redirect('home')
 
@@ -337,8 +337,8 @@ def publish_post(request):
 
             return JsonResponse({'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id})
         except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
-            return JsonResponse({'status': 'error', 'message': 'Группа не найден'})
-    return JsonResponse({'status': 'error', 'message': 'Неверный запрос'})
+            return JsonResponse({'status': 'error', 'message': 'Group not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
 @login_required
@@ -483,14 +483,14 @@ def change_email_view(request):
         # Проверяем пароль пользователя
         user = authenticate(username=request.user.username, password=password)
         if user is None:
-            messages.error(request, "Неверный пароль.")
+            messages.error(request, "Incorrect password")
             return redirect('account_change_email')  # Остаемся на той же странице
 
         # Проверка корректности нового email
         try:
             validate_email(new_email)
         except ValidationError:
-            messages.error(request, "Некорректный формат электронной почты.")
+            messages.error(request, "Incorrect email format.")
             return redirect('account_change_email')
 
         # Устанавливаем новый email
@@ -498,7 +498,7 @@ def change_email_view(request):
         user.save()
 
         # Сообщение об успешной смене email
-        messages.success(request, "Email успешно изменен.")
+        messages.success(request, "Email has been successfully changed!")
         return redirect('account_change_email')  # Остаемся на странице изменения email
 
     return render(request, 'account/email.html', {'user': request.user})
@@ -513,24 +513,24 @@ def change_username(request):
         # Проверяем пароль пользователя
         user = authenticate(username=request.user.username, password=password)
         if user is None:
-            messages.error(request, "Неверный пароль.")
+            messages.error(request, "Incorrect password.")
             return redirect('account_change_username')  # Остаемся на той же странице
 
         if User.objects.filter(username=new_username).exists():
-            messages.error(request, "Такой ник уже есть")
+            messages.error(request, "There is already such a nickname")
             return redirect('account_change_username')  # Остаемся на той же странице
         try:
             validators.UnicodeUsernameValidator(new_username)
             validators.ASCIIUsernameValidator(new_username)  # Не знаю, какой у нас стандарт
         except ValidationError:
-            messages.error(request, "Некорректный формат ника.")
+            messages.error(request, "Incorrect nickname format.")
             return redirect('account_change_username')
 
         user.username = new_username
         user.save()
 
         # Сообщение об успешной смене email
-        messages.success(request, "Username успешно изменен.")
+        messages.success(request, "Username has been successfully changed.")
         return redirect('account_change_username')  # Остаемся на странице изменения email
 
     return render(request, 'account/change_username.html', {'user': request.user})
@@ -564,7 +564,7 @@ def create_group(request):
         new_name = request.POST.get('name_group')
 
         if Group.objects.filter(name=new_name).exists():
-            messages.error(request, "Такая группа уже есть")
+            messages.error(request, "Such a group already exists")
             return redirect('home/create_group')  # Остаемся на той же странице
 
         group = Group(name=new_name, sender=request.user)
@@ -583,7 +583,7 @@ def create_group(request):
 
         profile.groups.add(group)
         GroupMemberStatus.objects.create(group=group, member=profile)
-        messages.success(request, "Группа создана.")
+        messages.success(request, "The group has been created.")
         return redirect('home')  # Остаемся на странице изменения email
     return render(request, 'account/create_group.html', {'user': request.user})
 
@@ -599,9 +599,9 @@ def add_group(request):
             profile.groups.add(group)
             if group.sender != request.user:
                 GroupMemberStatus.objects.create(group=group, member=profile)
-            messages.success(request, f'Группа {group_name} успешно добавлена!')
+            messages.success(request, f'Group {group_name} has been successfully added!')
         except Group.DoesNotExist:
-            messages.error(request, 'Пользователь с таким именем не найден.')
+            messages.error(request, 'User with this name not found.')
         return redirect('home')
     return redirect('home')
 # изменены

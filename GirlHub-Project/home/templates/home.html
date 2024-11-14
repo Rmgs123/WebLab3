@@ -244,6 +244,7 @@
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault(); // Предотвращаем добавление новой строки
                 $('#send-message-form').submit(); // Отправляем форму
+                $('#message-input').css('height', 'auto');
             }
         });
 
@@ -251,6 +252,7 @@
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 $('#publish-post-form').submit();
+                $('#post-input').css('height', 'auto');
             }
         });
 
@@ -287,6 +289,7 @@
 
             const formData = new FormData(this);
 
+
             $.ajax({
                 url: "{% url 'send_message' %}",
                 type: 'POST',
@@ -310,6 +313,8 @@
                         $('#chat-messages').append(messageHtml);
 
                         $('#message-input').val('');
+                        $('#message-input').css('height', 'auto');
+
                         $('#image-input').val('');
 
                         // Прокручиваем вниз после отправки сообщения
@@ -557,6 +562,8 @@
                         $('#chat-messages').append(postHtml);
 
                         $('#post-input').val('');
+                        $('#post-input').css('height', 'auto');
+
                         $('#post-image-input').val('');
 
                         // Прокручиваем вниз после отправки сообщения
