@@ -5,38 +5,117 @@
 {% endblock %}
 
 {% block content %}
+<div class="picture">
+    <p class="picture-line"></p>
+</div>
 <form method="post"  enctype="multipart/form-data">
     {% csrf_token %}
-    <p><input type="file" name="image" accept=".png, .jpg, .jpeg"></p>
+    <p>
+        <input class="inputfile" type="file" name="image" id="file" accept=".png, .jpg, .jpeg">
+        <label for="file" id="file-label">Choose</label>
+    </p>
+
     <p><button class="submit-button" type="submit">Upload</button></p>
 </form>
 <p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
 <style type="text/css">
+    .background {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(43deg, rgba(252,207,69,1) 26%, rgba(252,176,69,1) 46%, rgba(252,127,50,1) 65%, rgba(253,73,29,1) 85%, rgba(253,29,29,1) 95%);
+        background-size: 400% 400%;
+        animation: gradient 10s ease infinite;
+        z-index: -1;
+    }
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
     .logo img {
         width: 90px;
         height: auto;
         margin-bottom: 0px;
     }
 
-    h1, h2 {
+    h2 {
         margin-bottom: 10px;
+        font-size: 35px;
+        text-shadow: 2px 2px 1px #FF9108;
+    }
+
+    .picture-line {
+        border: 2px solid black;
+        border-radius: 50%;
+        width: 75%;
+        margin: auto;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s ease;
+    }
+
+    .picture-line-loaded .picture-line {
+        transform: scaleX(1);
+    }
+
+    .inputfile {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+
+    .inputfile + label {
+        font-size: 1.25em;
+        font-weight: 700;
+        color: black;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid white;
+        border-radius: 5px;
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+        min-width: 107px;
+        max-width: 107px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .inputfile:focus + label,
+    .inputfile + label:hover {
+        background-color: white;
+        box-shadow: 0 0 20px #FF9108;
     }
 
     .submit-button {
+        font-family: "Permanent Marker", cursive;
         margin-top: 10px;
-        background-color: #000;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.15);
+        color: black;
+        font-size: 25px;
+        border: 2px solid white;
+        padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.8s;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
         width: 90%;
         max-width: 150px;
     }
 
     .submit-button:hover {
-        background-color: #EE82EE;
+        background: white;
+        box-shadow: 0 0 20px #FF9108;
+    }
+
+    .submit-button:active {
+        background-color: #e8e8e8;
     }
 
     .back-link {
@@ -44,24 +123,45 @@
     }
 
     .back-link a {
-        color: #000;
+        color: black;
         text-decoration: none;
         font-weight: normal;
         transition: color 0.8s;
-        color: #555555;
-        font-size: 14px;
+        font-size: 25px;
         margin-top: 20px;
+        transition: text-shadow 0.15s;
     }
 
     .back-link a:hover {
-        color: #EE82EE;
+        text-shadow: 1px 1px 1px #FF9108;
     }
 
-    .error-message {
-        color: red;
-        font-size: 14px;
-        margin-bottom: 10px;
-        text-align: center;
+    .back-link::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 3px;
+        border-radius: 50%;
+        background-color: #FF9108;
+        margin: auto;
+        transition: width 0.3s ease;
+    }
+
+    .back-link:hover::after {
+        width: 20%;
     }
 </style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        document.querySelector(".picture").classList.add("picture-line-loaded");
+    }, 50);
+
+    document.getElementById("file").addEventListener("change", function() {
+        const fileLabel = document.getElementById("file-label");
+        const fileName = this.files[0] ? this.files[0].name : "Choose a file";
+        fileLabel.textContent = fileName;
+    });
+});
+</script>
 {% endblock %}

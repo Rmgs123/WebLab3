@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Вход</title>
+    <title>Login</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'home/login.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'icons/icon.ico' %}">
 </head>
 <body>
     <div class="background"></div>
@@ -18,19 +19,16 @@
         <form method="post" action="{% url 'account_login' %}">
             {% csrf_token %}
 
-            <!-- Поле Email и его ошибки -->
-            <input type="email" name="login" placeholder="Email" required value="{{ form.login.value|default_if_none:'' }}">
+            <input class="input-email" type="email" name="login" placeholder="Email" required value="{{ form.login.value|default_if_none:'' }}">
 
-            <!-- Поле Password и его ошибки -->
-            <input type="password" name="password" placeholder="Password" required>
+            <input class="input-password" type="password" name="password" placeholder="Password" required>
 
             <a href="{% url 'account_reset_password' %}" class="forgot-password">Forget password?</a>
-            <button type="submit">Login</button>
+            <button type="submit" class="button">Login</button>
         </form>
 
         <p class="signup">No account yet? <a href="{% url 'account_signup' %}">Register</a></p>
 
-        <!-- Всплывающее уведомление об ошибке входа -->
         {% if form.errors %}
         <div class="error-message show">
             {{ form.non_field_errors.as_text }}

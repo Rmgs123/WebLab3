@@ -4,7 +4,6 @@
 <h2>Change username</h2>
 {% endblock %}
 
-
 {% block content %}
 <div class="username">
     <p class="username-line"></p>
@@ -33,19 +32,16 @@
 
 <div class="notification" id="notification">The nickname has been successfully changed.</div>
 <script>
-    // Функция показа уведомления
     function showNotification(message) {
         const notification = document.getElementById("notification");
         notification.innerText = message;
         notification.classList.add("show");
 
-        // Убираем уведомление через 3 секунды
         setTimeout(() => {
             notification.classList.remove("show");
         }, 3000);
     }
 
-    // Если есть сообщения об успехе, показать уведомление
     {% if messages %}
         {% for message in messages %}
             showNotification("{{ message }}");
@@ -54,7 +50,7 @@
 </script>
 <style type="text/css">
     .background {
-        position: absolute;
+        position: fixed;
         width: 100%;
         height: 100%;
         background: linear-gradient(43deg, rgba(2,0,36,1) 0%, rgba(224,29,25,1) 0%, rgba(255,76,0,1) 39%, rgba(255,188,0,1) 88%);
@@ -70,8 +66,8 @@
 
     h2 {
         margin-bottom: 10px;
-        font-size: 45px;
-        text-shadow: 1px 1px 1px #E60808;
+        font-size: 35px;
+        text-shadow: 2px 2px 1px #E60808;
     }
 
     .label_password,
@@ -84,23 +80,21 @@
         border-radius: 50%;
         width: 75%;
         margin: auto;
-        transform: scaleX(0); /* Начальный масштаб по горизонтали - 0 */
-        transform-origin: center; /* Начало анимации из центра */
-        transition: transform 0.5s ease; /* Плавная анимация */
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s ease;
     }
 
     .username-line-loaded .username-line {
-        transform: scaleX(1); /* Конечный масштаб по горизонтали - 1 */
+        transform: scaleX(1);
     }
 
     .form {
         font-size: 25px;
     }
 
-
-
     .logo img {
-        width: 90px; /* Ограничиваем размер логотипа */
+        width: 90px;
         height: auto;
         margin-bottom: 0px;
     }
@@ -109,14 +103,19 @@
     input[type="password"] {
         background-color: #f2f2f2;
         font-size: 16px;
-        width: 90%; /* Уменьшаем ширину для лучшего центрирования */
+        width: 90%;
         padding: 10px;
         margin: 10px 0;
         border: 1px solid #ccc;
         border-radius: 15px;
-        text-align: center; /* Центрируем текст внутри поля */
-        font-family: "Permanent Marker", cursive;
-        box-shadow: 1px 1px 8px #E60808;
+        text-align: center;
+        font-family: "Open Sans", sans-serif;
+        transition: box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        box-shadow: 0 0 15px#E60808;
     }
 
     .submit-button {
@@ -130,13 +129,13 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.45s, box-shadow 0.2s;
-        width: 90%; /* Ширина кнопки совпадает с шириной полей */
+        width: 90%;
         max-width: 150px;
     }
 
     .submit-button:hover {
         background-color: white;
-        box-shadow: 0 0 10px red;
+        box-shadow: 0 0 20px red;
     }
 
     .submit-button:active {
@@ -150,7 +149,7 @@
     .back-link a {
         color: black;
         text-decoration: none;
-        font-weight: normal; /* Убираем жирность */
+        font-weight: normal;
         transition: color 0.8s;
         font-size: 25px;
         margin-top: 20px;
@@ -169,21 +168,20 @@
         border-radius: 50%;
         background-color: #E60808;
         margin: auto;
-        transition: width 0.3s ease; /* Плавное появление подчеркивания */
+        transition: width 0.3s ease;
     }
 
     .back-link:hover::after {
         width: 20%;
     }
 
-    /* Уведомление об успехе */
     .notification {
         position: fixed;
         top: 10px;
         left: 50%;
         transform: translateX(-50%);
-        background: #fff; /* Белый фон для уведомления */
-        color: 	#000000; /* White текст */
+        background: #fff;
+        color: 	#000000;
         padding: 10px;
         border: 2px solid #fff;
         border-radius: 5px;
@@ -193,31 +191,28 @@
         transition: opacity 0.5s ease, visibility 0.5s;
     }
 
-    /* Показ уведомления */
     .notification.show {
         opacity: 1;
         visibility: visible;
     }
 
-    /* Исчезновение уведомления через 3 секунды */
     @keyframes fadeOut {
         0% { opacity: 1; }
         100% { opacity: 0; }
     }
 
-    /* Стили для ошибок */
     .error-message {
         color: red;
         font-size: 14px;
         margin-bottom: 10px;
-        text-align: center; /* Центрируем ошибки */
+        text-align: center;
     }
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         document.querySelector(".username").classList.add("username-line-loaded");
-    }, 50); // Небольшая задержка в 50 миллисекунд
+    }, 50);
 });
 </script>
 {% endblock %}

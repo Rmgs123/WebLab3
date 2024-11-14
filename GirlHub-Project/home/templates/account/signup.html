@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Registration</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'home/signup.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'icons/icon.ico' %}">
 </head>
 <body>
 <div class="background"></div>
@@ -15,12 +16,11 @@
         <div class="logo">
             <img src="{% static 'home/GirlHub_transparent.png' %}" alt="GirlHub Logo">
         </div>
-        <h1>Регистрация</h1>
+        <h1>Registration</h1>
 
         <form method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
 
-            <!-- Поле Username и его ошибки -->
             {% if form.username.errors %}
             <div class="error">
                 {% for error in form.username.errors %}
@@ -31,7 +31,6 @@
             <input type="text" name="username" placeholder="Username" required
                    value="{{ form.username.value|default_if_none:'' }}">
 
-            <!-- Поле Email и его ошибки -->
             {% if form.email.errors %}
             <div class="error">
                 {% for error in form.email.errors %}
@@ -42,7 +41,6 @@
             <input type="email" name="email" placeholder="Email address" required
                    value="{{ form.email.value|default_if_none:'' }}">
 
-            <!-- Поле Password и его ошибки -->
             {% if form.password1.errors %}
             <div class="error">
                 {% for error in form.password1.errors %}
@@ -52,10 +50,10 @@
             {% endif %}
             <input type="password" name="password1" placeholder="Password" required>
 
-            <button type="submit">Зарегистрироваться</button>
+            <button type="submit">Register</button>
         </form>
 
-        <p class="signup">Уже есть аккаунт? <a href="{% url 'account_login' %}">Войти</a></p>
+        <p class="signup">Already have an account? <a href="{% url 'account_login' %}">Login</a></p>
     </div>
 </div>
 

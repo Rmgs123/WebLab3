@@ -1,4 +1,5 @@
 Django~=5.1.2
 django-allauth~=65.1.0
 Pillow
+whitenoise
 gunicorn
