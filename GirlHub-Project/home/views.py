@@ -1,4 +1,5 @@
 # home/views.py
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
@@ -82,6 +83,188 @@ def home_view(request):
     })
 
 
+@login_required
+def home_delete(request):
+    chat_user = request.GET.get('chat_with')
+    group_id = request.GET.get('group_with')
+
+    if request.method == 'POST':
+        if chat_user:
+            try:
+
+                chat_partner = User.objects.get(username=chat_user)
+                profile = Profile.objects.get(user=request.user)
+
+                profile.contacts.remove(chat_partner.profile)
+                profile.save()
+
+                messages.success(request, "Контакт удален.")
+            except User.DoesNotExist:
+                chat_user = None
+
+            return redirect('home')
+
+        if group_id:
+            try:
+                group = Group.objects.get(name=group_id)
+                profile = Profile.objects.get(user=request.user)
+
+                GroupMemberStatus.objects.get(group=group, member=profile).delete()
+                profile.groups.remove(group)
+                profile.save()
+                print(group.sender, request.user)
+                if group.sender == request.user:
+                    new_sender = GroupMemberStatus.objects.filter(group=group)
+
+                    if len(new_sender) != 0:
+                        sender_user = User.objects.get(username=new_sender[0].member.user)
+                        group.sender = sender_user
+                        group.save()
+                    else:
+                        posts_qs = Post.objects.filter(
+                            Q(group_sender=group)
+                        )
+
+                        for post in posts_qs:
+                            if post.image:
+                                os.remove(os.path.join('media', f'{post.image}'))
+
+                        posts_qs.delete()
+                        group.delete()
+
+
+            except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
+                group_id = None
+
+            return redirect('home')
+
+    return render(request, 'account/delete.html', {
+        'user': request.user,
+        'username': request.user.username,
+        'chat_user': chat_user,
+        'group_id': group_id,
+
+    })
+
+
+@login_required
+def home_clear(request):
+    chat_user = request.GET.get('chat_with')
+    group_id = request.GET.get('group_with')
+
+    if request.method == 'POST':
+        if chat_user:
+            try:
+
+                chat_partner = User.objects.get(username=chat_user)
+
+                messages_qs = Message.objects.filter(
+                    Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user))
+
+                for message in messages_qs:
+                    if message.image:
+                        os.remove(os.path.join('media', f'{message.image}'))
+
+                messages_qs.delete()
+
+                messages.success(request, "Чат очищен.")
+            except User.DoesNotExist:
+                chat_user = None
+
+            url = f"{reverse('home')}?chat_with={chat_user}"
+            return redirect(url)
+
+        if group_id:
+            try:
+                group = Group.objects.get(name=group_id)
+
+                posts_qs = Post.objects.filter(
+                    Q(group_sender=group)
+                )
+
+                for post in posts_qs:
+                    if post.image:
+                        os.remove(os.path.join('media', f'{post.image}'))
+
+                posts_qs.delete()
+
+                messages.success(request, "Чат очищен.")
+            except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
+                group_id = None
+
+            url = f"{reverse('home')}?group_with={group_id}"
+            return redirect(url)
+
+    return render(request, 'account/clear.html', {
+        'user': request.user,
+        'username': request.user.username,
+        'chat_user': chat_user,
+        'group_id': group_id,
+
+    })
+
+
+@login_required
+def home_pop_back(request):
+    chat_user = request.GET.get('chat_with')
+    group_id = request.GET.get('group_with')
+
+    if request.method == 'POST':
+        if chat_user:
+            try:
+
+                chat_partner = User.objects.get(username=chat_user)
+
+                message_qs = Message.objects.filter(
+                    Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)
+                ).order_by('-timestamp', '-id')
+
+                if len(message_qs) != 0:
+                    message = message_qs[0]
+                    if message.image:
+                        os.remove(os.path.join('media', f'{message.image}'))
+
+                    message.delete()
+
+                messages.success(request, "Сообщение удалено.")
+            except User.DoesNotExist:
+                chat_user = None
+
+            url = f"{reverse('home')}?chat_with={chat_user}"
+            return redirect(url)
+
+        if group_id:
+            try:
+                group = Group.objects.get(name=group_id)
+
+                posts_qs = Post.objects.filter(
+                    Q(group_sender=group)
+                ).order_by('-timestamp', '-id')
+
+                if len(posts_qs) != 0:
+                    post = posts_qs[0]
+
+                    if post.image:
+                        os.remove(os.path.join('media', f'{post.image}'))
+
+                    post.delete()
+
+                messages.success(request, "Пост удален.")
+            except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
+                group_id = None
+
+            url = f"{reverse('home')}?group_with={group_id}"
+            return redirect(url)
+
+    return render(request, 'account/pop_back.html', {
+        'user': request.user,
+        'username': request.user.username,
+        'chat_user': chat_user,
+        'group_id': group_id,
+
+    })
+
+
 def redirect_to_home(request):
     return redirect('/home/')
 
@@ -160,7 +343,8 @@ def send_message(request):
             return JsonResponse({'status': 'error', 'message': 'Message cannot be empty.'})
 
         if len(message_content) > 5000:
-            return JsonResponse({'status': 'error', 'message': 'The message is too long. The maximum length is 5000 characters.'})
+            return JsonResponse(
+                {'status': 'error', 'message': 'The message is too long. The maximum length is 5000 characters.'})
 
         try:
             receiver_user = User.objects.get(username=receiver_name)
@@ -306,7 +490,8 @@ def publish_post(request):
 
         # Проверка на длину поста
         if len(post_content) > 8000:
-            return JsonResponse({'status': 'error', 'message': 'The post is too long. Maximum length is 8000 characters.'})
+            return JsonResponse(
+                {'status': 'error', 'message': 'The post is too long. Maximum length is 8000 characters.'})
 
         try:
             group_sender = Group.objects.get(name=name_group)

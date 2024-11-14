@@ -169,6 +169,7 @@ header {
     min-height: 0;      /* Добавлено */
 }
 
+
 /* Область сообщений */
 .chat-messages {
     flex: 1;
@@ -308,7 +309,6 @@ header {
     color: white;
     margin-left: auto;
     align-self: flex-end;
-    max-width
 }
 
 .from-contact {
@@ -359,7 +359,6 @@ header {
     border-radius: 50%;
     margin-right: 10px;
 }
-
 .standard-title {
     text-align: center;
     font-family: "Permanent Marker", sans-serif;
@@ -418,6 +417,7 @@ header {
  #chat-user{
     font-family: "Open Sans", sans-serif;
 }
+
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
