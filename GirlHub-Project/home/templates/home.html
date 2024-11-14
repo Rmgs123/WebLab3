@@ -19,6 +19,7 @@
             <img src="{{user.profile.image.url}}" alt="Profile image">
         </div>
         <div class="username-display">Welcome, {{ user.username }}!</div>
+        
         <div class="logout"><a href="{% url 'account_settings' %}"><img src="{% static 'icons8-settings.svg' %}" alt=""></a>
         </div>
     </header>
@@ -78,10 +79,21 @@
         {% if chat_user %}
         <div class="chat-header">
             <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
+            <a class="delete_link" href="{% url 'home_delete' %}?chat_with={{ chat_user }}">Delete chat</a>
+            <a class="clear_link" href="{% url 'home_clear' %}?chat_with={{ chat_user }}">Clear chat</a>
+            <a class="pop_back_link" href="{% url 'home_pop_back' %}?chat_with={{ chat_user }}">Delete last message
+                chat</a>
         </div>
         {% elif group_id %}
         <div class="chat-header">
             <span id="group-id">{{ group_id|default_if_none:"" }}</span>
+            <a class="delete_link" href="{% url 'home_delete' %}?group_with={{ group_id}}">Leave group</a>
+            {% if group.sender == user %}
+            <a class="clear_link" href="{% url 'home_clear' %}?group_with={{ group_id}}">Clear group</a>
+            <a class="pop_back_link" href="{% url 'home_pop_back' %}?group_with={{ group_id}}">Delete last post
+                group</a>
+            {% endif %}
+
         </div>
         {% endif %}
         <div class="chat-container">
@@ -244,7 +256,7 @@
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault(); // Предотвращаем добавление новой строки
                 $('#send-message-form').submit(); // Отправляем форму
-                $('#message-input').css('height', 'auto');
+                 $('#message-input').css('height', 'auto');
             }
         });
 
@@ -252,7 +264,7 @@
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 $('#publish-post-form').submit();
-                $('#post-input').css('height', 'auto');
+                 $('#post-input').css('height', 'auto');
             }
         });
 
@@ -270,14 +282,14 @@
 
             // Проверяем, что сообщение не пустое и не состоит только из пробелов и переносов строк
             if (!messageContent && !imageInput) {
-                alert("You cannot send an empty message.");
+                 alert("You cannot send an empty message.");
                 return;
             }
 
-            if (messageContent.length > 5000) {
+             if (messageContent.length > 5000) {
                 alert("The message is too long. The maximum length is 5000 characters.");
                 return;
-            }
+             }
 
             const now = Date.now();
             if (now - lastMessageTime < 1000) {
@@ -288,7 +300,6 @@
             lastMessageTime = now;
 
             const formData = new FormData(this);
-
 
             $.ajax({
                 url: "{% url 'send_message' %}",
@@ -314,6 +325,7 @@
 
                         $('#message-input').val('');
                         $('#message-input').css('height', 'auto');
+
 
                         $('#image-input').val('');
 
@@ -409,22 +421,26 @@
                     const $contactsList = $('.contacts-list .contacts');
                     $contactsList.empty(); // Очищаем текущий список контактов
 
-                    contacts.forEach(function(contact) {
+                    if (contacts.length === 0) {
+                            $contactsList.append('<li>No contacts</li>'); // Display message if empty
+                    } else {
+                        contacts.forEach(function(contact) {
 
-                        let contactHtml = `
-                            <li id="contact-${contact.username}">
-                                <div class="info-contact">
-                                    <img src="${contact.profile_image_url}" alt="Profile image">
-                                    <a href="{% url 'home' %}?chat_with=${contact.username}">${contact.username}</a>
-                                </div>
-                                <span class="notification-dot" style="display: ${contact.is_read ? 'inline': 'none'};">●</span>
-                            </li>
-                        `;
+                            let contactHtml = `
+                                <li id="contact-${contact.username}">
+                                    <div class="info-contact">
+                                        <img src="${contact.profile_image_url}" alt="Profile image">
+                                        <a href="{% url 'home' %}?chat_with=${contact.username}">${contact.username}</a>
+                                    </div>
+                                    <span class="notification-dot" style="display: ${contact.is_read ? 'inline': 'none'};">●</span>
+                                </li>
+                            `;
 
 
-                        $contactsList.append(contactHtml);
+                            $contactsList.append(contactHtml);
 
-                    });
+                        });
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.log("Ошибка обновления списка контактов: ", error);
@@ -563,7 +579,6 @@
 
                         $('#post-input').val('');
                         $('#post-input').css('height', 'auto');
-
                         $('#post-image-input').val('');
 
                         // Прокручиваем вниз после отправки сообщения
@@ -656,19 +671,24 @@
                     const $groupsList = $('.contacts-list .groups');
                     $groupsList.empty(); // Очищаем текущий список контактов
 
-                    groups.forEach(function(group) {
-                        let groupHtml = `
-                            <li id="group-${group.name}">
-                                <div class="info-group">
-                                    <img src="${group.image_url}" alt="Profile image">
-                                    <a href="{% url 'home' %}?group_with=${group.name }">${group.name }</a>
-                                </div>
-                                <span class="notification-dot-group" style="display: ${group.is_read ? 'inline': 'none'};">●</span>
-                            </li>
-                        `;
-                        $groupsList.append(groupHtml);
+                    if (groups.length === 0) {
+                            $groupsList.append('<li>No groups</li>'); // Display message if empty
+                    } else {
 
-                    });
+                        groups.forEach(function(group) {
+                            let groupHtml = `
+                                <li id="group-${group.name}">
+                                    <div class="info-group">
+                                        <img src="${group.image_url}" alt="Profile image">
+                                        <a href="{% url 'home' %}?group_with=${group.name }">${group.name }</a>
+                                    </div>
+                                    <span class="notification-dot-group" style="display: ${group.is_read ? 'inline': 'none'};">●</span>
+                                </li>
+                            `;
+                            $groupsList.append(groupHtml);
+
+                        });
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.log("Ошибка обновления списка групп: ", error);

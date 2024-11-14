@@ -4,6 +4,10 @@ from . import views
 
 urlpatterns = [
     path('', views.home_view, name='home'),  # Главная страница
+    path('delete/', views.home_delete, name='home_delete'),  # Главная страница
+    path('clear/', views.home_clear, name='home_clear'),  # Главная страница
+    path('pop_back/', views.home_pop_back, name='home_pop_back'),  # Главная страница
+
     path('add_contact/', views.add_contact, name='add_contact'),  # Маршрут для добавления контактов
     path('get_contacts/', views.get_contacts, name='get_contacts'),
     path('get_groups/', views.get_groups, name='get_groups'),
