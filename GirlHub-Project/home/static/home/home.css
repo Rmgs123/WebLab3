@@ -324,6 +324,7 @@ header {
     background-color: #111D2A;
     margin-right: auto;
     align-self: flex-start;
+    color: white;
 }
 
 .message img {

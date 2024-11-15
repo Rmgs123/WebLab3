@@ -672,6 +672,9 @@ def change_image(request):
 
             result = change_image_1(image_file, size)
 
+            if result.mode != 'RGBA':
+                result = result.convert('RGBA')
+
             buffer = io.BytesIO()
             result.save(buffer, format='PNG')
             profile.image.save('profile_images.png', ContentFile(buffer.getvalue()))
@@ -696,6 +699,9 @@ def create_group(request):
             image_file = request.FILES.get('image')
             size = (32, 32)
             result = change_image_1(image_file, size)
+
+            if result.mode != 'RGBA':
+                result = result.convert('RGBA')
 
             buffer = io.BytesIO()
             result.save(buffer, format='PNG')
