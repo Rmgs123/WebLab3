@@ -1,27 +1,41 @@
 # WebLab3
-This is a team website development project using _Django_
+This is a _Django_ team website development project
 
 ## **Our Idea:**
-We are going to make a **Telegram-like** website where people will communicate via private messages or in public chat groups. But it will be with one particular ~feature~... - It will be for girls
+We are going to make a **Telegram-like** website where people will communicate via private messages or in public blogs (groups). And it will be with one particular ~feature~...
+--> _It will be for girls_
 
 ## **Current Functionality:**
 - Registration and Login
 - Account Managment
-- Adding users
+- Adding users (friends)
 - Chatting (with .png or .jpg upload)
-- Notifications on new messages
-- *Responsive Web Desing
+- Notifications (on new messages)
+- Blog creation and managment
+- Responsive Web Desing
 - and etc...
+
+## **Hosting:**
+If currently hosted, website will be available via:
+- _https://girlhub.onrender.com/_
 
 ## **Current Design:**
 ---
-![image (8)](https://github.com/user-attachments/assets/0e2c093c-2789-4ff0-a992-1eb9c64d982a)
+![image](https://github.com/user-attachments/assets/30788f40-3515-4c81-a00e-56cc4556920b)
 ---
-![image (9)](https://github.com/user-attachments/assets/c60b06fd-7e01-44ee-a85f-efb52d91afd4)
+![image](https://github.com/user-attachments/assets/430bd29f-f379-44b3-b20e-3f76aad15981)
 ---
-![image (10)](https://github.com/user-attachments/assets/95dd9b21-4ae5-47b3-b446-d59e260a1f86)
+![image](https://github.com/user-attachments/assets/abfff6a5-0616-44c0-9ee9-a68c557979ff)
 ---
-![image (11)](https://github.com/user-attachments/assets/7f6a251a-dbdb-4b95-9654-3fff7953cf7c)
+![image](https://github.com/user-attachments/assets/8f8b7241-7753-4cdf-a841-ad39fc8b2d28)
 ---
-![image (12)](https://github.com/user-attachments/assets/176b18b2-d13c-427d-aaa3-b6dbe3f89fa9)
+![image](https://github.com/user-attachments/assets/911740fa-00c1-429c-b5ff-131d3b1585ca)
+---
+![image](https://github.com/user-attachments/assets/f92cd6d1-c5eb-45e4-8a1e-bffe85a32c14)
+---
+![image](https://github.com/user-attachments/assets/ddda2b7b-54e8-4e73-8577-f21ad58ca61f)
+---
+![image](https://github.com/user-attachments/assets/c14a4bb4-fcf6-4d47-a31f-81284b6980f5)
+---
+![image](https://github.com/user-attachments/assets/1145faa6-5d50-4a76-bdb0-54c906439d6e)
 ---
