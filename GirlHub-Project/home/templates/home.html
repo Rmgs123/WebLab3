@@ -86,7 +86,6 @@
             <span id="chat-user">{{ chat_user|default_if_none:"[username]" }}</span>
             <a class="delete_link" href="{% url 'home_delete' %}?chat_with={{ chat_user }}">Delete chat</a>
             <a class="clear_link" href="{% url 'home_clear' %}?chat_with={{ chat_user }}">Clear chat</a>
-            <a class="pop_back_link" href="{% url 'home_pop_back' %}?chat_with={{ chat_user }}">Delete last message</a>
         </div>
         {% elif group_id %}
         <div class="chat-header">
@@ -94,7 +93,7 @@
             <a class="delete_link" href="{% url 'home_delete' %}?group_with={{ group_id }}">Leave group</a>
             {% if group.sender == user %}
             <a class="clear_link" href="{% url 'home_clear' %}?group_with={{ group_id }}">Clear group</a>
-            <a class="pop_back_link" href="{% url 'home_pop_back' %}?group_with={{ group_id }}">Delete last post</a>
+
             {% endif %}
         </div>
         {% endif %}
@@ -102,6 +101,7 @@
             <div class="chat-messages" id="chat-messages">
                 {% if chat_user %}
                 {% for message in messages %}{% spaceless %}
+
                 <div class="message {% if message.sender == user %}from-user{% else %}from-contact{% endif %}"
                      data-timestamp="{{ message.timestamp|date:'c' }}" data-id="{{ message.id }}">
                     {% if message.image %}
@@ -111,6 +111,9 @@
                     <p>{{ message.content|safe }}</p>
                     {% endif %}
                 </div>
+                {% if message.sender == user %}
+                    <a class="pop_message_link"  href="{% url 'home_message_back' message_id=message.id%}?chat_with={{ chat_user }}">Delete message</a>
+                {% endif %}
                 {% endspaceless %}{% endfor %}
                 {% elif group_id %}
                 {% for post in posts %}{% spaceless %}
@@ -122,6 +125,9 @@
                     <p>{{ post.content|safe }}</p>
                     {% endif %}
                 </div>
+                {% if group.sender == user %}
+                    <a class="pop_post_link"  href="{% url 'home_message_back' message_id=post.id%}?group_with={{ group_id }}">Delete post</a>
+                {% endif %}
                 {% endspaceless %}{% endfor %}
                 {% else %}
                 <p class="standard-title">Choose contact or group</p>

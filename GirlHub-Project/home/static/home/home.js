@@ -79,7 +79,12 @@ $(function() {
                             }
                             messageHtml += `</div>`;
 
+                            if (message.sender === username){
+                                $('#chat-messages').prepend(`<a class="pop_message_link" href="/home/pop_message/${message.id}/?chat_with=${message.chat_user}">Delete message</a>`);
+                            }
                             $('#chat-messages').prepend(messageHtml);
+
+
                         }
                     });
 
@@ -169,7 +174,9 @@ $(function() {
                     }
                     messageHtml += `</div>`;
 
+
                     $('#chat-messages').append(messageHtml);
+                    $('#chat-messages').append(`<a class="pop_message_link" href="/home/pop_message/${response.id}/?chat_with=${response.chat_user}">Delete message</a>`);
 
                     $('#message-input').val('');
                     $('#message-input').css('height', 'auto');
@@ -237,6 +244,8 @@ $(function() {
                                 messageHtml += `<p>${message.content}</p>`;
                             }
                             messageHtml += `</div>`;
+
+
                             $('#chat-messages').append(messageHtml);
                         }
                     });
@@ -319,6 +328,10 @@ $(function() {
                             }
                             postHtml += `</div>`;
 
+
+                            if (post.group_sender === username){
+                                $('#chat-messages').prepend(`<a class="pop_post_link" href="/home/pop_message/${post.id}/?group_with=${post.sender}">Delete message</a>`);
+                            }
                             $('#chat-messages').prepend(postHtml);
                         }
                     });
@@ -490,6 +503,7 @@ $(function() {
                     postHtml += `</div>`;
 
                     $('#chat-messages').append(postHtml);
+                    $('#chat-messages').append(`<a class="pop_post_link" href="/home/pop_message/${response.id}/?group_with=${response.group_id}">Delete message</a>`);
 
                     $('#post-input').val('');
                     $('#post-input').css('height', 'auto');

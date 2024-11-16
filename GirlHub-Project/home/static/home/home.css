@@ -301,9 +301,10 @@ header {
     text-shadow: 3px 3px 2px #D9AFD9;
 }
 
+
 .message {
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     padding: 10px;
     border-radius: 8px;
     max-width: 70%;
@@ -441,13 +442,12 @@ header {
     margin-right: 50px;
 }
 
-.pop_back_link {
+.pop_message_back_link {
     margin-right: 50px;
 }
 
 .delete_link,
- .clear_link,
- .pop_back_link{
+ .clear_link{
     text-decoration: none;
     color: white;
     font-weight: normal;
@@ -455,8 +455,35 @@ header {
 }
 
 .delete_link:hover,
- .clear_link:hover,
- .pop_back_link:hover {
+ .clear_link:hover{
+    text-shadow: 3px 3px 2px #D9AFD9;
+ }
+
+.pop_message_link {
+    color: white;
+    margin-left: auto;
+    align-self: flex-end;
+    margin-bottom: 10px;
+    text-decoration: none;
+
+    font-weight: normal;
+    transition: text-shadow 0.2s ease;
+}
+
+.pop_post_link {
+    margin-right: auto;
+    align-self: flex-start;
+    color: white;
+
+    margin-bottom: 10px;
+    text-decoration: none;
+
+    font-weight: normal;
+    transition: text-shadow 0.2s ease;
+}
+
+
+.pop_message_link:hover,.pop_post_link:hover {
     text-shadow: 3px 3px 2px #D9AFD9;
  }
 

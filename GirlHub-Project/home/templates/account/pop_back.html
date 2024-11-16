@@ -1,28 +1,30 @@
 {% extends "base_settings.html" %}
 
 {% block title %}
-    {% if chat_user %}
-        <h1>Are you sure you want to delete the late message in the chat with {{chat_user}}?</h1>
+{% if chat_user %}
+<h1>Are you sure you want to delete the message in the chat with {{chat_user}}?</h1>
 
-    {% elif group_id %}
-        <h1>Are you sure you want to delete the late post in the group {{group_id}}?</h1>
-    {% endif %}
+{% elif group_id %}
+<h1>Are you sure you want to delete the post in the group {{group_id}}?</h1>
+{% endif %}
 {% endblock %}
 
 {% block content %}
 {% if chat_user %}
-<form method="post" action="{% url 'home_pop_back' %}?chat_with={{ chat_user }}" enctype="multipart/form-data">
+<form method="post" action="{% url 'home_message_back' message_id=message_id%}?chat_with={{ chat_user }}"
+      enctype="multipart/form-data">
     {% csrf_token %}
     <button type="submit" class="logout-button">Yes</button>
 </form>
 
-    <p class="cancel"><a href="{% url 'home' %}?chat_with={{ chat_user }}">Back</a></p>
+<p class="cancel"><a href="{% url 'home' %}?chat_with={{ chat_user }}">Back</a></p>
 {% elif group_id %}
-    <form method="post" action="{% url 'home_pop_back' %}?group_with={{ group_id }}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <button type="submit" class="logout-button">Yes</button>
-    </form>
-    <p class="cancel"><a href="{% url 'home' %}?group_with={{ group_id }}">Back</a></p>
+<form method="post" action="{% url 'home_message_back' message_id=message_id%}?group_with={{ group_id }}"
+      enctype="multipart/form-data">
+    {% csrf_token %}
+    <button type="submit" class="logout-button">Yes</button>
+</form>
+<p class="cancel"><a href="{% url 'home' %}?group_with={{ group_id }}">Back</a></p>
 {% endif %}
 <style type="text/css">
     .background {

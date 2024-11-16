@@ -74,6 +74,7 @@ def home_view(request):
         'group': group_object
     })
 
+
 @login_required
 def home_delete(request):
     chat_user = request.GET.get('chat_with')
@@ -136,6 +137,7 @@ def home_delete(request):
 
     })
 
+
 @login_required
 def home_clear(request):
     chat_user = request.GET.get('chat_with')
@@ -192,8 +194,9 @@ def home_clear(request):
 
     })
 
+
 @login_required
-def home_pop_back(request):
+def home_message_back(request, message_id=0):
     chat_user = request.GET.get('chat_with')
     group_id = request.GET.get('group_with')
 
@@ -204,8 +207,9 @@ def home_pop_back(request):
                 chat_partner = User.objects.get(username=chat_user)
 
                 message_qs = Message.objects.filter(
-                    Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)
-                ).order_by('-timestamp', '-id')
+                    (Q(sender=request.user, receiver=chat_partner) | Q(sender=chat_partner, receiver=request.user)) & Q(
+                        id=message_id)
+                )
 
                 if len(message_qs) != 0:
                     message = message_qs[0]
@@ -226,8 +230,8 @@ def home_pop_back(request):
                 group = Group.objects.get(name=group_id)
 
                 posts_qs = Post.objects.filter(
-                    Q(group_sender=group)
-                ).order_by('-timestamp', '-id')
+                    Q(group_sender=group) & Q(id=message_id)
+                )
 
                 if len(posts_qs) != 0:
                     post = posts_qs[0]
@@ -249,11 +253,13 @@ def home_pop_back(request):
         'username': request.user.username,
         'chat_user': chat_user,
         'group_id': group_id,
-
+        'message_id': message_id,
     })
+
 
 def redirect_to_home(request):
     return redirect('/home/')
+
 
 @login_required
 def add_contact(request):
@@ -268,6 +274,7 @@ def add_contact(request):
             messages.error(request, 'User with this name not found.')
         return redirect('home')
     return redirect('home')
+
 
 @login_required
 def get_contacts(request):
@@ -288,6 +295,7 @@ def get_contacts(request):
         })
 
     return JsonResponse({'contacts': contacts_data})
+
 
 @login_required
 def get_groups(request):
@@ -312,6 +320,7 @@ def get_groups(request):
             'is_read': is_read,
         })
     return JsonResponse({'groups': groups_data})
+
 
 @login_required
 def send_message(request):
@@ -347,10 +356,12 @@ def send_message(request):
                 image=image if image else None
             )
             message.save()
-            return JsonResponse({'status': 'success', 'timestamp': message.timestamp.isoformat(), 'id': message.id})
+            return JsonResponse({'status': 'success', 'timestamp': message.timestamp.isoformat(), 'id': message.id,
+                                 'chat_user': receiver_name})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Recipient not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
 
 @login_required
 def check_new_messages(request):
@@ -362,6 +373,7 @@ def check_new_messages(request):
         if unread_messages.exists():
             contacts_with_unread.append(contact.user.username)
     return JsonResponse({'contacts_with_unread': contacts_with_unread})
+
 
 @login_required
 def get_new_messages(request, chat_user=None):
@@ -410,6 +422,7 @@ def get_new_messages(request, chat_user=None):
     except User.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
 
+
 @login_required
 def load_old_messages(request, chat_user):
     before_timestamp = request.GET.get('before_timestamp')
@@ -433,6 +446,7 @@ def load_old_messages(request, chat_user):
         for message in messages_qs:
             messages.append({
                 "id": message.id,
+                "chat_user": chat_user,
                 "sender": message.sender.username,
                 "content": message.content,
                 "image_url": message.image.url if message.image else None,
@@ -443,6 +457,7 @@ def load_old_messages(request, chat_user):
 
     except User.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
+
 
 @login_required
 def publish_post(request):
@@ -484,10 +499,11 @@ def publish_post(request):
                 status.is_read = False
                 status.save()
 
-            return JsonResponse({'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id})
+            return JsonResponse({'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id, 'group_id': name_group})
         except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
             return JsonResponse({'status': 'error', 'message': 'Group not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
 
 @login_required
 def check_new_posts(request):
@@ -504,6 +520,7 @@ def check_new_posts(request):
         if unread_posts.exists():
             groups_with_unread.append(group_user.name)
     return JsonResponse({'groups_with_unread': groups_with_unread})
+
 
 @login_required
 def get_new_posts(request, group_id=None):
@@ -551,6 +568,7 @@ def get_new_posts(request, group_id=None):
     except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
         return JsonResponse({"error": "User does not exist"}, status=404)
 
+
 @login_required
 def load_old_posts(request, group_id):
     before_timestamp = request.GET.get('before_timestamp')
@@ -580,13 +598,15 @@ def load_old_posts(request, group_id):
                 "sender": group_id,
                 "content": post.content,
                 "image_url": post.image.url if post.image else None,
-                "timestamp": post.timestamp.isoformat()
+                "timestamp": post.timestamp.isoformat(),
+                "group_sender": group_sender.sender.username,
             })
 
         return JsonResponse({"posts": posts})
 
     except Group.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
+
 
 def change_image_1(image_file, size):
     image = Image.open(image_file)
@@ -604,9 +624,11 @@ def change_image_1(image_file, size):
 
     return result
 
+
 @login_required
 def settings(request):
     return render(request, 'account/setting.html')
+
 
 @login_required
 def change_email_view(request):
@@ -632,6 +654,7 @@ def change_email_view(request):
         return redirect('account_change_email')
 
     return render(request, 'account/email.html', {'user': request.user})
+
 
 @login_required
 def change_username(request):
@@ -661,6 +684,7 @@ def change_username(request):
         return redirect('account_change_username')
 
     return render(request, 'account/change_username.html', {'user': request.user})
+
 
 @login_required
 def change_image(request):
@@ -715,6 +739,7 @@ def create_group(request):
         messages.success(request, "The group has been created.")
         return redirect('home')
     return render(request, 'account/create_group.html', {'user': request.user})
+
 
 @login_required
 def add_group(request):
