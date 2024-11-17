@@ -260,7 +260,7 @@ header {
 .input-file:focus + label,
 .input-file + label:hover,.input-file-post:focus + label,
 .input-file-post + label:hover {
-    border: 1px solid rgba(51, 51, 51, 0.15);
+    border: 0px solid rgba(51, 51, 51, 0.15);
     text-shadow: 3px 3px 2px #D9AFD9;
 }
 
@@ -361,6 +361,95 @@ header {
     padding: 0;
     display: block;
 }
+
+#style-menu,#style-menu-post {
+    display: none;
+    position: absolute;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 200px;
+    max-width: 90%;
+
+}
+
+#style-menu button,#style-menu-post button {
+    display: block;
+    color: black;
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    background: #f8f8f8;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    transition: background 0.3s ease;
+}
+
+#style-menu button:hover,#style-menu-post button:hover {
+    background: #e0e0e0;
+}
+
+#style-button,#style-button-post {
+    font-size: 15px;
+    text-align: center;
+    color: white;
+    background: r#121B24;
+    display: inline-block;
+    padding: 10px 20px;
+    font-family: "Permanent Marker", sans-serif;
+    cursor: pointer;
+    transition: background 0.3s;
+    min-width: 100px;
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: text-shadow 0.3s ease;
+}
+
+
+#emoji-picker,#emoji-picker-post {
+    display: none;
+    position: fixed;
+    padding: 0px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+
+    width: auto;
+    margin: 0;
+    transform: none;
+
+}
+
+#emoji-picker table,#emoji-picker-post table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#emoji-picker td,#emoji-picker-post td {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    transition: background 0.3s, transform 0.3s;
+    user-select: none;
+    width: 20%;
+}
+
+#emoji-picker td:hover,#emoji-picker-post td:hover {
+    background: rgba(240, 240, 240, 0.9);
+    transform: scale(1.2);
+    border-radius: 50%;
+}
+
 
 .info-contact,.info-group {
     display: flex;

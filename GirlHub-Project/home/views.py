@@ -329,6 +329,27 @@ def send_message(request):
         receiver_name = request.POST.get('receiver_name')
         image = request.FILES.get('image')
 
+        bold_count = message_content.count('<b>')
+        italic_count = message_content.count('<i>')
+        underline_count = message_content.count('<u>')
+
+        if (bold_count != message_content.count('</b>') or
+                italic_count != message_content.count('</i>') or
+                underline_count != message_content.count('</u>')):
+            return JsonResponse({'status': 'error', 'message': 'Every tag: <b>, <i>, <u> '
+                                                               'must appear with corresponding </b>,  </i>, </u>'})
+
+        message_text = message_content
+
+        for tag in ['<b>', '</b>', '<i>', '</i>', '<u>', '</u>']:
+            message_text = message_text.replace(tag, '')
+
+        if not message_text:
+            if image:
+                message_content = ''
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Message cannot contain only tags.'})
+
         if not message_content and not image:
             return JsonResponse({'status': 'error', 'message': 'Message cannot be empty.'})
 
@@ -467,6 +488,27 @@ def publish_post(request):
         name_group = request.POST.get('name_group')
         image = request.FILES.get('post_image')
 
+        bold_count = post_content.count('<b>')
+        italic_count = post_content.count('<i>')
+        underline_count = post_content.count('<u>')
+
+        if (bold_count != post_content.count('</b>') or
+                italic_count != post_content.count('</i>') or
+                underline_count != post_content.count('</u>')):
+            return JsonResponse({'status': 'error', 'message': 'Every tag: <b>, <i>, <u> '
+                                                               'must appear with corresponding </b>,  </i>, </u>'})
+
+        message_text = post_content
+
+        for tag in ['<b>', '</b>', '<i>', '</i>', '<u>', '</u>']:
+            message_text = message_text.replace(tag, '')
+
+        if not message_text:
+            if image:
+                post_content = ''
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Post cannot contain only tags.'})
+
         if not post_content and not image:
             return JsonResponse({'status': 'error', 'message': 'The post cannot be empty.'})
 
@@ -499,7 +541,8 @@ def publish_post(request):
                 status.is_read = False
                 status.save()
 
-            return JsonResponse({'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id, 'group_id': name_group})
+            return JsonResponse(
+                {'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id, 'group_id': name_group})
         except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
             return JsonResponse({'status': 'error', 'message': 'Group not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})

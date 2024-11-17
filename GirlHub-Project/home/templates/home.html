@@ -139,6 +139,46 @@
                 <input type="hidden" name="receiver_name" value="{{ chat_user }}">
                 <textarea class="textarea-message" name="message" id="message-input" placeholder="Write message..."
                           autocomplete="off" rows="2"></textarea>
+
+
+                <button type="button" id="style-button">Format</button>
+
+
+                <div id="style-menu">
+                    <button type="button" class="style-option" data-style="bold">Bold</button>
+                    <button type="button" class="style-option" data-style="italic">Italic</button>
+                    <button type="button" class="style-option" data-style="underline">Underline</button>
+                    <button type="button" class="style-option" data-style="normal">Normal</button>
+                </div>
+
+                <button type="button" id="emoji-button">😊</button>
+                <div id="emoji-picker" >
+                    <table>
+                        <tr>
+                            <td class="emoji">😊</td>
+                            <td class="emoji">😂</td>
+                            <td class="emoji">❤️</td>
+                            <td class="emoji">👍</td>
+                            <td class="emoji">🎉</td>
+
+                        </tr>
+                        <tr>
+                            <td class="emoji">🔥</td>
+                            <td class="emoji">😎</td>
+                            <td class="emoji">😢</td>
+                            <td class="emoji">😡</td>
+                            <td class="emoji">🙌</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji">🎂</td>
+                            <td class="emoji">💪</td>
+                            <td class="emoji">🤔</td>
+                            <td class="emoji">😴</td>
+                            <td class="emoji">🥳</td>
+                        </tr>
+                    </table>
+                </div>
+
                 <input class="input-file" type="file" name="image" id="image-input" accept=".png, .jpg, .jpeg">
                 <label for="image-input" id="image-input-label">Choose a file</label>
                 <button type="submit" class="send-submit">Send</button>
@@ -150,6 +190,47 @@
                 <input type="hidden" name="name_group" value="{{ group_id }}">
                 <textarea class="textarea-post" name="post" id="post-input" placeholder="Write the text of the post..."
                           autocomplete="off" rows="2"></textarea>
+
+
+                <button type="button" id="style-button-post">Format</button>
+
+
+                <div id="style-menu-post">
+                    <button type="button" class="style-option" data-style="bold">Bold</button>
+                    <button type="button" class="style-option" data-style="italic">Italic</button>
+                    <button type="button" class="style-option" data-style="underline">Underline</button>
+                    <button type="button" class="style-option" data-style="normal">Normal</button>
+                </div>
+
+                <button type="button" id="emoji-button-post">😊</button>
+
+                <div id="emoji-picker-post">
+                    <table>
+                        <tr>
+                            <td class="emoji">😊</td>
+                            <td class="emoji">😂</td>
+                            <td class="emoji">❤️</td>
+                            <td class="emoji">👍</td>
+                            <td class="emoji">🎉</td>
+
+                        </tr>
+                        <tr>
+                            <td class="emoji">🔥</td>
+                            <td class="emoji">😎</td>
+                            <td class="emoji">😢</td>
+                            <td class="emoji">😡</td>
+                            <td class="emoji">🙌</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji">🎂</td>
+                            <td class="emoji">💪</td>
+                            <td class="emoji">🤔</td>
+                            <td class="emoji">😴</td>
+                            <td class="emoji">🥳</td>
+                        </tr>
+                    </table>
+                </div>
+
                 <input class="input-file-post" type="file" name="post_image" id="post-image-input"
                        accept=".png, .jpg, .jpeg">
                 <label for="post-image-input" id="image-input-label-post">Choose a file</label>
@@ -161,5 +242,6 @@
     </main>
 </div>
 <script src="{% static 'home/home.js' %}"></script>
+
 </body>
 </html>

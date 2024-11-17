@@ -169,7 +169,7 @@ $(function() {
                     if (imageInput) {
                         messageHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
                     }
-                    if (messageContent) {
+                    if (messageContent  && messageContent.replace(/<\/?(b|i|u)>/g, '').length) {
                         messageHtml += `<p>${messageContent}</p>`;
                     }
                     messageHtml += `</div>`;
@@ -497,7 +497,7 @@ $(function() {
                     if (imageInput) {
                         postHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
                     }
-                    if (postContent) {
+                    if (postContent && postContent.replace(/<\/?(b|i|u)>/g, '').length) {
                         postHtml += `<p>${postContent}</p>`;
                     }
                     postHtml += `</div>`;
@@ -532,4 +532,262 @@ $(function() {
 
     setInterval(updateContacts, 5000);
     setInterval(updateGroups, 5000);
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const emojiButton = document.getElementById('emoji-button');
+    const emojiPicker = document.getElementById('emoji-picker');
+    const messageInput = document.getElementById('message-input');
+
+    const emojiButtonPost = document.getElementById('emoji-button-post');
+    const emojiPickerPost = document.getElementById('emoji-picker-post');
+    const postInput = document.getElementById('post-input');
+
+    const styleButton = document.getElementById('style-button');
+    const styleMenu = document.getElementById('style-menu');
+    const textarea = document.getElementById('message-input');
+
+    const styleButtonPost = document.getElementById('style-button-post');
+    const styleMenuPost = document.getElementById('style-menu-post');
+    const textareaPost = document.getElementById('post-input');
+
+
+    if (emojiButton){
+        emojiButton.addEventListener('click', function(event) {
+            if (emojiPicker.style.display === 'none' || emojiPicker.style.display === '') {
+                emojiPicker.style.display = 'table';
+
+                const start = messageInput.selectionStart;
+                const end = messageInput.selectionEnd;
+                messageInput.setSelectionRange(start , end);
+                messageInput.focus();
+
+                updateEmojiPickerPosition()
+            } else {
+                emojiPicker.style.display = 'none';
+            }
+        });
+
+
+        emojiPicker.addEventListener('click', function(event) {
+            if (event.target.classList.contains('emoji')) {
+                const start = messageInput.selectionStart;
+                const end = messageInput.selectionEnd;
+
+
+                messageInput.value = messageInput.value.substring(0, start) + event.target.textContent+ messageInput.value.substring(end);
+
+                messageInput.setSelectionRange(start + event.target.textContent.length, start + event.target.textContent.length);
+                messageInput.focus();
+
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!emojiPicker.contains(event.target) && event.target !== emojiButton) {
+                emojiPicker.style.display = 'none';
+            }
+        });
+
+
+        window.addEventListener('resize', updateEmojiPickerPosition);
+
+        function updateEmojiPickerPosition() {
+            const rect = emojiButton.getBoundingClientRect();
+            const pickerHeight = emojiPicker.offsetHeight;
+
+
+            emojiPicker.style.top = `${rect.top + window.scrollY - pickerHeight}px`;
+            emojiPicker.style.left = `${Math.max(rect.left + window.scrollX, 10)}px`;
+            emojiPicker.style.right = `${Math.max(window.innerWidth - rect.right, 10)}px`;
+        }
+    }
+    else if (emojiButtonPost){
+        emojiButtonPost.addEventListener('click', function(event) {
+            if (emojiPickerPost.style.display === 'none' || emojiPickerPost.style.display === '') {
+                emojiPickerPost.style.display = 'table';
+
+                const start = postInput.selectionStart;
+                const end = postInput.selectionEnd;
+                postInput.setSelectionRange(start, end);
+                postInput.focus();
+
+                updateEmojiPickerPostPosition()
+            } else {
+                emojiPickerPost.style.display = 'none';
+            }
+        });
+
+
+        emojiPickerPost.addEventListener('click', function(event) {
+            if (event.target.classList.contains('emoji')) {
+                const start = postInput.selectionStart;
+                const end = postInput.selectionEnd;
+
+
+                postInput.value = postInput.value.substring(0, start) + event.target.textContent+ postInput.value.substring(end);
+
+                postInput.setSelectionRange(start + event.target.textContent.length, start + event.target.textContent.length);
+                postInput.focus();
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!emojiPickerPost.contains(event.target) && event.target !== emojiButtonPost) {
+                emojiPickerPost.style.display = 'none';
+            }
+        });
+
+
+        window.addEventListener('resize', updateEmojiPickerPostPosition);
+
+        function updateEmojiPickerPostPosition() {
+            const rect = emojiButtonPost.getBoundingClientRect();
+            const pickerHeight = emojiPickerPost.offsetHeight;
+
+
+            emojiPickerPost.style.top = `${rect.top + window.scrollY - pickerHeight}px`;
+            emojiPickerPost.style.left = `${Math.max(rect.left + window.scrollX, 10)}px`;
+            emojiPickerPost.style.right = `${Math.max(window.innerWidth - rect.right, 10)}px`;
+        }
+    }
+
+
+    if (styleButton){
+
+        styleButton.addEventListener('click', function (e) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.setSelectionRange(start, end);
+            textarea.focus();
+
+            if (styleMenu.style.display === 'none') {
+
+                const rect = styleButton.getBoundingClientRect();
+                styleMenu.style.display = 'block';
+                styleMenu.style.top = `${rect.top + window.scrollY - styleMenu.offsetHeight}px`;
+                styleMenu.style.left = `${rect.left + window.scrollX}px`;
+            } else {
+                styleMenu.style.display = 'none';
+            }
+        });
+
+        styleMenu.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('style-option')) return;
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const style = e.target.getAttribute('data-style');
+            const text = textarea.value;
+            const selectedText = text.substring(start, end);
+
+            let styledText;
+            switch (style) {
+                case 'bold':
+                    styledText = `<b>${selectedText}</b>`;
+                    break;
+                case 'italic':
+                    styledText = `<i>${selectedText}</i>`;
+                    break;
+                case 'underline':
+                    styledText = `<u>${selectedText}</u>`;
+                    break;
+                case 'normal':
+                    styledText = selectedText.replace(/<\/?(b|i|u)>/g, '');
+                    break;
+                default:
+                    return;
+            }
+
+            textarea.value = text.substring(0, start) + styledText + text.substring(end);
+
+            textarea.setSelectionRange(start, start + styledText.length);
+            textarea.focus();
+
+            styleMenu.style.display = 'none';
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!styleMenu.contains(e.target) && e.target !== styleButton) {
+                styleMenu.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (styleMenu.style.display === 'block') {
+                const rect = styleButton.getBoundingClientRect();
+                styleMenu.style.top = `${rect.top + window.scrollY - styleMenu.offsetHeight}px`;
+                styleMenu.style.left = `${rect.left + window.scrollX}px`;
+            }
+        });
+    }
+
+    else  if (styleButtonPost){
+        styleButtonPost.addEventListener('click', function (e) {
+            const start = textareaPost.selectionStart;
+            const end = textareaPost.selectionEnd;
+            textareaPost.setSelectionRange(start, end);
+            textareaPost.focus();
+
+            if (styleMenuPost.style.display === 'none') {
+
+                const rect = styleButtonPost.getBoundingClientRect();
+                styleMenuPost.style.display = 'block';
+                styleMenuPost.style.top = `${rect.top + window.scrollY - styleMenuPost.offsetHeight}px`;
+                styleMenuPost.style.left = `${rect.left + window.scrollX}px`;
+            } else {
+                styleMenuPost.style.display = 'none';
+            }
+        });
+
+        styleMenuPost.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('style-option')) return;
+
+            const start = textareaPost.selectionStart;
+            const end = textareaPost.selectionEnd;
+            const style = e.target.getAttribute('data-style');
+            const text = textareaPost.value;
+            const selectedText = text.substring(start, end);
+
+            let styledText;
+            switch (style) {
+                case 'bold':
+                    styledText = `<b>${selectedText}</b>`;
+                    break;
+                case 'italic':
+                    styledText = `<i>${selectedText}</i>`;
+                    break;
+                case 'underline':
+                    styledText = `<u>${selectedText}</u>`;
+                    break;
+                case 'normal':
+                    styledText = selectedText.replace(/<\/?(b|i|u)>/g, '');
+                    break;
+                default:
+                    return;
+            }
+
+            textareaPost.value = text.substring(0, start) + styledText + text.substring(end);
+
+            textareaPost.setSelectionRange(start, start + styledText.length);
+            textareaPost.focus();
+
+            styleMenuPost.style.display = 'none';
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!styleMenuPost.contains(e.target) && e.target !== styleButtonPost) {
+                styleMenuPost.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (styleMenuPost.style.display === 'block') {
+                const rect = styleButtonPost.getBoundingClientRect();
+                styleMenuPost.style.top = `${rect.top + window.scrollY - styleMenuPost.offsetHeight}px`;
+                styleMenuPost.style.left = `${rect.left + window.scrollX}px`;
+            }
+        });
+    }
 });
