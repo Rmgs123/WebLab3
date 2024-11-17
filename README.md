@@ -1,25 +1,25 @@
 # WebLab3
-This is a _Django_ team website development project
+This is a _Django_ team website development project which is built with Django 5.x, utilizing Python 3.13 for a secure and maintainable backend. Frontend uses HTML5, CSS3, and JavaScript (kept in separate files for security and clarity). Environment variables store sensitive data like SECRET_KEY and database credentials, ensuring no hardcoded secrets. Debug mode is disabled in production (DEBUG=False), with CSRF protection and proper handling of static and media files via Whitenoise and custom middleware. The app follows best practices, including clear separation of concerns, modular design, and version control with Git, creating a robust and scalable foundation for web development. 🚀
 
 ## **Our Idea:**
 We are going to make a **Telegram-like** website where people will communicate via private messages or in public blogs (groups). And it will be with one particular ~feature~...
---> _It will be for girls_
+--> _It will be for girls_ 😮
 
 ## **Current Functionality:**
 - Registration and Login
 - Account Managment
-- Adding users (friends)
+- Adding Users (friends)
 - Chatting (with .png or .jpg upload)
-- Notifications (on new messages)
-- Blog creation and managment
-- Responsive Web Desing
-- and etc...
+- Notifications (On new messages)
+- Blog Creation and Managment
+- Formatting and Deleting
+- Emojis and MORE... 🔥
 
 ## **Hosting:**
 If currently hosted, website will be available via:
-- _https://girlhub.onrender.com/_
+- _https://weblab3-production.up.railway.app/_ 🚀
 
-## **Current Design:**
+## **Screenshots of Current Design:**
 ---
 ![image](https://github.com/user-attachments/assets/30788f40-3515-4c81-a00e-56cc4556920b)
 ---
