@@ -5,7 +5,8 @@ urlpatterns = [
     path('', views.home_view, name='home'),
     path('delete/', views.home_delete, name='home_delete'),
     path('clear/', views.home_clear, name='home_clear'),
-    path('pop_back/', views.home_pop_back, name='home_pop_back'),
+    path('pop_message/<int:message_id>/', views.home_message_back, name='home_message_back'),
+
 
     path('add_contact/', views.add_contact, name='add_contact'),
     path('get_contacts/', views.get_contacts, name='get_contacts'),
