@@ -1,14 +1,15 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-62*#4*q8y*ir$e6h!&%ww+51lzl0rh%mo*47--&p$*24e#0*sc'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-62*#4*q8y*ir$e6h!&%ww+51lzl0rh%mo*47--&p$*24e#0*sc')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True' # Make True or $ collectstatic if running locally
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1').split(',') # Or 'localhost' instead of '127.0.0.1'
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(',') # Or something else instead of 'http://localhost' if running locally
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
@@ -20,9 +21,6 @@ LOGIN_REDIRECT_URL = '/home'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/home'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 USE_TZ = True
 TIME_ZONE = 'UTC'
 
@@ -33,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
@@ -44,6 +43,8 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = (
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -55,6 +56,19 @@ MIDDLEWARE = (
 )
 
 ROOT_URLCONF = 'GirlHub.urls'
+
+# Static and Media files (CSS, JavaScript, Images)
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+WHITENOISE_AUTOREFRESH = True  # This is temp (fixing /media/)
+WHITENOISE_USE_FINDERS = True  # This is temp (fixing /media/)
 
 # Specify the context processors as follows:
 TEMPLATES = [
@@ -115,15 +129,9 @@ LANGUAGE_CODE = 'en-us'
 
 USE_I18N = True
 
-# Static files (CSS, JavaScript, Images)
-
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
-
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 ACCOUNT_RATE_LIMITS = {
     "login": "10/m",
