@@ -523,20 +523,29 @@ header {
 }
 
 .delete_link {
-    margin-left: 280px;
-    margin-right: 50px;
+    margin-left: 250px;
+    margin-right: 30px;
 }
 
 .clear_link {
-    margin-right: 50px;
+    margin-right: 30px;
 }
 
+.change_link {
+    margin-right: 30px;
+}
+
+.change_image_link {
+    margin-right: 30px;
+}
 .pop_message_back_link {
-    margin-right: 50px;
+    margin-right: 30px;
 }
 
 .delete_link,
- .clear_link{
+ .clear_link,
+ .change_link,
+ .change_image_link{
     text-decoration: none;
     color: white;
     font-weight: normal;
@@ -544,7 +553,9 @@ header {
 }
 
 .delete_link:hover,
- .clear_link:hover{
+ .clear_link:hover,
+ .change_link:hover,
+ .change_image_link:hover{
     text-shadow: 3px 3px 2px #D9AFD9;
  }
 

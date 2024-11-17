@@ -93,6 +93,8 @@
             <a class="delete_link" href="{% url 'home_delete' %}?group_with={{ group_id }}">Leave group</a>
             {% if group.sender == user %}
             <a class="clear_link" href="{% url 'home_clear' %}?group_with={{ group_id }}">Clear group</a>
+            <a class="change_link" href="{% url 'account_change_username' %}?group={{ group_id }}">Change name</a>
+            <a class="change_image_link" href="{% url 'account_change_image' %}?group={{ group_id }}">Change image</a>
 
             {% endif %}
         </div>

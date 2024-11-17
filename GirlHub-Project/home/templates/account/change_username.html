@@ -1,7 +1,7 @@
 {% extends "base_settings.html" %}
 
 {%block title%}
-<h2>Change username</h2>
+<h2>Change name</h2>
 {% endblock %}
 
 
@@ -9,6 +9,21 @@
 <div class="username">
     <p class="username-line"></p>
 </div>
+{% if group_id %}
+<form method="post" action="{% url 'account_change_username' %}?group={{ group_id }}" class="form">
+    {% csrf_token %}
+
+    <label for="password" class="label_password">Current Password:</label>
+    <input type="password" placeholder="Current Password" id="passwordGroup" name="password" required>
+
+    <label for="new_name" class="label_username">New name:</label>
+    <input type="text" placeholder="New name" id="new_name" name="new_name" required
+           value="{{ form.name.value|default_if_none:'' }}">
+
+    <button type="submit" class="submit-button">Change</button>
+</form>
+<p class="back-link"><a href="{% url 'home' %}?group_with={{ group_id }}">Back</a></p>
+{% else %}
 <form method="post" action="{% url 'account_change_username' %}" class="form">
     {% csrf_token %}
 
@@ -30,8 +45,9 @@
     <button type="submit" class="submit-button">Change</button>
 </form>
 <p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
+{% endif %}
+<div class="notification" id="notification">The name has been successfully changed.</div>
 
-<div class="notification" id="notification">The nickname has been successfully changed.</div>
 <script>
     function showNotification(message) {
         const notification = document.getElementById("notification");

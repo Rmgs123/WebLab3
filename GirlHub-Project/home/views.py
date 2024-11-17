@@ -696,60 +696,118 @@ def change_email_view(request):
         messages.success(request, "Email has been successfully changed!")
         return redirect('account_change_email')
 
-    return render(request, 'account/email.html', {'user': request.user})
+    return render(request, 'account/email.html', {
+        'user': request.user,
+    })
 
 
 @login_required
 def change_username(request):
+    group_id = request.GET.get('group')
+
     if request.method == 'POST':
-        password = request.POST.get('password')
-        new_username = request.POST.get('new_username')
 
-        user = authenticate(username=request.user.username, password=password)
-        if user is None:
-            messages.error(request, "Incorrect password.")
+        if group_id:
+            new_name = request.POST.get('new_name')
+            password = request.POST.get('password')
+            url_change = f"{reverse('account_change_username')}?group={group_id}"
+
+            user = authenticate(username=request.user.username, password=password)
+            group = Group.objects.get(name=group_id)
+            if user is None:
+                messages.error(request, "Incorrect password.")
+                return redirect(url_change)
+
+            if not new_name.strip():
+                messages.error(request, "The name should not be empty.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+            if Group.objects.filter(name=new_name).exists():
+                messages.error(request, "There is already such a name")
+                return redirect(url_change)
+
+            group.name = new_name
+            group.save()
+
+            messages.success(request, "Name has been successfully changed.")
+
+            url = f"{reverse('home')}?group_with={new_name}"
+            return redirect(url)
+        else:
+            password = request.POST.get('password')
+            new_username = request.POST.get('new_username')
+
+            user = authenticate(username=request.user.username, password=password)
+            if user is None:
+                messages.error(request, "Incorrect password.")
+                return redirect('account_change_username')
+
+            if User.objects.filter(username=new_username).exists():
+                messages.error(request, "There is already such a nickname")
+                return redirect('account_change_username')
+            try:
+                validators.UnicodeUsernameValidator(new_username)
+                validators.ASCIIUsernameValidator(new_username)
+            except ValidationError:
+                messages.error(request, "Incorrect nickname format.")
+                return redirect('account_change_username')
+
+            user.username = new_username
+            user.save()
+
+            messages.success(request, "Username has been successfully changed.")
             return redirect('account_change_username')
 
-        if User.objects.filter(username=new_username).exists():
-            messages.error(request, "There is already such a nickname")
-            return redirect('account_change_username')
-        try:
-            validators.UnicodeUsernameValidator(new_username)
-            validators.ASCIIUsernameValidator(new_username)
-        except ValidationError:
-            messages.error(request, "Incorrect nickname format.")
-            return redirect('account_change_username')
-
-        user.username = new_username
-        user.save()
-
-        messages.success(request, "Username has been successfully changed.")
-        return redirect('account_change_username')
-
-    return render(request, 'account/change_username.html', {'user': request.user})
+    return render(request, 'account/change_username.html', {
+        'user': request.user,
+        'group_id': group_id})
 
 
 @login_required
 def change_image(request):
+    group_id = request.GET.get('group')
+
     if request.method == 'POST':
-        if request.FILES.get('image'):
-            image_file = request.FILES.get('image')
-            size = (32, 32)
+        buffer = io.BytesIO()
+        if group_id:
+            group = Group.objects.get(name=group_id)
+            if request.FILES.get('image'):
+                image_file = request.FILES.get('image')
+                size = (32, 32)
+
+                result = change_image_1(image_file, size)
+
+                if result.mode != 'RGBA':
+                    result = result.convert('RGBA')
+
+                buffer = io.BytesIO()
+                result.save(buffer, format='PNG')
+                group.image.save('profile_images.png', ContentFile(buffer.getvalue()))
+                group.save()
+
+            url = f"{reverse('home')}?group_with={group_id}"
+            return redirect(url)
+        else:
             profile = Profile.objects.get(user=request.user)
 
-            result = change_image_1(image_file, size)
+            if request.FILES.get('image'):
+                image_file = request.FILES.get('image')
+                size = (32, 32)
 
-            if result.mode != 'RGBA':
-                result = result.convert('RGBA')
+                result = change_image_1(image_file, size)
 
-            buffer = io.BytesIO()
-            result.save(buffer, format='PNG')
-            profile.image.save('profile_images.png', ContentFile(buffer.getvalue()))
-            profile.save()
+                if result.mode != 'RGBA':
+                    result = result.convert('RGBA')
 
-        return redirect('home')
+                result.save(buffer, format='PNG')
+                profile.image.save('profile_images.png', ContentFile(buffer.getvalue()))
+                profile.save()
 
-    return render(request, 'account/change_image.html')
+            return redirect('account_change_image')
+
+    return render(request, 'account/change_image.html', {
+        'group_id': group_id
+    })
 
 
 @login_required
@@ -757,6 +815,9 @@ def create_group(request):
     if request.method == 'POST':
         new_name = request.POST.get('name_group')
 
+        if not new_name.strip():
+            messages.error(request, "The name should not be empty.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         if Group.objects.filter(name=new_name).exists():
             messages.error(request, "Such a group already exists")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

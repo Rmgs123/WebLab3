@@ -1,23 +1,36 @@
 {% extends "base_settings.html" %}
 
 {% block title %}
-<h2>Change profile picture</h2>
+<h2>Change picture</h2>
 {% endblock %}
 
 {% block content %}
 <div class="picture">
     <p class="picture-line"></p>
 </div>
-<form method="post"  enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>
-        <input class="inputfile" type="file" name="image" id="file" accept=".png, .jpg, .jpeg">
-        <label for="file" id="file-label">Choose</label>
-    </p>
+{% if group_id %}
+    <form method="post"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <input class="inputfile" type="file" name="image" id="file-group" accept=".png, .jpg, .jpeg">
+            <label for="file-group" id="file-group-label">Choose</label>
+        </p>
 
-    <p><button class="submit-button" type="submit">Upload</button></p>
-</form>
-<p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
+        <p><button class="submit-button" type="submit">Upload</button></p>
+    </form>
+    <p class="back-link"><a href="{% url 'home' %}?group_with={{ group_id }}">Back</a></p>
+{% else %}
+    <form method="post"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <input class="inputfile" type="file" name="image" id="file" accept=".png, .jpg, .jpeg">
+            <label for="file" id="file-label">Choose</label>
+        </p>
+
+        <p><button class="submit-button" type="submit">Upload</button></p>
+    </form>
+    <p class="back-link"><a href="{% url 'account_settings' %}">Back</a></p>
+{% endif %}
 <style type="text/css">
     .background {
         position: fixed;
@@ -161,6 +174,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const fileLabel = document.getElementById("file-label");
         const fileName = this.files[0] ? this.files[0].name : "Choose a file";
         fileLabel.textContent = fileName;
+    });
+
+    document.getElementById("file-group").addEventListener("change", function() {
+        const fileGroupLabel = document.getElementById("file-group-label");
+        const fileGroupName = this.files[0] ? this.files[0].name : "Choose a file";
+        fileGroupLabel.textContent = fileGroupName;
     });
 });
 </script>
