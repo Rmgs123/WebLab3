@@ -5,7 +5,7 @@ This is a _Django_ team website development project which is built with Django 5
 We are going to make a **Telegram-like** website where people will communicate via private messages or in public blogs (groups). And it will be with one particular ~feature~...
 --> _It will be for girls_ 😮
 
-## **Current Functionality:**
+## **Current Functionality (~50 code commits):**
 - Registration and Login
 - Account Managment
 - Adding Users (friends)
