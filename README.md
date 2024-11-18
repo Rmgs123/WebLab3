@@ -29,10 +29,6 @@ If currently hosted, website will be available via:
 ---
 ![image](https://github.com/user-attachments/assets/8f8b7241-7753-4cdf-a841-ad39fc8b2d28)
 ---
-![image](https://github.com/user-attachments/assets/911740fa-00c1-429c-b5ff-131d3b1585ca)
----
-![image](https://github.com/user-attachments/assets/f92cd6d1-c5eb-45e4-8a1e-bffe85a32c14)
----
 ![image](https://github.com/user-attachments/assets/ddda2b7b-54e8-4e73-8577-f21ad58ca61f)
 ---
 ![image](https://github.com/user-attachments/assets/c14a4bb4-fcf6-4d47-a31f-81284b6980f5)
