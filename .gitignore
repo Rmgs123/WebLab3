@@ -1,0 +1,10 @@
+girlvenv/
+.idea/
+.env
+
+__pycache__/
+*.pyc
+
+staticfiles/
+
+.sqlite3

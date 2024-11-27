@@ -23,6 +23,8 @@ from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 from datetime import timedelta
 
+from django.http import JsonResponse
+import bleach
 
 @login_required
 def home_view(request):
@@ -357,6 +359,22 @@ def send_message(request):
             return JsonResponse(
                 {'status': 'error', 'message': 'The message is too long. The maximum length is 5000 characters.'})
 
+        # Sanitize the message content
+        allowed_tags = ['b', 'i', 'u']
+        allowed_attrs = {}
+
+        sanitized_content = bleach.clean(message_content, tags=allowed_tags, attributes=allowed_attrs, strip=True)
+
+        # Validate the sanitized content
+        if not sanitized_content and not image:
+            return JsonResponse({'status': 'error', 'message': 'Message cannot be empty.'})
+
+        if len(sanitized_content) > 5000:
+            return JsonResponse(
+                {'status': 'error', 'message': 'The message is too long. The maximum length is 5000 characters.'})
+
+        message_content = sanitized_content
+
         try:
             receiver_user = User.objects.get(username=receiver_name)
 
@@ -377,12 +395,19 @@ def send_message(request):
                 image=image if image else None
             )
             message.save()
-            return JsonResponse({'status': 'success', 'timestamp': message.timestamp.isoformat(), 'id': message.id,
-                                 'chat_user': receiver_name})
+
+            return JsonResponse({
+                'status': 'success',
+                'timestamp': message.timestamp.isoformat(),
+                'id': message.id,
+                'chat_user': receiver_name,
+                'content': sanitized_content,
+                'image_url': message.image.url if message.image else None
+            })
+
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Recipient not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
-
 
 @login_required
 def check_new_messages(request):
@@ -515,6 +540,23 @@ def publish_post(request):
         if len(post_content) > 8000:
             return JsonResponse(
                 {'status': 'error', 'message': 'The post is too long. Maximum length is 8000 characters.'})
+
+        # Sanitize the post content
+        allowed_tags = ['b', 'i', 'u']
+        allowed_attrs = {}
+
+        sanitized_content = bleach.clean(post_content, tags=allowed_tags, attributes=allowed_attrs, strip=True)
+
+        # Validate the sanitized content
+        if not sanitized_content and not image:
+            return JsonResponse({'status': 'error', 'message': 'Post cannot be empty.'})
+
+        if len(sanitized_content) > 8000:
+            return JsonResponse(
+                {'status': 'error', 'message': 'The post is too long. Maximum length is 8000 characters.'})
+
+        post_content = sanitized_content
+
         try:
             group_sender = Group.objects.get(name=name_group)
 
@@ -541,8 +583,15 @@ def publish_post(request):
                 status.is_read = False
                 status.save()
 
-            return JsonResponse(
-                {'status': 'success', 'timestamp': post.timestamp.isoformat(), 'id': post.id, 'group_id': name_group})
+            return JsonResponse({
+                'status': 'success',
+                'timestamp': post.timestamp.isoformat(),
+                'id': post.id,
+                'group_id': name_group,
+                'content': sanitized_content,
+                'image_url': post.image.url if post.image else None
+            })
+
         except (Group.DoesNotExist, GroupMemberStatus.DoesNotExist):
             return JsonResponse({'status': 'error', 'message': 'Group not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})

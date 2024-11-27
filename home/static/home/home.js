@@ -15,6 +15,76 @@ const checkNewPostsUrl = djangoVars.checkNewPostsUrl;
 const getNewPostsUrl = djangoVars.getNewPostsUrl;
 const updateGroupsUrl = djangoVars.updateGroupsUrl;
 
+function escapeHtml(unsafe) { // currently not used
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function sanitizeContent(content) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+
+    const allowedTags = ['B', 'I', 'U'];
+    const elements = tempDiv.getElementsByTagName('*');
+
+    for (let i = elements.length - 1; i >= 0; i--) {
+        const el = elements[i];
+        if (!allowedTags.includes(el.tagName)) {
+            el.parentNode.removeChild(el);
+        } else {
+            Array.from(el.attributes).forEach(attr => {
+                el.removeAttribute(attr.name);
+            });
+        }
+    }
+
+    return tempDiv.innerHTML;
+}
+
+function addMessageToDom(message) {
+    const sanitizedContent = sanitizeContent(message.content);
+    const escapedContent = escapeHtml(sanitizedContent);
+
+    let messageHtml = `<div class="message ${message.sender === username ? 'from-user' : 'from-contact'}">`;
+
+    if (message.image_url) {
+        messageHtml += `<img src="${message.image_url}" width="200">`;
+    }
+
+    const contentNode = document.createTextNode(escapedContent);
+
+    const paragraph = document.createElement('p');
+    paragraph.appendChild(contentNode);
+    messageHtml += paragraph.outerHTML;
+
+    messageHtml += `</div>`;
+
+    $('#chat-messages').append(messageHtml);
+}
+
+function addPostToDom(post) {
+    const chatMessages = document.getElementById('chat-messages');
+
+    let postHtml = `<div class="post_group" data-timestamp="${post.timestamp}" data-id="${post.id}">`;
+
+    if (post.image_url) {
+        postHtml += `<img src="${post.image_url}" width="200">`;
+    }
+
+    if (post.content) {
+        const sanitizedContent = sanitizeContent(post.content);
+        postHtml += `<p>${sanitizedContent}</p>`;
+    }
+
+    postHtml += `</div>`;
+
+    chatMessages.insertAdjacentHTML('beforeend', postHtml);
+}
+
 $(function() {
     const messageTextarea = document.getElementById('message-input');
     if (messageTextarea) {
@@ -132,6 +202,7 @@ $(function() {
         event.preventDefault();
 
         const messageContent = $('#message-input').val().trim();
+
         const imageInput = $('#image-input')[0].files[0];
 
         if (!messageContent && !imageInput) {
@@ -162,8 +233,11 @@ $(function() {
             contentType: false,
             success: function(response) {
                 if (response.status === 'success') {
-                    const messageContent = $('#message-input').val();
-                    const imageInput = $('#image-input')[0].files[0];
+                    const messageContent = response.content;
+                    const imageUrl = response.image_url;
+
+                    const sanitizedContent = sanitizeContent(messageContent);
+                    const escapedContent = escapeHtml(sanitizedContent);
 
                     let messageHtml = `<div class="message from-user" data-timestamp="${response.timestamp}" data-id="${response.id}">`;
                     if (imageInput) {
@@ -173,7 +247,6 @@ $(function() {
                         messageHtml += `<p>${messageContent}</p>`;
                     }
                     messageHtml += `</div>`;
-
 
                     $('#chat-messages').append(messageHtml);
                     $('#chat-messages').append(`<a class="pop_message_link" href="/home/pop_message/${response.id}/?chat_with=${response.chat_user}">Delete message</a>`);
@@ -371,15 +444,7 @@ $(function() {
 
                     response.new_posts.forEach(function(post) {
                         if ($('#chat-messages .post_group[data-id="' + post.id + '"]').length === 0) {
-                            let postHtml = `<div class="post_group" data-timestamp="${post.timestamp}" data-id="${post.id}">`;
-                            if (post.image_url) {
-                                postHtml += `<img src="${post.image_url}" width="200">`;
-                            }
-                            if (post.content) {
-                                postHtml += `<p>${post.content}</p>`;
-                            }
-                            postHtml += `</div>`;
-                            $('#chat-messages').append(postHtml);
+                            addPostToDom(post); // Используем защищённую функцию
                         }
                     });
 
@@ -490,15 +555,15 @@ $(function() {
             contentType: false,
             success: function(response) {
                 if (response.status === 'success') {
-                    const postContent = $('#post-input').val();
+                    const sanitizedContent = sanitizeContent(response.content);
                     const imageInput = $('#post-image-input')[0].files[0];
 
                     let postHtml = `<div class="post_group" data-timestamp="${response.timestamp}" data-id="${response.id}">`;
                     if (imageInput) {
                         postHtml += `<img src="${URL.createObjectURL(imageInput)}" width="200">`;
                     }
-                    if (postContent && postContent.replace(/<\/?(b|i|u)>/g, '').length) {
-                        postHtml += `<p>${postContent}</p>`;
+                    if (sanitizedContent) {
+                        postHtml += `<p>${sanitizedContent}</p>`;
                     }
                     postHtml += `</div>`;
 

@@ -599,3 +599,52 @@ header {
         display: none;
     }
 }
+
+.textarea-container {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#style-button,
+.emoji-button {
+    flex-shrink: 0;
+    height: 40px;
+    line-height: 1;
+}
+
+.image-input-label {
+    flex-shrink: 0;
+    height: 40px;
+    line-height: 1;
+}
+
+.send-submit {
+    flex-shrink: 0;
+    height: 40px;
+    line-height: 1;
+}
+
+#style-button-post,
+#emoji-button-post {
+    flex-shrink: 0;
+    height: 40px;
+    line-height: 1;
+}
+
+#image-input-label-post {
+    flex-shrink: 0;
+    height: 18px;
+    line-height: 1;
+}
+
+.post-publish-button {
+    flex-shrink: 0;
+    height: 40px;
+    line-height: 1;
+}
